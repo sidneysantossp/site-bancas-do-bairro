@@ -1,0 +1,42 @@
+# Arquivos desnecessários para deploy
+*.rar
+*.zip
+*.url
+*.txt
+*.html
+*.md
+*.log
+*.lock
+
+# Diretórios desnecessários
+/.idea/
+/.vscode/
+/1/
+
+# Arquivos de configuração local
+.prettierrc.json
+.prettierignore
+jsconfig.json
+deploy.sh
+get_changed_files.sh
+DEPLOY_INSTRUCTIONS.md
+deploy-guide.md
+netlify.toml
+yarn.lock
+package-lock.json
+
+# Arquivos de desenvolvimento
+test-translations.html
+check-language.html
+debug-language.html
+force-language.html
+force-portuguese.html
+set-language.html
+codelist.cc.txt
+"Downloaded from CODELIST.CC.url"
+stackfoofdweb-31nulled*
+
+# Arquivos de ambiente local (manter apenas .env.production)
+.env.development
+.env.local
+.env*.local

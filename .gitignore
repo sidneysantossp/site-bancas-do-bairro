@@ -1,0 +1,150 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+get_changed_files.sh
+changed_files.zip
+*./zip
+
+# next.js
+/.next/
+/out/
+/.vscode/
+
+# arquivos desnecessários para deploy
+*.rar
+*.zip
+*.url
+*.txt
+*.html
+# *.md - permitindo README.md
+/1/
+/.idea/
+/stackfoofdweb-31nulled*
+test-translations.html
+check-language.html
+debug-language.html
+force-language.html
+force-portuguese.html
+set-language.html
+codelist.cc.txt
+"Downloaded from CODELIST.CC.url"
+
+# arquivos de desenvolvimento
+*.log
+*.lock
+yarn.lock
+package-lock.json
+
+# arquivos de configuração desnecessários
+.prettierrc.json
+.prettierignore
+jsconfig.json
+deploy.sh
+get_changed_files.sh
+DEPLOY_INSTRUCTIONS.md
+deploy-guide.md
+netlify.toml
+
+# testing
+/coverage
+
+# production
+/build
+
+# misc
+.DS_Store
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# local env files
+.env*.local
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# coverage directory used by tools like istanbul
+coverage/
+*.lcov
+
+# nyc test coverage
+.nyc_output
+
+# dependency directories
+node_modules/
+jspm_packages/
+
+# optional npm cache directory
+.npm
+
+# optional eslint cache
+.eslintcache
+
+# optional REPL history
+.node_repl_history
+
+# output of 'npm pack'
+*.tgz
+
+# yarn integrity file
+.yarn-integrity
+
+# parcel-bundler cache (https://parceljs.org/)
+.cache
+.parcel-cache
+
+# next.js build output
+.next
+out
+
+# nuxt.js build / generate output
+.nuxt
+dist
+
+# storybook build outputs
+.out
+.storybook-out
+
+# temporary folders
+tmp/
+temp/
+
+# editor directories and files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# os generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# package-lock for different package managers
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+npm-debug.log*
+yarn-debug.log*
+yarn-.log*
+
+.yarn
