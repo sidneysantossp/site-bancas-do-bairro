@@ -42,12 +42,8 @@ function App({ Component, pageProps, emotionCache = clientSideEmotionCache }) {
     const Footer = dynamic(() => import('../components/footer/Footer'), {
         ssr: false,
     })
+    // Removido: código temporário de forçar pt-br e limpar chaves de linguagem
     useEffect(() => {
-        // Temporary: Force clear language settings to test pt-br translations
-        localStorage.removeItem('language')
-        localStorage.removeItem('i18nextLng')
-        localStorage.setItem('language', 'pt-br')
-        
         const userLanguage = localStorage.getItem('language')
         if (!userLanguage) {
             localStorage.setItem('language', i18n.language)
