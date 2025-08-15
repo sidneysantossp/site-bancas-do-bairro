@@ -19,11 +19,10 @@ export default function SearchResult({ searchValue, count, foodOrRestaurant }) {
                    sx={{ padding: '10px 0px', background:(theme)=>theme.palette.neutral[200] }}
                >
                    <Typography sx={{ textAlign: 'center' }}>
-                       {t("Search result for")}{' '}
+                       Sua pesquisa por{' '}
                        <Typography  component="span" color={theme.palette.primary.main}>"{searchValue?searchValue:"item"}"</Typography>{' '}
                        <Typography component="span" cstyle={{ color: '#EF7822' }}>{count}{' '}</Typography>
-                       {foodOrRestaurant === 'products' ? t('foods') : t('restaurants')}{' '}
-                       {' '}
+                       {foodOrRestaurant === 'products' ? 'produtos' : 'bancas'}{' '}
                    </Typography>
                </Grid>
            </Grid>

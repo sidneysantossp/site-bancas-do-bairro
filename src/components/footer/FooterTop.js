@@ -93,7 +93,7 @@ const FooterTop = ({ landingPageData }) => {
                                 <CustomColouredTypography
                                     variant="h3"
                                     color={theme.palette.neutral[1000]}
-                                    fontweight="600"
+                                    fontWeight="600"
                                     component="h2"
                                 >
                                     {landingPageData?.news_letter_title}
@@ -101,7 +101,7 @@ const FooterTop = ({ landingPageData }) => {
                                 <Typography
                                     fontSize="14px"
                                     color={theme.palette.neutral[1000]}
-                                    fontweight="400"
+                                    fontWeight="400"
                                     maxWidth="300px"
                                     textAlign={{ xs: 'center', sm: 'left' }}
                                     component="p"
@@ -146,7 +146,7 @@ const FooterTop = ({ landingPageData }) => {
                                         }}
                                         value={emailAddress}
                                         type="email"
-                                        placeholder={t('Your Email Address')}
+                                        placeholder={'Digite seu e-mail'}
                                         onChange={(e) =>
                                             setEmailAddress(e.target.value)
                                         }

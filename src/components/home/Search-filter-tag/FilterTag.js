@@ -34,7 +34,9 @@ import FilterCard from '../../products-page/FilterCard'
 import SearchBox from '../hero-section-with-search/SearchBox'
 import { WrapperForSideDrawerFilter } from '@/styled-components/CustomStyles.style'
 
-export const CustomChip = styled(Chip)(({ theme, query, value, isSticky }) => ({
+export const CustomChip = styled(Chip, {
+    shouldForwardProp: (prop) => prop !== 'isSticky'
+})(({ theme, query, value, isSticky }) => ({
     padding: isSticky ? '2px 3px' : '10px 10px',
     alignItems: 'center',
     color: value ? theme.palette.neutral[100] : '#767E8F',
@@ -50,7 +52,7 @@ export const CustomChip = styled(Chip)(({ theme, query, value, isSticky }) => ({
     '& .MuiChip-label': {
         paddingLeft: isSticky ? '5px 6px' : '8px 8px',
         paddingRight: isSticky ? '5px 6px' : '8px 8px',
-        maxWidth: '110px',
+        maxWidth: '200px',
         overflow: 'hidden',
         textOverflow: 'ellipsis',
     },
@@ -58,8 +60,11 @@ export const CustomChip = styled(Chip)(({ theme, query, value, isSticky }) => ({
         fontSize: '12px',
         padding: '4px 4px',
         height: '31px',
+        '& .MuiChip-label': {
+            maxWidth: '160px',
+        },
     },
-}))
+}));
 
 export const SearchIconButton = styled(IconButton)(({ theme }) => ({
     backgroundColor: theme.palette.borderBottomBg,

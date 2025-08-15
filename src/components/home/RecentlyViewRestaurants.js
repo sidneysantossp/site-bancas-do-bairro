@@ -51,7 +51,7 @@ const RecentlyViewRestaurants = () => {
                                     router.push('/recently-view-restaurant')
                                 }
                             >
-                                {t('View all')}
+                                {'Ver todos'}
                             </CustomViewAll>
                         </CustomStackFullWidth>
                     </Grid>

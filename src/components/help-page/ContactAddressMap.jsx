@@ -10,7 +10,8 @@ import {
     useTheme,
 } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
-import { GoogleMap, Marker, useJsApiLoader } from '@react-google-maps/api'
+import { GoogleMap, Marker } from '@react-google-maps/api'
+import useGoogleMaps from '../../hooks/useGoogleMaps'
 import MapComponent from '../restaurant-details/google-address/MapComponent'
 import { useSelector } from 'react-redux'
 import { useQuery } from 'react-query'
@@ -38,10 +39,7 @@ const ContactAddressMap = ({
         lat: parseFloat(global?.default_location?.lat),
         lng: parseFloat(global?.default_location?.lng),
     }
-    const { isLoaded } = useJsApiLoader({
-        id: 'google-map-script',
-        googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAP_KEY,
-    })
+    const { isLoaded } = useGoogleMaps()
     const options = useMemo(
         () => ({
             zoomControl: false,

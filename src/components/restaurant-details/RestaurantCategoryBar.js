@@ -177,7 +177,7 @@ const RestaurantCategoryBar = (props) => {
                             <CustomSearch
                                 borderRadius="5px"
                                 handleSearchResult={handleSearchResult}
-                                label={t('Search foods')}
+                                label={'Buscar produtos'}
                                 searchFrom="restaurantDetails"
                                 selectedValue={searchKey}
                             />

@@ -15,9 +15,14 @@ const StartPriceView = (props) => {
     let digitAfterDecimalPoint
 
     if (global) {
-        currencySymbol = global.currency_symbol
-        currencySymbolDirection = global.currency_symbol_direction
-        digitAfterDecimalPoint = global.digit_after_decimal_point
+        currencySymbol = global.currency_symbol || 'R$'
+        currencySymbolDirection = global.currency_symbol_direction || 'left'
+        digitAfterDecimalPoint = global.digit_after_decimal_point || 2
+    } else {
+        // Fallback para configurações padrão brasileiras
+        currencySymbol = 'R$'
+        currencySymbolDirection = 'left'
+        digitAfterDecimalPoint = 2
     }
 
     const handleConvertedPrice = () => {
@@ -53,7 +58,7 @@ const StartPriceView = (props) => {
             flexWrap="wrap"
         >
             {hideStartFromText === 'false' && (
-                <Typography component="p">{t('Starts From:')}</Typography>
+                <Typography component="p">A partir de:</Typography>
             )}
             <Typography
                 display="flex"
@@ -110,7 +115,7 @@ const StartPriceView = (props) => {
                             color={theme.palette.error.main}
                             fontSize="12px"
                         >
-                            {t('Out Of Stock')}
+                            Indisponível
                         </Typography>
                     </Stack>
                 )}

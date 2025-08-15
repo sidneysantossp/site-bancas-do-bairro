@@ -8,7 +8,6 @@ import { RestaurantsApi } from '@/hooks/react-query/config/restaurantApi'
 import { useTranslation } from 'react-i18next'
 import { RatingStarIcon, TypographyText } from '../../food-card/FoodCard.style'
 import Link from 'next/link'
-import TimerIcon from '@mui/icons-material/Timer'
 import { addWishListRes, removeWishListRes } from '@/redux/slices/wishList'
 import { useWishListResDelete } from '@/hooks/react-query/config/wish-list/useWishListResDelete'
 import { CustomColouredTypography } from '@/styled-components/CustomStyles.style'
@@ -297,22 +296,7 @@ const RestaurantTopDetail = ({
                             </Stack>
                         </Link>
                     </Grid>
-                    <Grid item xs={6} sm={3} md={3} align="center">
-                        <Stack alignItems="center">
-                            <CustomColouredTypography
-                                color="primary"
-                                variant="h3"
-                            >
-                                {delivery_time} {t('Min')}
-                            </CustomColouredTypography>
-                            <Stack direction="row" spacing={1}>
-                                <TimerIcon />
-                                <TypographyText>
-                                    {t('Delivery Time')}
-                                </TypographyText>
-                            </Stack>
-                        </Stack>
-                    </Grid>
+                    {/* Delivery time hidden for now */}
                     <Grid
                         item
                         xs={6}

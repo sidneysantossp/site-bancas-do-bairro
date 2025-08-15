@@ -8,18 +8,27 @@ import { useRouter } from 'next/router'
 import { setGlobalSettings } from '@/redux/slices/global'
 
 const index = ({ restaurantData, configData, error }) => {
-    if (!restaurantData) {
+    if (!restaurantData || error) {
         return (
             <Box sx={{ textAlign: 'center', p: 2 }}>
                 <p>Não foi possível carregar os detalhes da banca.</p>
-                {error && <p>Erro: {error.message}</p>}
+                {error && <p>Erro: {error.message || 'Erro desconhecido'}</p>}
+            </Box>
+        )
+    }
+    
+    // Validação adicional dos dados do restaurante
+    if (!restaurantData.id || !restaurantData.name) {
+        return (
+            <Box sx={{ textAlign: 'center', p: 2 }}>
+                <p>Dados da banca incompletos.</p>
             </Box>
         )
     }
     const router = useRouter()
     const dispatch = useDispatch()
 
-    const { restaurant_zone_id } = router.query
+    const { banca_zone_id, restaurant_zone_id } = router.query
     let zoneId = undefined
     if (typeof window !== 'undefined') {
         zoneId = localStorage.getItem('zoneid')
@@ -38,12 +47,12 @@ const index = ({ restaurantData, configData, error }) => {
 
     useEffect(() => {
         if (!zoneId) {
-            localStorage.setItem(
-                'zoneid',
-                JSON.stringify([Number(restaurant_zone_id)])
-            )
+            const z = banca_zone_id ?? restaurant_zone_id
+            if (z !== undefined && z !== null && z !== '') {
+                localStorage.setItem('zoneid', JSON.stringify([Number(z)]))
+            }
         }
-    }, [restaurant_zone_id])
+    }, [banca_zone_id, restaurant_zone_id])
 
     return (
         <>
@@ -63,34 +72,63 @@ export default index
 export const getServerSideProps = async (context) => {
     const { id } = context.query
     const { req } = context
-    const language = req.cookies.languageSetting
+    const language = req.cookies.languageSetting || 'pt-br'
+    
+    console.log('Tentando carregar restaurante:', id)
+    
     try {
-        const data = await MainApi.get(`/api/v1/restaurants/details/${id}`)
-        const configRes = await fetch(
-            `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/config`,
-            {
-                method: 'GET',
-                headers: {
-                    'X-software-id': 33571750,
-                    'X-localization': language,
-                    origin: process.env.NEXT_CLIENT_HOST_URL,
-                },
+        // Tentar buscar dados do restaurante
+        let restaurantData = null
+        let configData = null
+        
+        try {
+            const data = await MainApi.get(`/api/v1/restaurants/details/${id}`)
+            restaurantData = data.data
+            console.log('Dados do restaurante carregados:', restaurantData?.name)
+        } catch (restaurantError) {
+            console.error('Erro ao buscar dados do restaurante:', restaurantError.message)
+        }
+        
+        try {
+            const configRes = await fetch(
+                `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/config`,
+                {
+                    method: 'GET',
+                    headers: {
+                        'X-software-id': 33571750,
+                        'X-localization': language,
+                        origin: process.env.NEXT_CLIENT_HOST_URL,
+                    },
+                }
+            )
+            
+            if (configRes.ok) {
+                configData = await configRes.json()
+                console.log('Config carregado com sucesso')
+            } else {
+                console.error('Erro na resposta da config:', configRes.status)
             }
-        )
-        const config = await configRes.json()
+        } catch (configError) {
+            console.error('Erro ao buscar config:', configError.message)
+        }
+        
         return {
             props: {
-                restaurantData: data.data,
-                configData: config,
+                restaurantData: restaurantData || null,
+                configData: configData || null,
+                error: null
             },
         }
     } catch (error) {
-        console.error('Failed to fetch restaurant details:', error)
+        console.error('Erro geral no getServerSideProps:', error)
         return {
             props: {
                 restaurantData: null,
                 configData: null,
-                error: JSON.parse(JSON.stringify(error))
+                error: {
+                    message: error.message || 'Erro desconhecido',
+                    status: error.status || 500
+                }
             },
         }
     }

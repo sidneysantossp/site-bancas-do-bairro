@@ -8,7 +8,13 @@ import CutleryIcon from './CutleryIcon'
 
 const Cutlery = ({ isChecked, handleChange }) => {
     const [checked, setChecked] = useState(isChecked)
-    const { t } = useTranslation()
+    const { t, i18n } = useTranslation()
+    const tt = (key, fallback) => {
+        const translated = t(key)
+        const isPt = i18n?.language?.toLowerCase?.().startsWith('pt')
+        if (isPt) return fallback ?? translated ?? key
+        return translated === key ? (fallback ?? key) : translated
+    }
     const handleChangeInner = (event) => {
         setChecked(event.target.checked)
         handleChange?.(event.target.checked)
@@ -45,10 +51,10 @@ const Cutlery = ({ isChecked, handleChange }) => {
                         fontWeight="bold"
                         mt="-2px"
                     >
-                        {t('Add Cutlery')}
+                        {tt('Add Cutlery', 'Adicionar talheres')}
                     </Typography>
                     <Typography color="text.secondary" fontSize="12px">
-                        {t('Dont have a cutlery? Restaurant will provide you.')}
+                        {tt('Dont have a cutlery? Restaurant will provide you.', 'Não tem talheres? O restaurante fornecerá para você.')}
                     </Typography>
                 </Stack>
             </CustomStackFullWidth>

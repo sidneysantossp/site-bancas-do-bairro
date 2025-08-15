@@ -51,6 +51,60 @@ const AddressForm = ({
         }
     }, [])
 
+    // Escutar mudanças do endereço selecionado no autocomplete
+    useEffect(() => {
+        if (formattedAddress && !editAddress) {
+            console.log('🏠 AddressForm: Atualizando endereço do Redux:', formattedAddress)
+            addAddressFormik.setFieldValue('address', formattedAddress)
+        }
+    }, [formattedAddress, editAddress])
+
+    // Escutar evento customizado de seleção de endereço
+    useEffect(() => {
+        const handleAddressSelected = (event) => {
+            if (event.detail && event.detail.address && !editAddress) {
+                console.log('🎯 AddressForm: Endereço selecionado via evento:', event.detail)
+                addAddressFormik.setFieldValue('address', event.detail.address)
+                if (event.detail.lat && event.detail.lng) {
+                    addAddressFormik.setFieldValue('latitude', event.detail.lat)
+                    addAddressFormik.setFieldValue('longitude', event.detail.lng)
+                }
+            }
+        }
+
+        window.addEventListener('addressSelected', handleAddressSelected)
+        return () => {
+            window.removeEventListener('addressSelected', handleAddressSelected)
+        }
+    }, [editAddress])
+
+    // Escutar mudanças do localStorage apenas para coordenadas, não para preencher o campo
+    useEffect(() => {
+        const handleStorageChange = () => {
+            const savedLatLng = localStorage.getItem('currentLatLng')
+            if (savedLatLng && savedLatLng !== 'undefined' && savedLatLng !== 'null' && !editAddress) {
+                try {
+                    const coords = JSON.parse(savedLatLng)
+                    if (coords.lat && coords.lng) {
+                        addAddressFormik.setFieldValue('latitude', coords.lat)
+                        addAddressFormik.setFieldValue('longitude', coords.lng)
+                    }
+                } catch (error) {
+                    console.log('Erro ao parsear coordenadas do localStorage:', error)
+                }
+            }
+        }
+
+        // Verificar imediatamente
+        handleStorageChange()
+
+        // Escutar mudanças no localStorage
+        window.addEventListener('storage', handleStorageChange)
+        return () => {
+            window.removeEventListener('storage', handleStorageChange)
+        }
+    }, [editAddress])
+
     const typeData = [
         {
             label: t('Home'),
@@ -70,9 +124,10 @@ const AddressForm = ({
     ]
 
     const { guestUserInfo } = useSelector((state) => state.guestUserInfo)
+    const { formattedAddress } = useSelector((state) => state.addressData)
     const addAddressFormik = useFormik({
         initialValues: {
-            address: editAddress ? address?.address : '',
+            address: editAddress ? address?.address : '', // Sempre vazio para novos endereços
             address_type: editAddress ? address?.address_type : '',
             address_label: editAddress ? address.address_type : '',
             contact_person_name: editAddress
@@ -148,9 +203,13 @@ const AddressForm = ({
     const floorHandler = (value) => {
         addAddressFormik.setFieldValue('floor', value)
     }
-    useEffect(() => {
-        addAddressFormik.setFieldValue('address', deliveryAddress)
-    }, [deliveryAddress])
+    const addressHandler = (value) => {
+        addAddressFormik.setFieldValue('address', value)
+    }
+    // Removido: não carregar deliveryAddress automaticamente para permitir digitação livre
+    // useEffect(() => {
+    //     addAddressFormik.setFieldValue('address', deliveryAddress)
+    // }, [deliveryAddress])
 
     const handleLabel = (item) => {
         if (label !== item.value) {
@@ -183,7 +242,7 @@ const AddressForm = ({
                                     color={theme.palette.neutral[500]}
                                     pb="5px"
                                 >
-                                    {t('Label As')}
+                                    {'Classificar Como'}
                                 </Typography>
                                 <CustomStackFullWidth
                                     flexDirection="row"
@@ -232,12 +291,13 @@ const AddressForm = ({
                             <CustomTextFieldWithFormik
                                 required="true"
                                 type="text"
-                                label={t('Address')}
+                                label={'Endereço'}
                                 touched={addAddressFormik.touched.address}
                                 errors={addAddressFormik.errors.address}
                                 fieldProps={addAddressFormik.getFieldProps(
                                     'address'
                                 )}
+                                onChangeHandler={addressHandler}
                                 value={addAddressFormik.values.address}
                             />
                         </Grid>
@@ -245,7 +305,7 @@ const AddressForm = ({
                             <CustomTextFieldWithFormik
                                 required="true"
                                 type="text"
-                                label={t('Contact Person Name')}
+                                label={'Nome do Contato'}
                                 touched={
                                     addAddressFormik.touched.contact_person_name
                                 }
@@ -283,8 +343,8 @@ const AddressForm = ({
                         <Grid item xs={12} md={12}>
                             <CustomTextFieldWithFormik
                                 type="text"
-                                placeholder={t('Enter Your Street Number')}
-                                label={t('Street Number')}
+                                placeholder={'Digite o Número da Rua'}
+                                label={'Número da Rua'}
                                 touched={addAddressFormik.touched.road}
                                 errors={addAddressFormik.errors.road}
                                 fieldProps={addAddressFormik.getFieldProps(
@@ -298,8 +358,8 @@ const AddressForm = ({
                             <Grid item xs={12} md={6}>
                                 <CustomTextFieldWithFormik
                                     type="text"
-                                    label={t('House')}
-                                    placeholder={t('Enter Your House')}
+                                    label={'Casa'}
+                                    placeholder={'Digite sua Casa'}
                                     touched={addAddressFormik.touched.house}
                                     errors={addAddressFormik.errors.house}
                                     fieldProps={addAddressFormik.getFieldProps(
@@ -312,8 +372,8 @@ const AddressForm = ({
                             <Grid item xs={12} md={6}>
                                 <CustomTextFieldWithFormik
                                     type="text"
-                                    label={t('Floor')}
-                                    placeholder={t('Enter Your Floor')}
+                                    label={'Andar'}
+                                    placeholder={'Digite seu Andar'}
                                     touched={addAddressFormik.touched.floor}
                                     errors={addAddressFormik.errors.floor}
                                     fieldProps={addAddressFormik.getFieldProps(
@@ -332,7 +392,7 @@ const AddressForm = ({
                     loading={isLoading}
                     variant="contained"
                 >
-                    {editAddress ? t('Update Address') : t('Save Address')}
+                    {editAddress ? 'Atualizar Endereço' : 'Salvar Endereço'}
                 </Button>
             </form>
         </Stack>

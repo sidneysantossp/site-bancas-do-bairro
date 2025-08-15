@@ -125,7 +125,7 @@ const FeatureCatagories = () => {
                                     fontWeight={{ xs: '500', md: '700' }}
                                     component="h2"
                                 >
-                                    {t('Whats on Your Mind?')}
+                                    {'Busque por Categoria'}
                                 </Typography>
                                 <CustomViewAll
                                     onClick={() => router.push('/categories')}
@@ -135,7 +135,7 @@ const FeatureCatagories = () => {
                                         fontSize="14px"
                                         fontWeight="500"
                                     >
-                                        {t('Explore More')}
+                                        {'Ver Todos'}
                                     </Typography>
                                 </CustomViewAll>
                             </Stack>

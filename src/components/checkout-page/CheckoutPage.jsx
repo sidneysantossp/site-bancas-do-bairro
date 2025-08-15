@@ -287,7 +287,7 @@ const CheckoutPage = ({ isDineIn }) => {
             latitude: currentLatLng?.lat,
             longitude: currentLatLng?.lng,
             address: location,
-            address_type: 'Selected Address',
+            address_type: 'Endereço Selecionado',
         })
 
         const apiRefetch = async () => {
@@ -486,11 +486,18 @@ const CheckoutPage = ({ isDineIn }) => {
         orderMutation(order, {
             onSuccess: handleSuccess,
             onError: (error) => {
-                error?.response?.data?.errors?.forEach((item) =>
-                    toast.error(item.message, {
+                error?.response?.data?.errors?.forEach((item) => {
+                    // Traduzir mensagens específicas do backend
+                    let message = item.message
+                    if (message === 'Instant order is not available for now!') {
+                        message = 'Pedido instantâneo não está disponível no momento!'
+                    } else if (message === 'The payment method field is required.') {
+                        message = 'O campo método de pagamento é obrigatório.'
+                    }
+                    toast.error(message, {
                         position: 'bottom-right',
                     })
-                )
+                })
             },
         })
     }
@@ -1222,7 +1229,7 @@ const CheckoutPage = ({ isDineIn }) => {
                 <CustomPaperBigCard height="auto">
                     <Stack spacing={2} justifyContent="space-between">
                         <OrderSummary variant="h4">
-                            {t('Order Summary')}
+                            Resumo do Pedido
                         </OrderSummary>
                         {zoneData &&
                             orderType !== 'dine_in' &&
@@ -1251,7 +1258,7 @@ const CheckoutPage = ({ isDineIn }) => {
                             {orderType === 'delivery' && (
                                 <Box mb={1}>
                                     <ItemSelectWithChip
-                                        title="If Any product is not available"
+                                        title="Se Algum Produto Não Estiver Disponível"
                                         data={productUnavailableData}
                                         handleChange={handleItemUnavailableNote}
                                     />
@@ -1260,7 +1267,7 @@ const CheckoutPage = ({ isDineIn }) => {
                             {orderType === 'delivery' && (
                                 <Box mb={1}>
                                     <ItemSelectWithChip
-                                        title="Add More Delivery Instruction"
+                                        title="Adicionar Instruções de Entrega"
                                         data={deliveryInstructions}
                                         handleChange={
                                             handleDeliveryInstructionNote

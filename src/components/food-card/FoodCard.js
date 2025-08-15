@@ -41,6 +41,10 @@ const FoodCard = ({
     const [openModal, setOpenModal] = React.useState(false)
     const [openAddressModalAlert, setOpenAddressModalAlert] = useState(false)
     const { t } = useTranslation()
+    const tt = (key, fallback) => {
+        const translated = t(key)
+        return translated === key ? (fallback ?? key) : translated
+    }
     const { global } = useSelector((state) => state.globalSettings)
     const { token } = useSelector((state) => state.userToken)
     const imageUrl = image_full_url
@@ -83,7 +87,12 @@ const FoodCard = ({
             onSuccess: (response) => {
                 if (response?.data) {
                     dispatch(addWishList(product))
-                    toast.success(response.data.message)
+                    const apiMsg = response?.data?.message || ''
+                    const isAddedToWishlist = /Added to\s*(Wish\s*list|Wishlist)/i.test(apiMsg)
+                    const displayMsg = isAddedToWishlist
+                        ? tt('Added to Wishlist successfully.', 'Adicionado aos Favoritos com sucesso.')
+                        : apiMsg || tt('Added to Wishlist successfully.', 'Adicionado aos Favoritos com sucesso.')
+                    toast.success(displayMsg)
                 }
             },
             onError: (error) => {
@@ -151,7 +160,7 @@ const FoodCard = ({
                 }
             })
             dispatch(setCart(product))
-            toast.success(t('Item added to cart'))
+            toast.success('Produto adicionado ao carrinho')
             setClearCartModal(false)
         }
     }

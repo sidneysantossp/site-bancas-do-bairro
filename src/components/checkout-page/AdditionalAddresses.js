@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import {
     CustomAccordion,
     CustomStackFullWidth,
@@ -23,6 +24,12 @@ const AdditionalAddresses = (props) => {
         orderType,
     } = props
     const theme = useTheme()
+    const { i18n } = useTranslation()
+    const tt = (key, fallback) => {
+        const translated = t(key)
+        // Force fallback when provided for checkout labels
+        return fallback ?? translated ?? key
+    }
     const note_text =
         orderType === 'take_away' ? 'Additional Note' : 'Additional Information'
     const [expanded, setExpanded] = useState(false)
@@ -50,7 +57,9 @@ const AdditionalAddresses = (props) => {
                             fontWeight="700"
                             no_margin_top="true"
                         >
-                            {t(note_text)}
+                            {orderType === 'take_away'
+                                ? tt(note_text, 'Observação adicional')
+                                : tt(note_text, 'Informações adicionais')}
                         </Typography>
                         {expanded ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />}
                     </Stack>
@@ -63,7 +72,7 @@ const AdditionalAddresses = (props) => {
                                     <>
                                         <Grid item xs={12}>
                                             <CustomTextField
-                                                label={t('Street number')}
+                                                label={tt('Street number', 'Número da rua')}
                                                 value={
                                                     additionalInformationStates.streetNumber
                                                 }
@@ -81,7 +90,7 @@ const AdditionalAddresses = (props) => {
                                         </Grid>
                                         <Grid item xs={6}>
                                             <CustomTextField
-                                                label={t('House number')}
+                                                label={tt('House number', 'Número da casa')}
                                                 value={
                                                     additionalInformationStates.houseNumber
                                                 }
@@ -99,7 +108,7 @@ const AdditionalAddresses = (props) => {
                                         </Grid>
                                         <Grid item xs={6}>
                                             <CustomTextField
-                                                label={t('Floor')}
+                                                label={tt('Floor', 'Andar')}
                                                 value={
                                                     additionalInformationStates.floor
                                                 }
@@ -121,10 +130,11 @@ const AdditionalAddresses = (props) => {
                                 <CustomTextField
                                     multiline
                                     rows={4}
-                                    placeholder={t(
-                                        'ex-lease provide an extra napkin'
+                                    placeholder={tt(
+                                        'ex-lease provide an extra napkin',
+                                        'ex.: por favor, forneça um guardanapo extra'
                                     )}
-                                    label={t('Note')}
+                                    label={tt('Note', 'Observação')}
                                     value={additionalInformationStates.note}
                                     fullWidth
                                     onChange={(e) =>

@@ -1,23 +1,23 @@
 export const RouteLinksData = [
     {
-        name: 'Open Restaurant',
+        name: 'Para Jornaleiros',
         value: 'restaurant_owner',
         // link: `${process.env.NEXT_PUBLIC_BASE_URL}/restaurant/apply`,
         link: '/restaurant-registration?active=active',
     },
     {
-        name: 'Become a delivery man',
+        name: 'Para Entregadores',
         value: 'delivery_man',
         // link: `${process.env.NEXT_PUBLIC_BASE_URL}/deliveryman/apply`,
         link: '/deliveryman-registration',
     },
     {
-        name: 'Profile',
+        name: 'Minha Conta',
         value: 'profile',
         link: '/customer/profile',
     },
     {
-        name: 'Help & Support',
+        name: 'Atendimento e Suporte',
         value: 'helpandsupport',
         link: '/help-and-support',
     },

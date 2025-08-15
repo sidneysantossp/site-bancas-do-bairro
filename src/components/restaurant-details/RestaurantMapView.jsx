@@ -35,7 +35,12 @@ export const StyledSimpleBar = styled(SimpleBar)(({ theme }) => ({
 const RestaurantMapView = ({ details, restaurantCoverUrl }) => {
     const theme = useTheme()
     const isSmall = useMediaQuery(theme.breakpoints.down('md'))
-    const availableTimeText = t('Today Available Till')
+    // helper: returns i18n translation or a PT-BR fallback
+    const tt = (key, fallback) => {
+        const val = t(key)
+        return val === key ? fallback : val
+    }
+    const availableTimeText = tt('Today Available Till', 'Hoje Disponível Até')
     const [expanded, setExpanded] = useState(false)
     const [userLocation, setUserLocation] = useState({})
     const getToday = () => {
@@ -67,10 +72,10 @@ const RestaurantMapView = ({ details, restaurantCoverUrl }) => {
             const schedule = groupedSchedule[day].map(
                 ({ opening_time, closing_time }) => ({
                     opening_time: moment(opening_time, 'HH:mm:ss').format(
-                        'hh:mm A'
+                        'HH:mm'
                     ),
                     closing_time: moment(closing_time, 'HH:mm:ss').format(
-                        'hh:mm A'
+                        'HH:mm'
                     ),
                 })
             )
@@ -78,37 +83,29 @@ const RestaurantMapView = ({ details, restaurantCoverUrl }) => {
         } else {
             finalSchedule.push({
                 day: i,
-                schedule: [{ opening_time: 'day off' }],
+                schedule: [{ opening_time: tt('Day off', 'Dia de folga') }],
             })
         }
     }
 
     const getDayName = (day) => {
         switch (day) {
-            case 0: {
-                return 'Sunday'
-            }
-            case 1: {
-                return 'Monday'
-            }
-            case 2: {
-                return 'Tuesday'
-            }
-            case 3: {
-                return 'Wednesday'
-            }
-            case 4: {
-                return 'Thursday'
-            }
-            case 5: {
-                return 'Friday'
-            }
-            case 6: {
-                return 'Saturday'
-            }
-            default: {
+            case 0:
+                return tt('Sunday', 'Domingo')
+            case 1:
+                return tt('Monday', 'Segunda-feira')
+            case 2:
+                return tt('Tuesday', 'Terça-feira')
+            case 3:
+                return tt('Wednesday', 'Quarta-feira')
+            case 4:
+                return tt('Thursday', 'Quinta-feira')
+            case 5:
+                return tt('Friday', 'Sexta-feira')
+            case 6:
+                return tt('Saturday', 'Sábado')
+            default:
                 return ''
-            }
         }
     }
     const handleChange = () => {
@@ -207,7 +204,7 @@ const RestaurantMapView = ({ details, restaurantCoverUrl }) => {
                                     {`${availableTimeText} ${moment(
                                         formattedMaxClosingTime,
                                         'HH:mm:ss'
-                                    ).format('hh:mm A')}`}
+                                    ).format('HH:mm')}`}
                                 </Typography>
                             </Stack>
                             <Button
@@ -233,14 +230,16 @@ const RestaurantMapView = ({ details, restaurantCoverUrl }) => {
                                     )
                                 }
                             >
-                                {expanded ? t('See Less') : t('See More')}
+                                {expanded
+                                    ? tt('See Less', 'Ver menos')
+                                    : tt('See More', 'Ver mais')}
                             </Button>
                         </Stack>
                     </AccordionSummary>
                     <AccordionDetails>
                         <Stack spacing={1}>
                             <Typography fontSize="14px">
-                                {t('Weekly schedule')}
+                                {tt('Weekly schedule', 'Agenda semanal')}
                             </Typography>
                             <CustomDivider />
                             {finalSchedule?.map((item, index) => (

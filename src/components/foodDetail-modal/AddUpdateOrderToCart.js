@@ -55,7 +55,7 @@ const AddUpdateOrderToCart = (props) => {
                                                     .main,
                                         }}
                                     >
-                                        {t('Add to cart')}
+                                        Comprar
                                     </CustomTypography>
                                 </Button>
                             ) : (
@@ -70,7 +70,7 @@ const AddUpdateOrderToCart = (props) => {
                                     variant="contained"
                                     fullWidth
                                 >
-                                    {t('Order Now')}
+                                    Pedir agora
                                 </Button>
                             )}
                         </>

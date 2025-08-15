@@ -212,7 +212,8 @@
 
 // export default MapForAddress
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import { GoogleMap, useJsApiLoader, Marker } from '@react-google-maps/api'
+import { GoogleMap, Marker } from '@react-google-maps/api'
+import useGoogleMaps from '../../../hooks/useGoogleMaps'
 import { Stack } from '@mui/material'
 
 const containerStyle = {
@@ -229,10 +230,7 @@ const MapForAddress = ({
     mounted,
     setMounted,
 }) => {
-    const { isLoaded } = useJsApiLoader({
-        id: 'google-map-script',
-        googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAP_KEY,
-    })
+    const { isLoaded } = useGoogleMaps()
     const center = useMemo(
         () => ({
             lat: parseFloat(location?.lat),

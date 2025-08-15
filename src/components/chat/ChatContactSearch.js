@@ -4,7 +4,7 @@ import { CloseIconWrapper } from '@/styled-components/CustomStyles.style'
 import { Search, StyledInputBase } from '../custom-search/CustomSearch.style'
 import { LoadingButton } from '@mui/lab'
 import CloseIcon from '@mui/icons-material/Close'
-import { t } from 'i18next'
+import { useTranslation } from 'react-i18next'
 
 const ChatContactSearch = ({
     searchValue,
@@ -13,6 +13,11 @@ const ChatContactSearch = ({
     handleReset,
     searchSubmitHandler,
 }) => {
+    const { t } = useTranslation()
+    const tt = (key, fallback) => {
+        const translated = t(key)
+        return translated === key ? (fallback ?? key) : translated
+    }
     const onChangeHandler = (e) => {
         e.preventDefault()
         handleSearch(e.target.value)
@@ -23,8 +28,8 @@ const ChatContactSearch = ({
                 <Search>
                     <StyledInputBase
                         fullWidth
-                        label={t('Search...')}
-                        placeholder={t('Search...')}
+                        label={tt('Search...', 'Pesquisar...')}
+                        placeholder={tt('Search...', 'Pesquisar...')}
                         startAdornment={
                             <InputAdornment
                                 position="start"

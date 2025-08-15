@@ -194,7 +194,7 @@ const FoodDetailModal = ({
                 }
             })
             dispatch(setCart(product))
-            CustomToaster('success', 'Item added to cart')
+            CustomToaster('success', 'Produto adicionado ao carrinho')
             handleClose()
         }
     }
@@ -243,19 +243,15 @@ const FoodDetailModal = ({
                 cart_id: product?.cart_id,
                 guest_id: getGuestId(),
                 model: product?.available_date_starts ? 'ItemCampaign' : 'Food',
-                add_on_ids:
-                    add_on?.length > 0
-                        ? add_on?.map((add) => {
-                              return add.id
-                          })
-                        : [],
-                add_on_qtys:
-                    add_on?.length > 0
-                        ? add_on?.map((add) => {
-                              totalQty = add.quantity
-                              return totalQty
-                          })
-                        : [],
+                add_on_ids: Array.isArray(add_on)
+                    ? add_on.map((add) => add.id)
+                    : [],
+                add_on_qtys: Array.isArray(add_on)
+                    ? add_on.map((add) => {
+                          totalQty = add.quantity
+                          return totalQty
+                      })
+                    : [],
                 item_id: product?.id,
                 price: getConvertDiscount(
                     product?.discount,
@@ -265,9 +261,10 @@ const FoodDetailModal = ({
                     quantity
                 ),
                 quantity: quantity,
-                variation_options: selectedOptions?.map(
-                    (item) => item.option_id
-                ),
+                variation_options:
+                    Array.isArray(selectedOptions) && selectedOptions.length > 0
+                        ? selectedOptions.map((item) => item.option_id)
+                        : [],
                 variations:
                     getNewVariationForDispatch()?.length > 0
                         ? getNewVariationForDispatch()?.map((variation) => {
@@ -301,19 +298,15 @@ const FoodDetailModal = ({
                 model: modalData[0]?.available_date_starts
                     ? 'ItemCampaign'
                     : 'Food',
-                add_on_ids:
-                    add_on?.length > 0
-                        ? add_on?.map((add) => {
-                              return add.id
-                          })
-                        : [],
-                add_on_qtys:
-                    add_on?.length > 0
-                        ? add_on?.map((add) => {
-                              totalQty = add.quantity
-                              return totalQty
-                          })
-                        : [],
+                add_on_ids: Array.isArray(add_on)
+                    ? add_on.map((add) => add.id)
+                    : [],
+                add_on_qtys: Array.isArray(add_on)
+                    ? add_on.map((add) => {
+                          totalQty = add.quantity
+                          return totalQty
+                      })
+                    : [],
                 item_id: modalData[0]?.id,
                 price: getConvertDiscount(
                     modalData[0]?.discount,
@@ -377,8 +370,9 @@ const FoodDetailModal = ({
                 ...modalData[0],
                 totalPrice: totalPrice,
                 quantity: quantity,
-                variations: getNewVariationForDispatch(),
-                selectedAddons: add_on,
+                // Ensure array, never null/undefined to avoid PHP count() error
+                variations: getNewVariationForDispatch() || [],
+                selectedAddons: add_on || [],
             })
         )
         router.push(`/checkout?page=campaign`)
@@ -486,88 +480,8 @@ const FoodDetailModal = ({
     }
 
     const handleAddToCartOnDispatch = (checkingFor) => {
-        let requiredItemsList = []
-        modalData?.[0]?.variations?.forEach((item, index) => {
-            if (item.required === 'on') {
-                const itemObj = {
-                    indexNumber: index,
-                    type: item.type,
-                    max: item.max,
-                    min: item.min,
-                    name: item.name,
-                }
-                requiredItemsList.push(itemObj)
-            }
-        })
-
-        if (requiredItemsList.length > 0) {
-            if (selectedOptions.length === 0) {
-                handleRequiredItemsToaster(requiredItemsList, selectedOptions)
-            } else {
-                let itemCount = 0
-
-                requiredItemsList?.forEach((item, index) => {
-                    const isExistInSelection = selectedOptions?.find(
-                        (sitem) => sitem.choiceIndex === item.indexNumber
-                    )
-
-                    if (isExistInSelection) {
-                        if (item.type === 'single') {
-                            //call add/update to cart functionalities
-                            itemCount += 1
-                        } else {
-                            //check based on min max for multiple selection
-                            let selectedOptionCount = 0
-                            selectedOptions?.forEach((item) => {
-                                if (
-                                    item.choiceIndex ===
-                                    isExistInSelection?.choiceIndex
-                                ) {
-                                    selectedOptionCount += 1
-                                }
-                            })
-                            if (
-                                selectedOptionCount >=
-                                    Number.parseInt(item.min) &&
-                                selectedOptionCount <= Number.parseInt(item.max)
-                            ) {
-                                //call add/update to cart functionalities
-                                itemCount += 1
-                            } else {
-                                const text = {
-                                    name: item.name,
-                                    min: item.min,
-                                    max: item.max,
-                                }
-                                let checkingQuantity = true
-
-                                handleProductVariationRequirementsToaster(
-                                    text,
-                                    checkingQuantity,
-                                    t
-                                )
-                            }
-                        }
-                        if (
-                            itemCount === requiredItemsList.length &&
-                            optionalVariationSelectionMinMax(
-                                selectedOptions,
-                                modalData
-                            )
-                        ) {
-                            handleProductAddUpdate(checkingFor)
-                        }
-                    } else {
-                        handleRequiredItemsToaster(
-                            requiredItemsList,
-                            selectedOptions
-                        )
-                    }
-                })
-            }
-        } else {
-            handleProductAddUpdate(checkingFor)
-        }
+        // All variations treated as optional: proceed without validation
+        handleProductAddUpdate(checkingFor)
     }
     const addToCard = () => {
         if (location) {
@@ -913,40 +827,16 @@ const FoodDetailModal = ({
                 ...modalData[0],
                 totalPrice: totalPrice,
                 quantity: quantity,
-                selectedAddons: add_on,
+                // Ensure arrays to avoid backend count() on null
+                selectedAddons: Array.isArray(add_on) ? add_on : [],
+                variations: getNewVariationForDispatch() || [],
             })
         )
         router.push(`/checkout?page=campaign`)
     }
     const getFullFillRequirements = () => {
-        let isdisabled = false
-        if (modalData[0]?.variations?.length > 0) {
-            modalData[0]?.variations?.forEach((variation, index) => {
-                if (variation?.type === 'multi') {
-                    const selectedIndex = selectedOptions?.filter(
-                        (item) => item.choiceIndex === index
-                    )
-                    if (selectedIndex && selectedIndex.length > 0) {
-                        isdisabled =
-                            selectedIndex.length >= variation.min &&
-                            selectedIndex.length <= variation.max
-                    }
-                } else {
-                    const singleVariation = modalData[0]?.variations?.filter(
-                        (item) =>
-                            item?.type === 'single' && item?.required === 'on'
-                    )
-                    const requiredSelected = selectedOptions?.filter(
-                        (item) => item?.type === 'required'
-                    )
-                    isdisabled =
-                        singleVariation?.length === requiredSelected?.length
-                }
-            })
-        } else {
-            isdisabled = true
-        }
-        return isdisabled
+        // Always allow proceeding (no required variations)
+        return true
     }
 
     const isUpdateDisabled = () => {
@@ -1403,24 +1293,34 @@ const FoodDetailModal = ({
                             )}
                         </>
                     ) : (
-                        !productUpdate && (
-                            <CustomStackFullWidth
-                                sx={{ padding: '10px' }}
-                                spacing={1}
-                            >
-                                <Skeleton
-                                    variant="rectangular"
-                                    witdh="100%"
-                                    height="200px"
-                                />
+                        <CustomStackFullWidth
+                            sx={{ padding: '10px' }}
+                            spacing={1}
+                        >
+                            <Skeleton
+                                variant="rectangular"
+                                witdh="100%"
+                                height="200px"
+                            />
+                            <Skeleton
+                                variant="rounded"
+                                width={100}
+                                height={10}
+                            />
+                            <Skeleton
+                                variant="rounded"
+                                width="50%"
+                                height={15}
+                            />
+                            <Skeleton
+                                variant="rounded"
+                                width={60}
+                                height={10}
+                            />
+                            <Stack mt="10px" spacing={1}>
                                 <Skeleton
                                     variant="rounded"
-                                    width={100}
-                                    height={10}
-                                />
-                                <Skeleton
-                                    variant="rounded"
-                                    width="50%"
+                                    width="30%"
                                     height={15}
                                 />
                                 <Skeleton
@@ -1428,41 +1328,29 @@ const FoodDetailModal = ({
                                     width={60}
                                     height={10}
                                 />
-                                <Stack mt="10px" spacing={1}>
-                                    <Skeleton
-                                        variant="rounded"
-                                        width="30%"
-                                        height={15}
-                                    />
-                                    <Skeleton
-                                        variant="rounded"
-                                        width={60}
-                                        height={10}
-                                    />
-                                    <Skeleton
-                                        variant="rounded"
-                                        width={60}
-                                        height={10}
-                                    />
-                                </Stack>
-                                <Stack
-                                    direction="row"
-                                    justifyContent="space-between"
-                                    alignItems="center"
-                                >
-                                    <Skeleton
-                                        variant="rounded"
-                                        width="30%"
-                                        height={15}
-                                    />
-                                    <Skeleton
-                                        variant="rounded"
-                                        width="50%"
-                                        height={30}
-                                    />
-                                </Stack>
-                            </CustomStackFullWidth>
-                        )
+                                <Skeleton
+                                    variant="rounded"
+                                    width={60}
+                                    height={10}
+                                />
+                            </Stack>
+                            <Stack
+                                direction="row"
+                                justifyContent="space-between"
+                                alignItems="center"
+                            >
+                                <Skeleton
+                                    variant="rounded"
+                                    width="30%"
+                                    height={15}
+                                />
+                                <Skeleton
+                                    variant="rounded"
+                                    width="50%"
+                                    height={30}
+                                />
+                            </Stack>
+                        </CustomStackFullWidth>
                     )}
                 </FoodDetailModalStyle>
             </Modal>

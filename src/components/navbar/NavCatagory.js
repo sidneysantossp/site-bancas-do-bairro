@@ -91,7 +91,7 @@ const NavCatagory = ({ setRestaurantModal, languageDirection }) => {
                 fontSize="14px"
                 alignItems="center"
             >
-                {t('Categories')}{' '}
+                Categorias{' '}
                 <KeyboardArrowDownIcon
                     style={{ width: '16px', marginLeft: '5px' }}
                 />
@@ -352,11 +352,13 @@ const NavCatagory = ({ setRestaurantModal, languageDirection }) => {
                                                                 variant="h5"
                                                                 nodefaultfont="true"
                                                             >
-                                                                (
-                                                                {
-                                                                    category.products_count
-                                                                }
-                                                                )
+                                                                 {/* Contagem de produtos desabilitada conforme solicitado - pode ser reabilitada no futuro
+                                                                 (
+                                                                 {
+                                                                     category.products_count
+                                                                 }
+                                                                 )
+                                                                 */}
                                                             </CustomTypographyGray>
                                                         </MenuItem>
                                                     </Link>
@@ -424,11 +426,13 @@ const NavCatagory = ({ setRestaurantModal, languageDirection }) => {
                                                                 variant="h5"
                                                                 nodefaultfont="true"
                                                             >
-                                                                (
-                                                                {
-                                                                    category.products_count
-                                                                }
-                                                                )
+                                                                 {/* Contagem de produtos desabilitada conforme solicitado - pode ser reabilitada no futuro
+                                                                 (
+                                                                 {
+                                                                     category.products_count
+                                                                 }
+                                                                 )
+                                                                 */}
                                                             </CustomTypographyGray>
                                                         </MenuItem>
                                                     </Link>
@@ -464,7 +468,7 @@ const NavCatagory = ({ setRestaurantModal, languageDirection }) => {
                                 size="medium"
                                 onClick={handleClick}
                             >
-                                {t('View all')}
+                                {'Ver todos'}
                             </Button>
                         </Grid>
                     )}

@@ -42,6 +42,10 @@ const HaveCoupon = ({
     const [tempInputValue, setTempInputValue] = useState("")
     const [isRefetchCall, setIsRefetchCall] = useState(false);
     const { t } = useTranslation();
+    const tt = (key, fallback) => {
+        const translated = t(key)
+        return translated === key ? (fallback ?? key) : translated
+    }
     const dispatch = useDispatch();
     let currencySymbol;
     let currencySymbolDirection;
@@ -71,7 +75,7 @@ const HaveCoupon = ({
             if (response?.data?.discount_type === "percent") {
                 setInputValue(tempInputValue)
                 dispatch(setCouponInfo(response.data));
-                toast.success(t("Coupon Applied"));
+                toast.success(tt("Coupon Applied", "Cupom aplicado"));
                 dispatch(setCouponType(response.data.coupon_type));
                 setCouponDiscount({ ...response.data, zoneId: zoneId });
                 if (typeof window !== "undefined") {
@@ -93,13 +97,13 @@ const HaveCoupon = ({
                     }
                 } else {
                     toast.error(
-                        t("Your total price must be more then coupon amount")
+                        tt("Your total price must be more then coupon amount", "O preço total deve ser maior que o valor do cupom")
                     );
                 }
             }
         } else {
             toast.error(
-                `$${t("Minimum purchase amount")} ${min_purchase}`
+                `$${tt("Minimum purchase amount", "Valor mínimo de compra")} ${min_purchase}`
             );
         }
         handleClose();
@@ -176,7 +180,7 @@ const HaveCoupon = ({
                         }}
                     >
                         <InputBase
-                            placeholder={t("Enter Voucher")}
+                            placeholder={tt("Enter Voucher", "Digite o cupom")}
                             sx={{
                                 ml: 1,
                                 flex: 1,
@@ -203,7 +207,7 @@ const HaveCoupon = ({
                                     onClick={() => handleApply(inputValue)}
                                     disabled={inputValue === "" || !inputValue}
                                 >
-                                    {t("Apply Now")}
+                                    {tt("Apply Now", "Aplicar agora")}
                                 </CouponButton>
                             )}
                             {couponStorage && (

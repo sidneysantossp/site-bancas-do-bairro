@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import {
     CustomColouredTypography,
     CustomStackFullWidth,
+    CustomLink,
 } from '@/styled-components/CustomStyles.style'
 import FormControl from '@mui/material/FormControl'
 import InputLabel from '@mui/material/InputLabel'
@@ -88,7 +89,7 @@ const ManualLogin = (props) => {
                                 }}
                                 htmlFor="outlined-adornment-password"
                             >
-                                {t('Email/Phone')}
+                                E-mail/Telefone
                             </InputLabel>
                             <CustomSigninOutLine
                                 borderradius="10px"
@@ -97,7 +98,7 @@ const ManualLogin = (props) => {
                                 type="text"
                                 id="email_or_phone"
                                 name="email_or_phone"
-                                placeholder={t('Email/Phone')}
+                                placeholder="E-mail/Telefone"
                                 value={loginFormik.values.email_or_phone}
                                 onChange={loginFormik.handleChange}
                                 error={
@@ -153,7 +154,7 @@ const ManualLogin = (props) => {
                         }}
                         htmlFor="outlined-adornment-password"
                     >
-                        {t('Password')}
+                        Senha
                     </InputLabel>
                     <CustomSigninOutLine
                         borderradius="10px"
@@ -162,7 +163,7 @@ const ManualLogin = (props) => {
                         type={showPassword ? 'text' : 'password'}
                         id="password"
                         name="password"
-                        placeholder={t('8+ Character')}
+                        placeholder="8+ caracteres"
                         value={loginFormik.values.password}
                         onChange={loginFormik.handleChange}
                         error={
@@ -270,7 +271,7 @@ const ManualLogin = (props) => {
                             color: (theme) => theme.palette.primary.main,
                         }}
                     >
-                        {t('Forgot password?')}
+                        Esqueceu a senha?
                     </Typography>
                 </CustomStackFullWidth>
             </CustomStackFullWidth>
@@ -288,7 +289,7 @@ const ManualLogin = (props) => {
                         },
                     }}
                 >
-                    {t('* By login I Agree with all the')}
+                    Ao entrar, eu concordo com os{' '}
                     <Typography
                         component="span"
                         color={theme.palette.primary.main}
@@ -296,9 +297,10 @@ const ManualLogin = (props) => {
                             textAlign: 'center',
                             fontWeight: '400',
                             fontSize: '12px',
+                            ml: '4px',
                         }}
                     >
-                        {t(' Terms & Conditions')}
+                        Termos e Condições
                     </Typography>
                 </CustomColouredTypography>
             </CustomStackFullWidth>
@@ -315,8 +317,28 @@ const ManualLogin = (props) => {
                 }}
                 loading={isLoading}
             >
-                {t('Login')}
+                Entrar
             </LoadingButton>
+            <CustomStackFullWidth
+                direction="row"
+                justifyContent="center"
+                alignItems="center"
+                sx={{ mt: 1 }}
+            >
+                <CustomTypography fontSize="14px">
+                    Não tem uma conta?
+                </CustomTypography>
+                <CustomLink
+                    onClick={() => {
+                        setModalFor('sign-up')
+                    }}
+                    href="#"
+                    variant="body2"
+                    sx={{ ml: '5px' }}
+                >
+                    Cadastre-se
+                </CustomLink>
+            </CustomStackFullWidth>
         </form>
     )
 }

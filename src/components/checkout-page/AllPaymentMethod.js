@@ -110,7 +110,7 @@ export const BringChangeAmount = ({changeAmount, setChangeAmount,theme,expanded,
                                         fontWeight:"600"
                                     }}
                                 >
-                                    {expanded ? t("See less") : t("See more")}
+                                    {expanded ? "Ver menos" : "Ver mais"}
                                 </Typography>
                             </AccordionSummary>
 
@@ -131,14 +131,14 @@ export const BringChangeAmount = ({changeAmount, setChangeAmount,theme,expanded,
                                             color={theme.palette.neutral[1000]} 
                                             fontWeight="500"
                                         >
-                                            {t("Bring Change Intruction")}
+                                            Instruções para Troco
                                         </Typography>
                                         <Typography 
                                             fontSize="12px" 
                                             color={theme.palette.neutral[600]} 
                                             fontWeight="400"
                                         >
-                                            {t('Insert amount if you need deliveryman to bring')}
+                                            Informe o valor se precisar que o entregador traga troco
                                         </Typography>
                                     </Stack>
 
@@ -149,7 +149,7 @@ export const BringChangeAmount = ({changeAmount, setChangeAmount,theme,expanded,
                                             color={theme.palette.neutral[1000]} 
                                             fontWeight="500"
                                         >
-                                            {t("Change Amount ($)")}
+                                            Valor do Troco (R$)
                                         </Typography>
                                         <TextField
                                             sx={{
@@ -254,13 +254,13 @@ const  AllPaymentMethod = ({
                     gap="10px" 
                     width="100%"
                 >
-                    <PymentTitle>{t('Payment Method')}</PymentTitle>
+                    <PymentTitle>Método de Pagamento</PymentTitle>
                     <Typography 
                         fontSize="12px" 
                         color={theme.palette.neutral[600]} 
                         fontWeight="600"
                     >
-                        {t("Total bill")}
+                        Total da conta
                     </Typography>
                 </Stack>
 
@@ -276,7 +276,7 @@ const  AllPaymentMethod = ({
                         textTransform="capitalize"
                         color={theme.palette.neutral[600]}
                     >
-                        {t('Select a Payment Method to Proceed')}
+                        Selecione um Método de Pagamento para Prosseguir
                     </Typography>
                     <Typography 
                         fontSize="20px" 
@@ -458,7 +458,7 @@ const  AllPaymentMethod = ({
                                                     : theme.palette.primary.main
                                             }
                                         >
-                                            {t('Cash on Delivery')}
+                                            Pagamento via PIX
                                         </Typography>
                                         </Stack>
                                        
@@ -505,7 +505,7 @@ const  AllPaymentMethod = ({
                                                             : theme.palette.primary.main
                                                     }
                                                 >
-                                                    {t('Cash on Delivery')}
+                                                    Pagamento via PIX
                                                 </Typography>
                                                 
                                             </Stack>
@@ -525,7 +525,7 @@ const  AllPaymentMethod = ({
                                 fontWeight="600"
                                 color={theme.palette.neutral[1000]}
                             >
-                                {t('Pay Via Online')}
+                                Pagar Online
                                 <Typography
                                     component="span"
                                     fontSize="10px"
@@ -701,7 +701,7 @@ const  AllPaymentMethod = ({
                                                     : theme.palette.primary.main
                                             }
                                         >
-                                            {t('Cash on Delivery')}
+                                            Pagamento via PIX
                                         </Typography>
                                         </Stack>
                                        
@@ -720,7 +720,7 @@ const  AllPaymentMethod = ({
                                 fontWeight="600"
                                 color={theme.palette.neutral[1000]}
                             >
-                                {t('Pay Via Online')}
+                                Pagar Online
                                 <Typography
                                     component="span"
                                     fontSize="10px"
@@ -868,7 +868,7 @@ const  AllPaymentMethod = ({
 
             <Stack paddingTop="30px">
                 <PrimaryButton variant="contained" onClick={handleSubmit}>
-                    {t('Select')}
+                    Selecionar
                 </PrimaryButton>
             </Stack>
         </Stack>

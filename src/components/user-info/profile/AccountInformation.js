@@ -16,6 +16,10 @@ import { useTheme } from '@mui/material/styles'
 
 const AccountInformation = ({ data, formSubmit }) => {
     const { t } = useTranslation()
+    const tt = (key, fallback) => {
+        const translated = t(key)
+        return translated === key ? (fallback ?? key) : translated
+    }
     const theme = useTheme()
     const [showPassword, setShowPassword] = useState(false)
     const [showConfirmPassword, setConfirmShowPassword] = useState(false)
@@ -31,14 +35,14 @@ const AccountInformation = ({ data, formSubmit }) => {
         },
         validationSchema: Yup.object({
             password: Yup.string()
-                .required(t('No password provided.'))
+                .required(tt('No password provided.', 'Senha obrigatória.'))
                 .min(
                     6,
-                    t('Password is too short - should be 6 chars minimum.')
+                    tt('Password is too short - should be 6 chars minimum.', 'Senha muito curta - mínimo de 6 caracteres.')
                 ),
             confirm_password: Yup.string()
-                .required(t('Confirm Password'))
-                .oneOf([Yup.ref('password'), null], t('Passwords must match')),
+                .required(tt('Confirm Password', 'Confirmar Senha'))
+                .oneOf([Yup.ref('password'), null], tt('Passwords must match', 'As senhas devem coincidir')),
         }),
         onSubmit: async (values, helpers) => {
             try {
@@ -59,7 +63,7 @@ const AccountInformation = ({ data, formSubmit }) => {
                 fontWeight="500"
                 color={theme.palette.neutral[1000]}
             >
-                {t('Change Password')}
+                {tt('Change Password', 'Alterar Senha')}
             </Typography>
             <CustomDivWithBorder>
                 <form noValidate onSubmit={profileFormik.handleSubmit}>
@@ -69,11 +73,11 @@ const AccountInformation = ({ data, formSubmit }) => {
                                 required
                                 id="password"
                                 variant="outlined"
-                                placeholder={t('8+ Character')}
+                                placeholder={tt('8+ Character', '8+ Caracteres')}
                                 value={profileFormik.values.password}
                                 onChange={profileFormik.handleChange}
                                 name="password"
-                                label={t('Password')}
+                                label={tt('Password', 'Senha')}
                                 type={showPassword ? 'text' : 'password'}
                                 InputLabelProps={{ shrink: true }}
                                 error={
@@ -113,8 +117,8 @@ const AccountInformation = ({ data, formSubmit }) => {
                             <CustomProfileTextfield
                                 required
                                 id="confirm_password"
-                                label={t('Confirm Password')}
-                                placeholder={t('8+ Character')}
+                                label={tt('Confirm Password', 'Confirmar Senha')}
+                                placeholder={tt('8+ Character', '8+ Caracteres')}
                                 variant="outlined"
                                 name="confirm_password"
                                 type={showConfirmPassword ? 'text' : 'password'}
@@ -165,7 +169,7 @@ const AccountInformation = ({ data, formSubmit }) => {
                                     variant="contained"
                                     type="submit"
                                 >
-                                    {t('Change')}
+                                    {tt('Change', 'Alterar')}
                                 </SaveButton>
                             </Stack>
                         </Grid>

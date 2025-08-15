@@ -46,6 +46,10 @@ const AddNewAddress = ({
     const dispatch = useDispatch()
     const [rerenderMap, setRerenderMap] = useState(false)
     const { t } = useTranslation()
+    const tt = (key, fallback) => {
+        const translated = t(key)
+        return translated === key ? (fallback ?? key) : translated
+    }
     const { global } = useSelector((state) => state.globalSettings)
     const { location, formatted_address } = useSelector(
         (state) => state.addressData
@@ -178,7 +182,7 @@ const AddNewAddress = ({
                                     : (theme) => theme.palette.primary.main
                             }
                         >
-                            {t('Add Address')}
+                            {tt('Add Address', 'Adicionar Endereço')}
                         </Typography>
 
                         {buttonbg !== 'true' && (

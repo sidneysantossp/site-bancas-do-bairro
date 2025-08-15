@@ -48,9 +48,9 @@ const Category = () => {
                     }}
                 >
                     <PageSearchWithTitle
-                        title="Choose Your Favourite Category"
+                        title="Encontre um produto pela categoria"
                         handleSearchResult={handleSearchResult}
-                        label={t('Search categories ...')}
+                        label={'Digite o produto...'}
                     />
                     <CategoryList
                         data={data}

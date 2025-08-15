@@ -21,18 +21,12 @@ export const handleProductVariationRequirementsToaster = (
                                     paddingRight: '5px',
                                 }}
                             >
-                                {t('Selected variation named')}{' '}
-                                <span style={{ fontWeight: 'bold' }}>
-                                    {text?.name}
-                                </span>{' '}
-                                {t('must be in between Minimum')}{' '}
-                                <span style={{ fontWeight: 'bold' }}>
-                                    {text?.min}
-                                </span>{' '}
-                                {t('and Maximum')}{' '}
-                                <span style={{ fontWeight: 'bold' }}>
-                                    {text?.max}
-                                </span>
+                                Variação selecionada denominada{' '}
+                                <span style={{ fontWeight: 'bold' }}>{text?.name}</span>{' '}
+                                deve estar entre o mínimo{' '}
+                                <span style={{ fontWeight: 'bold' }}>{text?.min}</span>{' '}
+                                e o máximo{' '}
+                                <span style={{ fontWeight: 'bold' }}>{text?.max}</span>
                             </p>
                         </Stack>
                     </span>
@@ -55,12 +49,9 @@ export const handleProductVariationRequirementsToaster = (
                                     paddingRight: '5px',
                                 }}
                             >
-                                {t('Variation')}{' '}
-                                <span style={{ fontWeight: 'bold' }}>
-                                    {' '}
-                                    {text}
-                                </span>{' '}
-                                {t('can not remain without selection.')}
+                                Variação{' '}
+                                <span style={{ fontWeight: 'bold' }}> {text}</span>{' '}
+                                não pode ficar sem seleção.
                             </p>
                         </Stack>
                     </span>

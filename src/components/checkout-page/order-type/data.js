@@ -2,12 +2,12 @@ import regular_order from "./assets/regular_order.png";
 import subscription_order from "./assets/subscription_order.png";
 
 export const orderTypes = [{
-    name: 'Regular Order',
+    name: 'Pedido Regular',
     value: '0',
     img: regular_order
 },
     {
-        name: 'Subscription Order',
+        name: 'Pedido por Assinatura',
         value: '1',
         img: subscription_order
     }]

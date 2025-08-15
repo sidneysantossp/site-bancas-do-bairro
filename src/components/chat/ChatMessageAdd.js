@@ -130,7 +130,7 @@ const ChatMessageAdd = ({ onSend }) => {
                             />
                         </IconButton>
                     </Tooltip>
-                    <Tooltip title={t('Attachment')}>
+                    <Tooltip title="Anexo">
                         <IconButton
                             sx={{ padding: '2px' }}
                             onClick={handleAttachment}
@@ -143,7 +143,7 @@ const ChatMessageAdd = ({ onSend }) => {
                     fullWidth
                     onChange={handleChange}
                     onKeyUp={handleKeyUp}
-                    placeholder={t('Start a new message')}
+                    placeholder="Digite sua mensagem aqui"
                     value={body.text}
                     size="small"
                     multiline

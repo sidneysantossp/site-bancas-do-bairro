@@ -28,6 +28,8 @@ const PushNotificationLayout = ({ children, refetch, pathName }) => {
     }, [fcmToken])
 
     const clickHandler = () => {
+        if (!notification) return;
+        
         if (notification.type === 'message') {
             router.push({
                 pathname: '/info',
@@ -53,12 +55,18 @@ const PushNotificationLayout = ({ children, refetch, pathName }) => {
     useEffect(() => {
         onMessageListener()
             .then((payload) => {
-                setNotification(payload.data)
+                // Verificar se payload existe antes de acessar sua propriedade data
+                if (payload && payload.data) {
+                    setNotification(payload.data)
+                }
             })
-            .catch((err) => toast(err))
+            .catch((err) => toast(err.message || 'Erro ao receber notificação'))
         if (notification) {
             if (pathName === 'info' && notification.type === 'message') {
-                refetch()
+                // Verificar se refetch existe antes de chamá-lo
+                if (typeof refetch === 'function') {
+                    refetch()
+                }
             } else {
                 toast(
                     <>
@@ -66,8 +74,8 @@ const PushNotificationLayout = ({ children, refetch, pathName }) => {
                             sx={{ cursor: 'pointer' }}
                             onClick={clickHandler}
                         >
-                            <Typography>{notification.title}</Typography>
-                            <Typography>{notification.body}</Typography>
+                            <Typography>{notification?.title || ''}</Typography>
+                            <Typography>{notification?.body || ''}</Typography>
                         </Stack>
                     </>
                 )

@@ -95,7 +95,7 @@ const NavResturant = ({ zoneid }) => {
                 fontSize="14px"
                 alignItems="center"
             >
-                {t('Restaurants')}{' '}
+                Bancas perto de mim{' '}
                 <KeyboardArrowDownIcon
                     style={{ width: '16px', marginLeft: '5px' }}
                 />
@@ -145,7 +145,7 @@ const NavResturant = ({ zoneid }) => {
                                                                     '/restaurant/[id]',
                                                                 query: {
                                                                     id: `${restaurantIdOrSlug}`,
-                                                                    restaurant_zone_id:
+                                                                    banca_zone_id:
                                                                         restaurant?.zone_id,
                                                                 },
                                                             }}
@@ -319,7 +319,7 @@ const NavResturant = ({ zoneid }) => {
                                     size="medium"
                                     onClick={viewAll}
                                 >
-                                    {t('View all')}
+                                    {'Ver todos'}
                                 </Button>
                             )}
 

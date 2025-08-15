@@ -24,6 +24,10 @@ const StyledAvatar = styled(Avatar)(({ theme }) => ({
 
 const EmptyView = props => {
     const { t } = useTranslation()
+    const tt = (key, fallback) => {
+        const translated = t(key)
+        return translated === key ? (fallback ?? key) : translated
+    }
     return (
         <StyledBox>
             <SmsSvg />
@@ -32,7 +36,7 @@ const EmptyView = props => {
                 sx={{ mt: 2 }}
                 variant="subtitle1"
             >
-                {t("Select and start messaging!")}
+                {tt("Select and start messaging!", "Selecione e comece a conversar!")}
             </Typography>
         </StyledBox>
 

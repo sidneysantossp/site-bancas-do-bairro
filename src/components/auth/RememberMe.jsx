@@ -17,7 +17,7 @@ const RememberMe = ({ rememberMeHandleChange }) => {
                 }
                 label={
                     <CustomTypography fontSize="12px" fontWeight="400">
-                        {t('Remember me')}
+                        Lembrar-me
                     </CustomTypography>
                 }
             />

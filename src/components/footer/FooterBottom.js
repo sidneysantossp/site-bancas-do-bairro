@@ -27,7 +27,7 @@ const FooterBottom = () => {
                         }}
                         color="whiteContainer.main"
                     >
-                        {t('Copyright')} &#9400;{'  '}
+                        {t('Direitos Autorais')} &#9400;{'  '}
                         {global?.footer_text || ''}
                     </CustomColouredTypography>
                 </CustomStackFullWidth>

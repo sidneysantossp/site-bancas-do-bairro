@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, forwardRef, useRef } from 'react'
 import {
     Box,
-    Modal,
+    Modal as MuiModal,
     Paper,
     Typography,
     styled,
@@ -10,26 +10,31 @@ import {
     TextField,
     Grid,
     useTheme,
-} from '@mui/material'
+    Fade,
+    Backdrop
+}
+from '@mui/material'
 import LoadingButton from '@mui/lab/LoadingButton'
 import GpsFixedIcon from '@mui/icons-material/GpsFixed'
 import CloseIcon from '@mui/icons-material/Close'
-import GoogleMapComponent from './GoogleMapComponent'
-import { useQuery } from 'react-query'
+import CircularProgress from '@mui/material/CircularProgress'
 import { GoogleApi } from '@/hooks/react-query/config/googleApi'
+import { useQuery } from 'react-query'
 import { useDispatch, useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
-import { useTranslation } from 'react-i18next'
-import { useGeolocated } from 'react-geolocated'
-import { PrimaryButton } from '../link-section/Linksection.style'
+import { toast } from 'react-hot-toast'
 import Skeleton from '@mui/material/Skeleton'
-import { onErrorResponse, onSingleErrorResponse } from '../../ErrorResponse'
-import { setUserLocationUpdate, setZoneData } from '@/redux/slices/global'
-import LocationEnableCheck from '../LocationEnableCheck'
-import { FacebookCircularProgress } from '../HeroLocationForm'
+import GoogleMapComponent from './GoogleMapComponent'
+import { useTranslation } from 'react-i18next'
+import { RTL } from '@/components/rtl/RTL'
+import {
+    setOpenMapDrawer,
+} from '@/redux/slices/global'
+import { setLocation as setReduxLocation, setUserLocationUpdate } from '@/redux/slices/addressData'
 import { CustomStackFullWidth } from '@/styled-components/CustomStyles.style'
 import { CustomTypographyGray } from '../../error/Errors.style'
 import { CustomToaster } from '@/components/custom-toaster/CustomToaster'
+import MapCustomStyle from './MapCustomStyle'
 
 const CustomBoxWrapper = styled(Box)(({ theme }) => ({
     outline: 'none',
@@ -37,250 +42,400 @@ const CustomBoxWrapper = styled(Box)(({ theme }) => ({
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    bgColor: 'background.paper',
-    boxShadow: 24,
-    padding: '25px',
-    maxWidth: '800px',
-    minWidth: '100px',
+    backgroundColor: '#ffffff',
+    boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.15)',
+    padding: '20px',
+    borderRadius: '12px',
+    maxWidth: '900px',
     width: '100%',
-    minHeight: '550px',
-    background: theme.palette.background.paper,
-    borderRadius: '5px',
-    [theme.breakpoints.down('md')]: {
-        maxWidth: '500px',
+    height: {
+        xs: '80vh',
+        sm: '70vh',
+        md: '75vh',
     },
-    [theme.breakpoints.down('sm')]: {
-        maxWidth: '330px',
-        minHeight: '300px',
-    },
+    overflow: 'hidden',
+    border: '1px solid rgba(0, 0, 0, 0.1)',
 }))
 const CssTextField = styled(TextField)(({ theme }) => ({
     '& label.Mui-focused': {
         color: theme.palette.primary.main,
-        background: theme.palette.whiteContainer.main,
+        background: theme.palette.neutral[100],
     },
     '& .MuiInput-underline:after': {
         borderBottomColor: theme.palette.primary.main,
-        background: theme.palette.whiteContainer.main,
     },
     '& .MuiOutlinedInput-notchedOutline': {
         border: 'none',
     },
-    '& .MuiOutlinedInput-root': {
-        fontSize: '13px',
-        padding: '7px',
-        border: '2px solid',
-        borderColor: theme.palette.primary.main,
-        '& fieldset': {
-            borderColor: theme.palette.primary.main,
-        },
-        '&:hover fieldset': {
-            borderColor: theme.palette.primary.main,
-        },
-        '&.Mui-focused fieldset': {
-            borderColor: theme.palette.primary.main,
-        },
-    },
 }))
 
-const MapModal = ({ open, handleClose, redirectUrl }) => {
-    const router = useRouter()
+const PrimaryButton = styled(LoadingButton)(({ theme }) => ({
+    borderRadius: '30px',
+    minWidth: '100px',
+}))
+
+const MapModal = ({
+    open,
+    handleClose,
+    locationAndZoneAfterClick,
+    redirectUrl,
+}) => {
     const theme = useTheme()
-    const { global, userLocationUpdate } = useSelector(
-        (state) => state.globalSettings
-    )
-    const [isEnableLocation, setIsEnableLocation] = useState(false)
+    const router = useRouter()
+    const { t } = useTranslation()
     const [searchKey, setSearchKey] = useState('')
+    // Texto exibido no campo do Autocomplete (controlado)
+    const [inputValue, setInputValue] = useState('')
     const [enabled, setEnabled] = useState(false)
-    const [predictions, setPredictions] = useState([])
-    const [placeDetailsEnabled, setPlaceDetailsEnabled] = useState(false)
     const [locationEnabled, setLocationEnabled] = useState(false)
+    const [placeDetailsEnabled, setPlaceDetailsEnabled] = useState(false)
     const [placeId, setPlaceId] = useState('')
-    const [placeDescription, setPlaceDescription] = useState(undefined)
-    const [location, setLocation] = useState(global?.default_location)
+    const [location, setLocation] = useState(null)
     const [zoneId, setZoneId] = useState(undefined)
-    const [isLoadingCurrentLocation, setLoadingCurrentLocation] =
+    const [isLoadingCurrentLocation, setIsLoadingCurrentLocation] =
         useState(false)
+    const [locationLoading, setLocationLoading] = useState(false)
     const [currentLocation, setCurrentLocation] = useState({})
     const [rerenderMap, setRerenderMap] = useState(false)
-    const [currentLocationValue, setCurrentLactionValue] = useState({
-        description: '',
+    const [currentLocationValue, setCurrentLocationValue] = useState({
+        description: ''
     })
+    // Evitar múltiplas navegações/redirecionamentos
+    const didRedirectRef = useRef(false)
+    
+    // Debug: Verificar valor inicial
+    console.log('currentLocationValue inicial:', currentLocationValue)
+    
+    // Limpar localStorage de valores inválidos e configurar campo inicial
+    useEffect(() => {
+        if (open) {
+            console.log('Modal aberto - verificando localStorage')
+            const savedLocation = localStorage.getItem('location')
+            console.log('Valor do localStorage:', savedLocation)
+            
+            // Limpar valores inválidos do localStorage
+            if (!savedLocation || savedLocation === 'undefined' || savedLocation === 'null' || savedLocation === '') {
+                console.log('Removendo valor inválido do localStorage')
+                localStorage.removeItem('location')
+                setSearchKey('')
+                setCurrentLocationValue({ description: '' })
+                setInputValue('')
+            } else {
+                try {
+                    // Quando houver um endereço salvo válido, preencher o campo
+                    setCurrentLocationValue({ description: savedLocation })
+                    setInputValue(savedLocation)
+                } catch (error) {
+                    console.error('Erro ao processar valor salvo:', error)
+                }
+            }
+        }
+    }, [open])
     const [loadingAuto, setLoadingAuto] = useState(false)
-    const { t } = useTranslation()
     const dispatch = useDispatch()
-    const {
-        isLoading: placesIsLoading,
-        data: places,
-        error,
-    } = useQuery(
+    const { geoLocation, openMapDrawer, userLocationUpdate } = useSelector(
+        (state) => state.globalSettings
+    )
+
+    const { data: places, isLoading: placesIsLoading } = useQuery(
         ['places', searchKey],
         async () => GoogleApi.placeApiAutocomplete(searchKey),
-        { enabled },
         {
-            retry: 1,
-        }
-    )
-    if (error) {
-        setPredictions([])
-        setEnabled(false)
-    }
-    
-
-    const { data: placeDetails } = useQuery(
-        ['placeDetails', placeId],
-        async () => GoogleApi.placeApiDetails(placeId),
-        {
-            enabled: placeDetailsEnabled,
-            onSuccess: () => setLoadingAuto(false),
-            onError: onSingleErrorResponse,
-        },
-        {
-            retry: 1,
+            enabled: !!searchKey && enabled,
+            onError: (error) => {
+                console.error('Erro ao buscar endereços:', error)
+            },
         }
     )
 
-    const {
-        isLoading: locationLoading,
-        data: zoneData,
-        isError: isErrorLocation,
-        error: errorLocation,
-        refetch: locationRefetch,
-    } = useQuery(
-        ['zoneId', location],
-        async () => GoogleApi.getZoneId(location),
-        { enabled: locationEnabled, onError: onErrorResponse },
-        {
-            retry: 1,
-        }
-    )
-    const { coords, isGeolocationEnabled } = useGeolocated({
-        positionOptions: {
-            enableHighAccuracy: false,
-        },
-        userDecisionTimeout: 1000,
-        isGeolocationEnabled: true,
-    })
-
-    useEffect(() => {
-        if (coords) {
-            setCurrentLocation({
-                lat: coords.latitude,
-                lng: coords.longitude,
-            })
-        }
-    }, [])
-
-    if (isErrorLocation) {
-    }
-    const { data: geoCodeResults, refetch: refetchCurrentLocation } = useQuery(
-        ['geocode-api', location],
-        async () => GoogleApi.geoCodeApi(location)
-    )
-    useEffect(() => {
-        if (geoCodeResults) {
-            setCurrentLactionValue({
-                description:
-                    geoCodeResults?.data?.results[0]?.formatted_address,
-            })
-        } else {
-            setCurrentLactionValue({
-                description: '',
-            })
-        }
-    }, [geoCodeResults])
-    useEffect(() => {
-        if (zoneData) {
-            setZoneId(zoneData?.data?.zone_id)
-            dispatch(setZoneData(zoneData?.data?.zone_data))
-            setLocationEnabled(false)
-        } else {
-            locationRefetch()
-        }
-        if (!zoneData) {
-            setZoneId(undefined)
-        }
-    }, [zoneData])
-    
-    useEffect(() => {
-        if (placeDetails) {
-            setLocation({
-                lat: placeDetails?.data?.location?.latitude,
-                lng: placeDetails?.data?.location?.longitude
-            })
-            setLocationEnabled(true)
-        }
-    }, [placeDetails])
     useEffect(() => {
         if (places) {
-           const tempData= places?.data?.suggestions?.map((item) => ({
-            place_id: item.placePrediction.placeId,
-                description: `${item?.placePrediction?.structuredFormat?.mainText?.text}, ${item?.placePrediction?.structuredFormat?.secondaryText?.text}`
-            }))
-            setPredictions(tempData)
+            setLoadingAuto(false)
         }
     }, [places])
 
+    const {
+        data: geoCodeResults,
+        refetch: refetchGeoCode,
+        isLoading: isGeoCodeLoading,
+    } = useQuery(
+        ['geocode-api', location],
+        async () => GoogleApi.geoCodeApi(location),
+        {
+            enabled: false,
+            onSuccess: (response) => {
+                setLocationLoading(false)
+                try {
+                    if (response?.data?.results?.length > 0) {
+                        const headerAddress = {
+                            description: response?.data?.results[0]?.formatted_address || '',
+                        }
+                        setCurrentLocationValue(headerAddress)
+                    }
+                } catch (error) {
+                    // Tratar erro silenciosamente
+                    console.error('Erro ao processar dados de geocode:', error)
+                }
+            },
+            onError: (error) => {
+                setLocationLoading(false)
+                console.error('Erro ao obter geocode:', error)
+            },
+        }
+    )
+
+    const { data, refetch, isLoading: isPlaceLoading } = useQuery(
+        ['placeDetails', placeId],
+        async () => GoogleApi.placeApiDetails(placeId),
+        {
+            enabled: false,
+            onSuccess: (res) => {
+                const result = res?.data?.result
+                const newLatLng = {
+                    lat: result?.geometry?.location?.lat,
+                    lng: result?.geometry?.location?.lng,
+                }
+                setLocation(newLatLng)
+                // Atualizar direto no localStorage
+                if (result?.formatted_address) {
+                    localStorage.setItem('location', result.formatted_address)
+                    setCurrentLocationValue({ description: result.formatted_address })
+                    setInputValue(result.formatted_address)
+                }
+                setLocationLoading(false)
+            },
+            onError: (error) => {
+                setLocationLoading(false)
+                console.error('Erro em placeDetails:', error)
+            },
+        }
+    )
+
+    const predictions = places?.data?.predictions
+
+    useEffect(() => {
+        if (placeId && placeDetailsEnabled) {
+            refetch()
+        }
+    }, [placeId, placeDetailsEnabled])
+
+    useEffect(() => {
+        if (location && locationEnabled) {
+            refetchGeoCode()
+        }
+    }, [location, locationEnabled])
+
+    useEffect(() => {
+        if (data && locationEnabled && !didRedirectRef.current) {
+            const formattedAddress = data?.data?.result?.formatted_address
+            
+            dispatch(setUserLocationUpdate(true))
+            
+            if (formattedAddress) {
+                localStorage.setItem('location', formattedAddress)
+            }
+            if (location?.lat && location?.lng) {
+                localStorage.setItem('currentLatLng', JSON.stringify({
+                    lat: location.lat,
+                    lng: location.lng
+                }))
+            }
+            if (zoneId) {
+                localStorage.setItem('zoneid', zoneId)
+            }
+
+            // Marcar como processado para evitar loop
+            didRedirectRef.current = true
+            
+            if (redirectUrl) {
+                router.push({ pathname: '/home' }, undefined, { shallow: true })
+            }
+            handleClose()
+        }
+    }, [data, locationEnabled])
+
+    const handleAgreeLocation = () => {
+        setIsLoadingCurrentLocation(true)
+        if (navigator?.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    try {
+                        // Verificar se position e position.coords existem
+                        if (position && position.coords) {
+                            const newCurrentLocation = {
+                                lat: position.coords.latitude,
+                                lng: position.coords.longitude,
+                            }
+                            setCurrentLocation(newCurrentLocation)
+                            setLocation(newCurrentLocation)
+                            
+                            // Atualizar também no localStorage para persistência
+                            localStorage.setItem('currentLatLng', JSON.stringify(newCurrentLocation))
+                            
+                            // Fazer geocodificação reversa para obter o endereço
+                            if (window.google && window.google.maps && window.google.maps.Geocoder) {
+                                const geocoder = new window.google.maps.Geocoder()
+                                geocoder.geocode(
+                                    { location: newCurrentLocation },
+                                    (results, status) => {
+                                        if (status === 'OK' && results[0]) {
+                                            const address = results[0].formatted_address
+                                            
+                                            // Atualizar com o endereço real
+                                            localStorage.setItem('location', address)
+                                            setCurrentLocationValue({
+                                                description: address
+                                            })
+                                            
+                                            // Forçar atualização do campo de busca
+                                            setSearchKey(address)
+                                            
+                                            console.log('Endereço definido:', address)
+                                            console.log('currentLocationValue atualizado:', { description: address })
+                                            
+
+                                        } else {
+
+                                            // Fallback se a geocodificação falhar
+                                            const locationDescription = 'Minha localização atual'
+                                            localStorage.setItem('location', locationDescription)
+                                            setCurrentLocationValue({
+                                                description: locationDescription
+                                            })
+                                            setSearchKey(locationDescription)
+                                        }
+                                    }
+                                )
+                            } else {
+
+                                // Fallback se o Google Maps não estiver carregado
+                                const locationDescription = 'Minha localização atual'
+                                localStorage.setItem('location', locationDescription)
+                                setCurrentLocationValue({
+                                    description: locationDescription
+                                })
+                                setSearchKey(locationDescription)
+                            }
+                            
+                            // Ativar o recurso de localização
+                            setLocationEnabled(true)
+                            
+                            dispatch(setReduxLocation(newCurrentLocation))
+                        } else {
+                            throw new Error('Dados de posição inválidos')
+                        }
+                    } catch (err) {
+                        console.error('Erro ao processar geolocalização:', err?.message || err)
+                        toast.error(err?.message || 'Erro ao processar sua localização.')
+                    } finally {
+                        setIsLoadingCurrentLocation(false)
+                    }
+                },
+                (error) => {
+                    console.error('Erro de geolocalização:', error)
+                    setIsLoadingCurrentLocation(false)
+                    
+                    // Mensagens de erro mais específicas baseadas no código do erro
+                    let errorMessage = 'Localização não encontrada.'
+                    if (error.code === 1) {
+                        errorMessage = 'Permissão de localização negada.'
+                    } else if (error.code === 2) {
+                        errorMessage = 'Localização indisponível.'
+                    } else if (error.code === 3) {
+                        errorMessage = 'Tempo limite excedido para obter localização.'
+                    }
+                    
+                    toast.error(errorMessage)
+                },
+                {
+                    enableHighAccuracy: true,
+                    timeout: 5000,
+                    maximumAge: 0,
+                }
+            )
+        } else {
+            setIsLoadingCurrentLocation(false)
+            toast.error('A geolocalização não é suportada pelo seu navegador.')
+        }
+    }
+    const handleLocationSelection = (value) => {
+        if (value) {
+            setCurrentLocationValue(value)
+            setPlaceId(value?.place_id)
+        }
+        setLoadingAuto(false)
+    }
     const handleLocationSet = (values) => {
         setLocation(values)
     }
     const handlePickLocationOnClick = () => {
-        if (zoneId && geoCodeResults && location) {
-            localStorage.setItem('zoneid', zoneId)
-            localStorage.setItem(
-                'location',
-                geoCodeResults?.data?.results[0]?.formatted_address
-            )
-            localStorage.setItem('currentLatLng', JSON.stringify(location))
-            dispatch(setUserLocationUpdate(!userLocationUpdate))
-            CustomToaster('success', 'New location has been set.')
-            if (redirectUrl) {
-                if (redirectUrl?.query === undefined) {
-                    router.push({ pathname: redirectUrl?.pathname })
-                } else {
-                    router.push({
-                        pathname: redirectUrl?.pathname,
-                        query: {
-                            restaurantType: redirectUrl?.query,
-                        },
-                    })
-                }
-            } else {
-                router.push('/home')
-            }
-        }
-        handleClose()
-    }
-    const handleLocationSelection = (value) => {
-        setPlaceId(value?.place_id)
-        setPlaceDescription(value?.description)
-    }
-
-    const handleAgreeLocation = async () => {
-        if (coords) {
-            setLocation({ lat: coords?.latitude, lng: coords?.longitude })
-            setLoadingCurrentLocation(true)
-            setLocationEnabled(true)
-            setLoadingCurrentLocation(false)
+        if (location) {
+            // Salvar dados da localização
             if (zoneId) {
                 localStorage.setItem('zoneid', zoneId)
             }
-            await refetchCurrentLocation()
-            setRerenderMap((prevState) => !prevState)
+            
+            // Usar o endereço do currentLocationValue ou um padrão
+            const locationAddress = currentLocationValue?.description || 
+                                  localStorage.getItem('location') || 
+                                  'Localização selecionada'
+            
+            localStorage.setItem('location', locationAddress)
+            localStorage.setItem('currentLatLng', JSON.stringify(location))
+            
+            // Atualizar Redux
+            dispatch(setUserLocationUpdate(!userLocationUpdate))
+            
+            // Mostrar notificação de sucesso
+            CustomToaster('success', 'Nova localização foi definida.')
+            
+            // Fechar modal primeiro
+            handleClose()
+            
+            // Redirecionar após um pequeno delay para garantir que o modal feche
+            setTimeout(() => {
+                if (redirectUrl) {
+                    if (redirectUrl?.query === undefined) {
+                        router.push({ pathname: redirectUrl?.pathname })
+                    } else {
+                        router.push({
+                            pathname: redirectUrl?.pathname,
+                            query: {
+                                restaurantType: redirectUrl?.query,
+                            },
+                        })
+                    }
+                } else {
+                    router.push('/home')
+                }
+            }, 100)
         } else {
-            setIsEnableLocation(true)
+            // Se não há localização selecionada, mostrar erro
+            toast.error('Por favor, selecione uma localização no mapa.')
         }
     }
 
-
     return (
-        <Modal
+        <MuiModal
             open={open}
             onClose={handleClose}
             aria-labelledby="modal-modal-title"
             aria-describedby="modal-modal-description"
+            disableAutoFocus={true}
+            closeAfterTransition={true}
+            slots={{
+                backdrop: Backdrop,
+            }}
+            slotProps={{
+                backdrop: {
+                    timeout: 500,
+                },
+            }}
         >
-            <CustomBoxWrapper>
+            <Fade in={open}>
+                <div>
+                    <MapCustomStyle />
+                    <CustomBoxWrapper>
                 <Grid container spacing={1}>
                     <Grid item md={12}>
                         <Typography
@@ -288,15 +443,13 @@ const MapModal = ({ open, handleClose, redirectUrl }) => {
                             fontSize={{ xs: '14px', sm: '16px' }}
                             color={theme.palette.neutral[1000]}
                         >
-                            {t('Pick Location')}
+                            Digite seu endereço ou escolha no mapa
                         </Typography>
                         <Typography
                             fontSize={{ xs: '12px', sm: '14px' }}
                             color={theme.palette.neutral[1000]}
                         >
-                            {t(
-                                'Sharing your accurate location enhances precision in search results and delivery estimates, ensures effortless order delivery.'
-                            )}
+                            Compartilhar sua localização exata melhora a precisão das entregas e garante que os produtos cheguem até você com facilidade.
                         </Typography>
                     </Grid>
                     <Grid item xs={12} sm={12} md={8}>
@@ -312,10 +465,14 @@ const MapModal = ({ open, handleClose, redirectUrl }) => {
                                     fullWidth
                                     freeSolo
                                     id="combo-box-demo"
-                                    getOptionLabel={(option) =>
-                                        option.description
-                                    }
-                                    options={predictions}
+                                    getOptionLabel={(option) => {
+                                        // Garantindo que nunca mostre undefined
+                                        if (!option) return ''
+                                        if (typeof option === 'string') return option === 'undefined' ? '' : option
+                                        if (option.description === 'undefined') return ''
+                                        return option?.description || ''
+                                    }}
+                                    options={predictions || []}
                                     onChange={(event, value) => {
                                         if (value) {
                                             if (
@@ -323,35 +480,36 @@ const MapModal = ({ open, handleClose, redirectUrl }) => {
                                                 typeof value === 'string'
                                             ) {
                                                 setLoadingAuto(true)
-                                                const value =predictions[0]
+                                                const value = predictions[0]
                                                 handleLocationSelection(value)
                                             } else {
                                                 handleLocationSelection(value)
                                             }
                                             setPlaceDetailsEnabled(true)
                                         }
-                                        
                                     }}
                                     clearOnBlur={false}
-                                    value={currentLocationValue}
+                                    // Controla o texto do input separadamente para evitar 'undefined'
+                                    value={null}
+                                    inputValue={inputValue}
+                                    onInputChange={(event, newInputValue) => {
+                                        const safe = newInputValue === 'undefined' || newInputValue === 'null' ? '' : newInputValue
+                                        setInputValue(safe)
+                                        setSearchKey(safe)
+                                        setEnabled(!!safe)
+                                    }}
                                     loading={placesIsLoading}
-                                    loadingText={t(
-                                        'Search suggestions are loading...'
-                                    )}
+                                    loadingText="Buscando sugestões..."
                                     renderInput={(params) => (
                                         <CssTextField
                                             label={null}
                                             {...params}
-                                            placeholder={t(
-                                                'Search location here...'
-                                            )}
-                                            onChange={(event) => {
-                                                setSearchKey(event.target.value)
-                                                if (event.target.value) {
-                                                    setEnabled(true)
-                                                } else {
-                                                    setEnabled(false)
-                                                }
+                                            placeholder="Pesquise seu endereço aqui..."
+                                            InputProps={{
+                                                ...params.InputProps,
+                                                style: {
+                                                    ...params.InputProps.style,
+                                                },
                                             }}
                                             onKeyPress={(e) => {
                                                 if (e.key === 'Enter') {
@@ -379,115 +537,79 @@ const MapModal = ({ open, handleClose, redirectUrl }) => {
                             variant="contained"
                             loading={isLoadingCurrentLocation}
                         >
-                            {t('Use Current Location')}
+                            Usar Localização Atual
                         </LoadingButton>
                     </Grid>
-                </Grid>
-                <Box
-                    spacing={2}
-                    className="mapsearch"
-                    sx={{
-                        width: '100%',
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        mb: '10px',
-                    }}
-                >
-                    <button onClick={handleClose} className="closebtn">
-                        <CloseIcon sx={{ fontSize: '16px' }} />
-                    </button>
-                </Box>
-
-                <Box
-                    id="modal-modal-description"
-                    sx={{
-                        mt: 2,
-                        color: (theme) => theme.palette.neutral[1000],
-                        Height: '400px',
-                    }}
-                >
-                    {!!location ? (
-                        <GoogleMapComponent
-                            key={rerenderMap}
-                            setLocationEnabled={setLocationEnabled}
-                            setLocation={handleLocationSet}
-                            setCurrentLocation={setCurrentLocation}
-                            locationLoading={locationLoading}
-                            location={location}
-                            setPlaceDetailsEnabled={setPlaceDetailsEnabled}
-                            placeDetailsEnabled={placeDetailsEnabled}
-                            locationEnabled={locationEnabled}
-                            setPlaceDescription={setPlaceDescription}
-                        />
-                    ) : (
-                        <CustomStackFullWidth
-                            alignItems="center"
-                            justifyContent="center"
-                            sx={{ minHeight: '400px' }}
-                        >
-                            <FacebookCircularProgress />
-                            <CustomTypographyGray nodefaultfont="true">
-                                {t('Please wait sometimes')}
-                            </CustomTypographyGray>
-                        </CustomStackFullWidth>
-                    )}
-
-                    <CustomStackFullWidth
-                        justifyConatent="center"
-                        alignItems="center"
-                    ></CustomStackFullWidth>
-
-                    {errorLocation?.response?.data ? (
-                        <Button
-                            aria-label="picklocation"
+                    <Grid item xs={12} sm={12} md={12}>
+                        <Box
                             sx={{
-                                flex: '1 0',
                                 width: '100%',
-                                top: '.7rem',
-                            }}
-                            disabled={locationLoading}
-                            variant="contained"
-                            color="error"
-                            onClick={() => {
-                                if (zoneId) {
-                                    localStorage.setItem('zoneid', zoneId)
-                                }
-                                handleClose()
+                                height: { xs: '310px', sm: '400px' },
                             }}
                         >
-                            {errorLocation?.response?.data?.errors[0]?.message}
-                        </Button>
-                    ) : (
-                        <>
-                            {!!location && (
-                                <PrimaryButton
-                                    align="center"
-                                    aria-label="picklocation"
-                                    sx={{
-                                        flex: '1 0',
-                                        width: '100%',
-                                        top: '.7rem',
-                                    }}
-                                    disabled={locationLoading}
-                                    variant="contained"
-                                    onClick={() => handlePickLocationOnClick()}
-                                >
-                                    {t('Pick Locations')}
-                                </PrimaryButton>
-                            )}
-                        </>
-                    )}
-                </Box>
-                <LocationEnableCheck
-                    openLocation={isEnableLocation}
-                    handleCloseLocation={() => setIsEnableLocation(false)}
-                    isGeolocationEnabled={isGeolocationEnabled}
-                    t={t}
-                    coords={coords}
-                    handleAgreeLocation={handleAgreeLocation}
-                />
-            </CustomBoxWrapper>
-        </Modal>
+                            <GoogleMapComponent
+                                setDisablePickButton={() => {}}
+                                setLocationEnabled={setLocationEnabled}
+                                setLocation={setLocation}
+                                setCurrentLocation={setCurrentLocation}
+                                locationLoading={locationLoading}
+                                location={
+                                    location
+                                        ? location
+                                        : {
+                                              lat: -22.9068467,
+                                              lng: -43.1728965,
+                                          }
+                                }
+                                setPlaceDetailsEnabled={setPlaceDetailsEnabled}
+                                placeDetailsEnabled={placeDetailsEnabled}
+                                locationEnabled={locationEnabled}
+                                setPlaceDescription={(address) => {
+                                    if (address && address !== 'undefined' && address !== 'null') {
+                                        const headerAddress = { description: address }
+                                        setCurrentLocationValue(headerAddress)
+                                        setInputValue(address)
+                                        localStorage.setItem('location', address)
+                                    }
+                                }}
+                                setZoneId={setZoneId}
+                                setPlaceName={() => {}}
+                                setLocationType={() => {}}
+                                rerenderMap={rerenderMap}
+                                setRerenderMap={setRerenderMap}
+                            />
+                        </Box>
+                    </Grid>
+
+                    <Grid item xs={12} sm={12} md={12}>
+                        <CustomStackFullWidth
+                            direction="row"
+                            alignItems="center"
+                            justifyContent="space-between"
+                            spacing={1}
+                        >
+                            <Button
+                                variant="outlined"
+                                onClick={() => handleClose()}
+                                startIcon={<CloseIcon />}
+                            >
+                                Cancelar
+                            </Button>
+                            <PrimaryButton
+                                aria-label="picklocation"
+                                disabled={locationLoading}
+                                variant="contained"
+                                onClick={() => handlePickLocationOnClick()}
+                            >
+                                Selecionar Localização
+                            </PrimaryButton>
+                        </CustomStackFullWidth>
+                    </Grid>
+                </Grid>
+                </CustomBoxWrapper>
+                </div>
+            </Fade>
+        </MuiModal>
     )
 }
 

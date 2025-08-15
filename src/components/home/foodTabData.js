@@ -1,17 +1,17 @@
 export const foodTabData = [
   {
     id: 0,
-    category_name: 'Todays Trends',
+    category_name: 'Tendências de Hoje',
     value: 'todays-trends',
   },
   {
     id: 1,
-    category_name: 'Popular Foods',
+    category_name: 'Bancas Populares',
     value: 'popular-foods',
   },
   {
     id: 2,
-    category_name: 'Best Reviewed',
+    category_name: 'Mais Bem Avaliadas',
     value: 'best-reviewed',
   },
 

@@ -479,7 +479,7 @@ const OrderDetails = ({ OrderIdDigital }) => {
                             >
                                 {trackData?.data?.subscription !== null
                                     ? t('Subscription')
-                                    : t('Order')}{' '}
+                                    : 'Pedido'}{' '}
                                 # {getCommonValue(data, 'order_id')}
                             </Typography>
                             {trackData && (
@@ -507,7 +507,9 @@ const OrderDetails = ({ OrderIdDigital }) => {
                                                       ?.order_status ===
                                                       'handover'
                                                 ? t('Ready to serve')
-                                                : t(
+                                                : trackData?.data?.order_status === 'pending' 
+                                                  ? 'Pendente'
+                                                  : t(
                                                       trackData?.data
                                                           ?.order_status
                                                   ).replaceAll('_', ' ')}
@@ -526,6 +528,8 @@ const OrderDetails = ({ OrderIdDigital }) => {
                                 >
                                     {trackData?.data?.order_type === 'delivery'
                                         ? t('Home Delivery')
+                                        : trackData?.data?.order_type === 'take_away'
+                                        ? 'Retirar no Local'
                                         : t(
                                               trackData?.data?.order_type
                                           ).replaceAll('_', ' ')}
@@ -549,7 +553,7 @@ const OrderDetails = ({ OrderIdDigital }) => {
                                     fontWeight={400}
                                     sx={{ color: theme.palette.text.secondary }}
                                 >
-                                    {t('Order date:')}
+                                    Data do pedido:
                                 </Typography>
                                 <Typography
                                     fontSize="12px"
@@ -917,7 +921,7 @@ const OrderDetails = ({ OrderIdDigital }) => {
                                                                     }
                                                                 >
                                                                     {t(
-                                                                        'Unit Price '
+                                                                        'Preço '
                                                                     )}
                                                                     :{' '}
                                                                     {getAmount(
@@ -950,7 +954,7 @@ const OrderDetails = ({ OrderIdDigital }) => {
                                                                 }
                                                                 textAlign="end"
                                                             >
-                                                                {t('Qty')}:{' '}
+                                                                Qtd:{' '}
                                                                 {
                                                                     product?.quantity
                                                                 }
@@ -1176,7 +1180,7 @@ const OrderDetails = ({ OrderIdDigital }) => {
                                 )}
                                 <Stack gap="25px">
                                     <TitleTypography>
-                                        {t('Restaurants Information')}
+                                        Informações da Banca
                                     </TitleTypography>
                                     <IformationGrid>
                                         <Stack
@@ -1231,7 +1235,7 @@ const OrderDetails = ({ OrderIdDigital }) => {
                                                     />{' '}
                                                 </InfoTypography>
                                                 <InfoTypography>
-                                                    {t('Address')} :{' '}
+                                                    Endereço :{' '}
                                                     {trackData &&
                                                         trackData?.data
                                                             ?.restaurant
@@ -1442,7 +1446,7 @@ const OrderDetails = ({ OrderIdDigital }) => {
                                                         <Stack alignItems="flex-start">
                                                             <Typography
                                                                 fontSize="16px"
-                                                                fontweight="500"
+                                                                fontWeight="500"
                                                             >
                                                                 {trackData?.data?.delivery_man?.f_name.concat(
                                                                     ' ',
@@ -1539,7 +1543,7 @@ const OrderDetails = ({ OrderIdDigital }) => {
 
                                     <Stack gap="15px">
                                         <TitleTypography>
-                                            {t('Payment Information')}
+                                            Informações de Pagamento
                                         </TitleTypography>
                                         <ProductDetailsWrapper
                                             isVerfired={
@@ -1585,7 +1589,7 @@ const OrderDetails = ({ OrderIdDigital }) => {
                                                                     'break-word',
                                                             }}
                                                         >
-                                                            {t('Method')}
+                                                            Método
                                                         </Typography>
                                                         <Typography
                                                             fontSize="14px"
@@ -1619,7 +1623,9 @@ const OrderDetails = ({ OrderIdDigital }) => {
                                                                           ?.data
                                                                           ?.method_name
                                                                   })`
-                                                                : `${t(
+                                                                : trackData?.data?.payment_method === 'cash_on_delivery'
+                                                                  ? 'Pagamento na Entrega'
+                                                                  : `${t(
                                                                       trackData
                                                                           ?.data
                                                                           ?.payment_method
@@ -1649,7 +1655,7 @@ const OrderDetails = ({ OrderIdDigital }) => {
                                                             align="left"
                                                         >
                                                             {t(
-                                                                'Payment Status'
+                                                                'Status do Pagamento'
                                                             )}
                                                         </Typography>
                                                         &nbsp;&nbsp;&nbsp;:
@@ -1704,7 +1710,7 @@ const OrderDetails = ({ OrderIdDigital }) => {
                                                                         }}
                                                                     >
                                                                         {t(
-                                                                            'Unpaid'
+                                                                            'À Pagar'
                                                                         )}
                                                                     </span>
                                                                 )}
@@ -1729,7 +1735,7 @@ const OrderDetails = ({ OrderIdDigital }) => {
                                                                 'break-word',
                                                         }}
                                                     >
-                                                        {t('Order Otp')}
+                                                        Pedido
                                                     </Typography>
                                                     <Typography
                                                         fontSize="14px"
@@ -1856,7 +1862,7 @@ const OrderDetails = ({ OrderIdDigital }) => {
                                                     .neutral[1000],
                                             }}
                                         >
-                                            {t('Summary')}
+                                            Resumo
                                         </Typography>
                                     </Grid>
                                     <Grid
@@ -1868,7 +1874,7 @@ const OrderDetails = ({ OrderIdDigital }) => {
                                     >
                                         <Grid item md={7} xs={8}>
                                             <InfoTypography>
-                                                {t('Items Price')}
+                                                Preço dos Itens
                                             </InfoTypography>
                                         </Grid>
                                         <Grid item md={5} xs={4}>
@@ -1886,7 +1892,7 @@ const OrderDetails = ({ OrderIdDigital }) => {
                                         </Grid>
                                         <Grid item md={8} xs={8}>
                                             <InfoTypography>
-                                                {t('Addons Price')}
+                                                Preço dos Adicionais
                                             </InfoTypography>
                                         </Grid>
                                         <Grid item md={4} xs={4}>
@@ -1904,7 +1910,7 @@ const OrderDetails = ({ OrderIdDigital }) => {
                                         </Grid>
                                         <Grid item md={7} xs={8}>
                                             <InfoTypography>
-                                                {t('Discount')}
+                                                Desconto
                                             </InfoTypography>
                                         </Grid>
                                         <Grid item md={5} xs={4}>
@@ -1935,7 +1941,7 @@ const OrderDetails = ({ OrderIdDigital }) => {
                                         </Grid>
                                         <Grid item md={8} xs={8}>
                                             <InfoTypography>
-                                                {t('Coupon Discount')}
+                                                Desconto do Cupom
                                             </InfoTypography>
                                         </Grid>
                                         <Grid item md={4} xs={4}>
@@ -2022,7 +2028,7 @@ const OrderDetails = ({ OrderIdDigital }) => {
                                         )}
                                         <Grid item md={8} xs={8}>
                                             <InfoTypography>
-                                                {t('VAT/TAX')}(
+                                                Impostos (
                                                 {getRestaurantValue(
                                                     data,
                                                     'tax'
@@ -2135,7 +2141,7 @@ const OrderDetails = ({ OrderIdDigital }) => {
                                             )}
                                         <Grid item md={8} xs={8}>
                                             <InfoTypography>
-                                                {t('Delivery fee')}
+                                                Taxa de Entrega
                                             </InfoTypography>
                                         </Grid>
                                         <Grid item md={4} xs={4}>
@@ -2170,7 +2176,7 @@ const OrderDetails = ({ OrderIdDigital }) => {
                                                         .neutral[400],
                                                 }}
                                             >
-                                                {t('Total')}
+                                                Total
                                             </Typography>
                                         </Grid>
                                         <Grid item md={4} xs={4} align="right">

@@ -36,7 +36,7 @@ const DifferentFoodCompontent = ({
 }) => {
     const [activeSection, setActiveSection] = useState(null)
     const parentScrollContainerRef = useRef(null)
-    const [filterType, setFilterType] = useState(null)
+    const [filterType, setFilterType] = useState(foodTabData?.[0]?.value || '')
     const [shouldUpdateActiveSection, setShouldUpdateActiveSection] =
         useState(true)
     const updateActiveSection = () => {
@@ -86,7 +86,7 @@ const DifferentFoodCompontent = ({
         }
     }, [])
 
-    const activeTab = activeSection || filterType
+    const activeTab = activeSection || filterType || foodTabData?.[0]?.value || ''
     return (
         <Stack marginTop="30px">
             <Stack
@@ -98,7 +98,7 @@ const DifferentFoodCompontent = ({
                 }}
             >
                 <CustomHomeTab
-                    value={filterType}
+                    value={filterType || foodTabData?.[0]?.value || ''}
                     onChange={handleChange}
                     variant="scrollable"
                     allowScrollButtonsMobile

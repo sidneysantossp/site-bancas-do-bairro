@@ -32,7 +32,7 @@ const AddOrderToCart = (props) => {
                                     theme.palette.whiteContainer.main,
                             }}
                         >
-                            {t('Add to cart')}
+                            Comprar
                         </CustomTypography>
                     )}
                 </Button>
@@ -52,7 +52,7 @@ const AddOrderToCart = (props) => {
                                     theme.palette.whiteContainer.main,
                             }}
                         >
-                            {t('Order Now')}
+                            Pedir agora
                         </CustomTypography>
                     )}
                 </Button>

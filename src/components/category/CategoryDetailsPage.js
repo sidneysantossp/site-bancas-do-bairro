@@ -143,7 +143,7 @@ const CategoryDetailsPage = ({
             <Grid container spacing={{ xs: 1, sm: 3, md: 2 }}>
                 <Grid item md={12} sm={12} xs={12} align="center">
                     <CustomPageTitle
-                        title={`${t('Search Result for')} "${name}"`}
+                        title={`Sua pesquisa por "${name}"`}
                         textAlign="center"
                     />
                 </Grid>

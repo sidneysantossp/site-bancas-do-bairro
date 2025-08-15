@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { CustomStackFullWidth } from '@/styled-components/CustomStyles.style'
-import CustomMapSearch from '../join-restaurant/CustomMapSearch'
+import SimpleAddressSelector from '../join-restaurant/SimpleAddressSelector'
 import GoogleMapComponent from '../landingpage/google-map/GoogleMapComponent'
 import { useDispatch, useSelector } from 'react-redux'
 import { useTheme } from '@mui/styles'
@@ -66,18 +66,11 @@ const MapWithSearch = ({
             {!searchBoxInside && (
                 <>
                     {orderType !== 'take_away' && (
-                        <CustomMapSearch
+                        <SimpleAddressSelector
                             setSearchKey={setSearchKey}
-                            setEnabled={setEnabled}
-                            predictions={predictions}
                             setPlaceId={setPlaceId}
-                            setPlaceDetailsEnabled={setPlaceDetailsEnabled}
                             setPlaceDescription={setPlaceDescription}
-                            border={theme.palette.primary.main}
-                            searchKey={searchKey}
-                            placeDescription={placeDescription}
-                            isLoadingPlacesApi={isLoadingPlacesApi}
-                            currentLocationValue={currentLocationValue}
+                            setPlaceDetailsEnabled={setPlaceDetailsEnabled}
                         />
                     )}
                 </>
@@ -99,20 +92,11 @@ const MapWithSearch = ({
                             }}
                         >
                             {orderType !== 'take_away' && (
-                                <CustomMapSearch
+                                <SimpleAddressSelector
                                     setSearchKey={setSearchKey}
-                                    setEnabled={setEnabled}
-                                    predictions={predictions}
                                     setPlaceId={setPlaceId}
-                                    setPlaceDetailsEnabled={
-                                        setPlaceDetailsEnabled
-                                    }
                                     setPlaceDescription={setPlaceDescription}
-                                    border={theme.palette.primary.main}
-                                    searchKey={searchKey}
-                                    placeDescription={placeDescription}
-                                    isLoadingPlacesApi={isLoadingPlacesApi}
-                                    currentLocationValue={currentLocationValue}
+                                    setPlaceDetailsEnabled={setPlaceDetailsEnabled}
                                 />
                             )}
                         </Box>

@@ -108,9 +108,9 @@ const CustomDrawerCart = () => {
                                                 fontWeight: 'bold',
                                             }}
                                         >
-                                            {cartList?.length} items
+                                            {cartList?.length} Itens
                                         </span>{' '}
-                                        in your cart
+                                        no seu carrinho
                                     </Typography>
                                     <Typography
                                         sx={{
@@ -167,7 +167,7 @@ const CustomDrawerCart = () => {
                                                         {item?.variation
                                                             ?.length > 0 && (
                                                             <OrderFoodSubtitle>
-                                                                Variation :
+                                                                Variação:
                                                                 {getVariation(
                                                                     item?.variation
                                                                 )}
@@ -176,7 +176,7 @@ const CustomDrawerCart = () => {
                                                         {item?.add_ons?.length >
                                                             0 && (
                                                             <OrderFoodSubtitle>
-                                                                Addon :
+                                                                Adicionais:
                                                                 {getSelectedAddOn(
                                                                     item?.add_ons
                                                                 )}
@@ -260,7 +260,7 @@ const CustomDrawerCart = () => {
                         <Grid item container md={12} lg={12} xs={12}>
                             <Grid item md={12} lg={12} xs={12}>
                                 <Button variant="text" fullWidth size="large">
-                                    Total Price $ {getTotalPrice(cartList)}
+                                    Preço total R$ {getTotalPrice(cartList)}
                                 </Button>
                                 <div style={{ padding: '0 10px' }}>
                                     <Button
@@ -269,7 +269,7 @@ const CustomDrawerCart = () => {
                                         size="large"
                                         fullWidth
                                     >
-                                        Checkout
+                                        Finalizar compra
                                     </Button>
                                 </div>
                             </Grid>

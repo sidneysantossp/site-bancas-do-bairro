@@ -40,7 +40,7 @@ const OrderType = (props) => {
     return (
         <CustomStackFullWidth>
             <DeliveryCaption id="demo-row-radio-buttons-group-label">
-                {t('Order Type')}
+                Tipo de Pedido
             </DeliveryCaption>
             <CustomStackFullWidth
                 direction="row"
@@ -77,9 +77,9 @@ const OrderType = (props) => {
                                 objectFit="contained"
                             />
                             <Stack>
-                                <Typography>{t(item?.name)}</Typography>
+                                <Typography>{item?.name}</Typography>
                                 <Typography variant="subtitle2">
-                                    {t('Place an order and enjoy')}
+                                    Faça um pedido e aproveite
                                 </Typography>
                             </Stack>
                         </Stack>

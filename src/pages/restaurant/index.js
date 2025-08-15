@@ -45,7 +45,21 @@ export const getServerSideProps = async (context) => {
             },
         }
     )
-    const config = await configRes.json()
+    
+    let config = {}
+    try {
+        // Verificar se a resposta é JSON válido
+        const contentType = configRes.headers.get('content-type')
+        if (contentType && contentType.includes('application/json')) {
+            config = await configRes.json()
+        } else {
+            console.error('API retornou HTML em vez de JSON - usando configuração padrão')
+            config = { data: {} } // Configuração padrão
+        }
+    } catch (error) {
+        console.error('Erro ao fazer parse do JSON da configuração:', error)
+        config = { data: {} } // Configuração padrão
+    }
     const landingPageData = await landingPageApi.getLandingPageImages()
     return {
         props: {

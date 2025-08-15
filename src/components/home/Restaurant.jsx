@@ -10,7 +10,6 @@ import { useTranslation } from 'react-i18next'
 import { useInView } from 'react-intersection-observer'
 import { useSelector } from 'react-redux'
 import noData from '../../../public/static/resturants.png'
-import restaurantIcon from '../../../public/static/result_count.svg'
 import CustomImageContainer from '../CustomImageContainer'
 import { RTL } from '../RTL/RTL'
 import CustomEmptyResult from '../empty-view/CustomEmptyResult'
@@ -18,6 +17,7 @@ import RestaurantBoxCard from '../restaurant-details/RestaurantBoxCard'
 import { mockData } from './mockData'
 import DotSpin from './restaurant/DotSpin'
 import RestaurantTab from './restaurant/RestaurantTab'
+import BancaNearbyIcon from '@/assets/images/icons/BancaNearbyIcon'
 
 const Restaurant = () => {
     const theme = useTheme()
@@ -159,18 +159,16 @@ const Restaurant = () => {
                 >
                     <Grid item xs={12} sm={12} md={4}>
                         <Stack direction="row" spacing={1}>
-                            <CustomImageContainer
-                                src={restaurantIcon.src}
-                                width="26px"
-                                height="26px"
-                            />
+                            <Box sx={{ width: 26, height: 26, '& svg': { width: '100%', height: '100%' } }}>
+                                <BancaNearbyIcon />
+                            </Box>
                             <Typography
                                 variant="h3"
                                 color={theme.palette.neutral[1000]}
                                 fontWeight="500"
                                 component="h2"
                             >
-                                {data?.pages[0]?.total_size} {t('Restaurants')}
+                                {data?.pages[0]?.total_size} Bancas perto de você
                             </Typography>
                         </Stack>
                     </Grid>
@@ -298,7 +296,7 @@ const Restaurant = () => {
                                 >
                                     <CustomEmptyResult
                                         image={noData}
-                                        label="No restaurant found"
+                                        label="Nenhuma banca encontrada"
                                     />
                                 </Grid>
                             )}

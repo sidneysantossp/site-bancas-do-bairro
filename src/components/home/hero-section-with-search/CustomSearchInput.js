@@ -70,7 +70,7 @@ const CustomSearch = ({
                         <StyledInputBase
                             onFocus={handleFocus}
                             backgroundColor={theme.palette.neutral[200]}
-                            placeholder={t('Search foods and restaurants....')}
+                            placeholder="Busque por um Produto ou uma Banca"
                             value={value}
                             onChange={(e) => handleChange(e.target.value)}
                             inputProps={{ 'aria-label': 'search' }}

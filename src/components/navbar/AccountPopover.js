@@ -88,6 +88,23 @@ export const AccountPopover = (props) => {
     const { global } = useSelector((state) => state.globalSettings)
     const router = useRouter()
     const { t } = useTranslation()
+    // Simple translation fallback helper
+    const tt = (key, fallback) => {
+        const translated = t(key)
+        return translated === key ? fallback ?? key : translated
+    }
+    const fallbacks = {
+        'My Orders': 'Meus Pedidos',
+        Profile: 'Perfil',
+        Coupons: 'Cupons',
+        'Wish List': 'Meus Favoritos',
+        Inbox: 'Caixa de Entrada',
+        Settings: 'Configurações',
+        Logout: 'Sair',
+        Wallets: 'Carteiras',
+        'Loyalty Points': 'Pontos de Fidelidade',
+        'Referral Code': 'Código de Indicação',
+    }
     const { cartListRefetch, anchorEl, onClose, open, ...other } = props
     const dispatch = useDispatch()
     const handleLogout = async () => {
@@ -180,7 +197,7 @@ export const AccountPopover = (props) => {
                                         }}
                                     >
                                         <Typography variant="body1">
-                                            {t(menu.label)}
+                                            {tt(menu.label, fallbacks[menu.label])}
                                         </Typography>
                                     </MenuItem>
                                 )
@@ -214,7 +231,7 @@ export const AccountPopover = (props) => {
                         <ListItemText
                             primary={
                                 <Typography variant="body1">
-                                    {t('Logout')}
+                                    {tt('Logout', fallbacks['Logout'])}
                                 </Typography>
                             }
                         />

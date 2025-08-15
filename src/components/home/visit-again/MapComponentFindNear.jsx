@@ -1,10 +1,9 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import {
     GoogleMap,
-    useJsApiLoader,
     Marker,
-    InfoWindow,
 } from '@react-google-maps/api'
+import useGoogleMaps from '../../../hooks/useGoogleMaps'
 import {
     Box,
     CircularProgress,
@@ -93,10 +92,7 @@ const MapComponentFindNear = ({
         }),
         []
     )
-    const { isLoaded } = useJsApiLoader({
-        id: 'google-map-script',
-        googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAP_KEY,
-    })
+    const { isLoaded } = useGoogleMaps()
 
     const onLoad = useCallback(function callback(map) {
         setZoom(10)

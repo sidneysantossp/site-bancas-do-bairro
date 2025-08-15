@@ -1,11 +1,11 @@
 import React from 'react'
 import { Tab, Tabs, Stack } from '@mui/material'
-import { t } from 'i18next'
+import { useTranslation } from 'react-i18next'
 
 export const data = [
     {
         id: 1,
-        userType: 'Seller',
+        userType: 'Jornaleiro',
         value: 'vendor',
     },
     {
@@ -21,6 +21,11 @@ export const data = [
 ]
 
 const ChatUserTab = ({ setUserType, useType, setChannelId }) => {
+    const { t } = useTranslation()
+    const tt = (key, fallback) => {
+        const translated = t(key)
+        return translated === key ? (fallback ?? key) : translated
+    }
     const handleChange = (event, newValue) => {
         setUserType(newValue)
         setChannelId(null)
@@ -44,13 +49,20 @@ const ChatUserTab = ({ setUserType, useType, setChannelId }) => {
                     },
                 }}
             >
-                {data?.map((item) => (
-                    <Tab
-                        value={item?.value}
-                        label={t(item.userType)}
-                        key={item?.id}
-                    />
-                ))}
+                {data?.map((item) => {
+                    const fallbackMap = {
+                        Seller: 'Banca',
+                        'Delivery Man': 'Entregador',
+                        admin: 'Admin',
+                    }
+                    return (
+                        <Tab
+                            value={item?.value}
+                            label={tt(item.userType, fallbackMap[item.userType])}
+                            key={item?.id}
+                        />
+                    )
+                })}
             </Tabs>
         </Stack>
     )

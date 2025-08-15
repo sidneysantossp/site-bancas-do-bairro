@@ -175,7 +175,7 @@ const NewRestaurant = () => {
             },
         })
     }
-    const new_on = t('New on')
+    // Heading adapted to Bancas in PT-BR
 
     return (
         <Grid
@@ -226,7 +226,7 @@ const NewRestaurant = () => {
                                 fontWeight={{ xs: '500', md: '700' }}
                                 component="h2"
                             >
-                                {t(`${new_on} ${global?.business_name}`)}
+                                Novidades nas Bancas do Bairro
                             </Typography>
                         </Stack>
                         <CustomViewAll
@@ -237,7 +237,7 @@ const NewRestaurant = () => {
                             marginRight="2rem"
                         >
                             <Typography fontSize="14px" fontWeight="500">
-                                {t('View all')}
+                                Ver todas
                             </Typography>
                         </CustomViewAll>
                     </CustomStackFullWidth>

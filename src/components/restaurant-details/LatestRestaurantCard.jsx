@@ -120,14 +120,9 @@ const LatestRestaurantCard = (props) => {
                         <Typography
                             variant="h4"
                             align="center"
-                            color={theme.palette.whiteContainer.main}
-                            sx={{
-                                textTransform: 'uppercase',
-                                position: 'relative',
-                                zIndex: 1,
-                            }}
+                            color={theme.palette.neutral[100]}
                         >
-                            {t('Closed Now')}
+                            Banca Fechada
                         </Typography>
                     </Stack>
                 )
@@ -153,10 +148,9 @@ const LatestRestaurantCard = (props) => {
                     <Typography
                         variant="h4"
                         align="center"
-                        color={theme.palette.whiteContainer.main}
-                        sx={{ textTransform: 'uppercase', fontWeight: '700' }}
+                        color={theme.palette.neutral[100]}
                     >
-                        {t('Closed Now')}
+                        Banca Fechada
                     </Typography>
                 </Stack>
             )
@@ -167,7 +161,7 @@ const LatestRestaurantCard = (props) => {
             pathname: `/restaurant/[id]`,
             query: {
                 id: `${slug ? slug : id}`,
-                restaurant_zone_id: zone_id,
+                banca_zone_id: zone_id,
             },
         })
     }

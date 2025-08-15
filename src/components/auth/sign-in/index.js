@@ -444,31 +444,10 @@ const SignInPage = ({
                                 borderRadius="50%"
                             />
                             <Typography fontSize="14px" fontWeight="600">
-                                {t('OTP Sign in')}
+                                Entrar com OTP
                             </Typography>
                         </CustomGoogleButton>
-                        <CustomStackFullWidth
-                            alignItems="center"
-                            spacing={0.5}
-                            sx={{ paddingTop: '10px !important' }}
-                        >
-                            <CustomStackFullWidth
-                                direction="row"
-                                alignItems="center"
-                                justifyContent="center"
-                                spacing={0.5}
-                            >
-                                <CustomTypography fontSize="14px">
-                                    {t("Don't have an account?")}
-                                </CustomTypography>
-                                <CustomLink
-                                    onClick={handleSignup}
-                                    variant="body2"
-                                >
-                                    {t('Sign Up')}
-                                </CustomLink>
-                            </CustomStackFullWidth>
-                        </CustomStackFullWidth>
+                        
                     </Stack>
                 )
             case 'otp_social':
@@ -486,7 +465,7 @@ const SignInPage = ({
 
                         <Typography fontSize="14px">
                             {' '}
-                            {'or login with'}
+                            {'ou entre com'}
                         </Typography>
                         <SocialLogin
                             global={global}
@@ -547,28 +526,7 @@ const SignInPage = ({
                                 setForWidth={setForWidth}
                                 all
                             />
-                            <CustomStackFullWidth
-                                alignItems="center"
-                                spacing={0.5}
-                                sx={{ paddingTop: '10px !important' }}
-                            >
-                                <CustomStackFullWidth
-                                    direction="row"
-                                    alignItems="center"
-                                    justifyContent="center"
-                                    spacing={0.5}
-                                >
-                                    <CustomTypography fontSize="14px">
-                                        {t("Don't have an account?")}
-                                    </CustomTypography>
-                                    <CustomLink
-                                        onClick={handleSignup}
-                                        variant="body2"
-                                    >
-                                        {t('Sign Up')}
-                                    </CustomLink>
-                                </CustomStackFullWidth>
-                            </CustomStackFullWidth>
+                            
                         </Stack>
                     </LoginWrapper>
                 )
@@ -634,28 +592,7 @@ const SignInPage = ({
                                     {t('OTP Sign in')}
                                 </Typography>
                             </CustomGoogleButton>
-                            <CustomStackFullWidth
-                                alignItems="center"
-                                spacing={0.5}
-                                sx={{ paddingTop: '10px !important' }}
-                            >
-                                <CustomStackFullWidth
-                                    direction="row"
-                                    alignItems="center"
-                                    justifyContent="center"
-                                    spacing={0.5}
-                                >
-                                    <CustomTypography fontSize="14px">
-                                        {t("Don't have an account?")}
-                                    </CustomTypography>
-                                    <CustomLink
-                                        onClick={handleSignup}
-                                        variant="body2"
-                                    >
-                                        {t('Sign Up')}
-                                    </CustomLink>
-                                </CustomStackFullWidth>
-                            </CustomStackFullWidth>
+                            
                         </Stack>
                     </LoginWrapper>
                 )
@@ -708,30 +645,7 @@ const SignInPage = ({
                     >
                         {loginView()}
                     </CustomStackFullWidth>
-                    {state.status === 'manual' && (
-                        <CustomStackFullWidth
-                            alignItems="center"
-                            spacing={0.5}
-                            sx={{ paddingTop: '10px !important' }}
-                        >
-                            <CustomStackFullWidth
-                                direction="row"
-                                alignItems="center"
-                                justifyContent="center"
-                                spacing={0.5}
-                            >
-                                <CustomTypography fontSize="14px">
-                                    {t("Don't have an account?")}
-                                </CustomTypography>
-                                <CustomLink
-                                    onClick={handleSignup}
-                                    variant="body2"
-                                >
-                                    {t('Sign Up')}
-                                </CustomLink>
-                            </CustomStackFullWidth>
-                        </CustomStackFullWidth>
-                    )}
+                    
                 </CustomStackFullWidth>
             </RTL>
             <CustomModal

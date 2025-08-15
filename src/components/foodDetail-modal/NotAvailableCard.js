@@ -17,7 +17,7 @@ const NotAvailableCard = ({ endTime, startTime, endDate }) => {
                         color={(theme) => theme.palette.primary.main}
                         variant="h5"
                     >
-                        {t('Not Available now')}
+                        Indisponível
                     </Typography>
                     {!endDate && (
                         <Typography fontSize="10px">

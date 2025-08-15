@@ -7,6 +7,20 @@ import CustomImageContainer from '../CustomImageContainer'
 
 const CustomEmptyResult = ({ label, image, height, width, subTitle }) => {
     const { t } = useTranslation()
+    const tt = (key, fallback) => {
+        if (!key) return ''
+        const translated = t(key)
+        return translated === key ? fallback ?? key : translated
+    }
+    const fallbacks = {
+        'No Order found': 'Nenhum Pedido Realizado',
+        'Not found': 'Não encontrado',
+        'No Address Found!': 'Nenhum endereço encontrado!',
+        'Please add your address for better experience!': 'Adicione seu endereço para uma melhor experiência!',
+        'No Coupon Found': 'Nenhum cupom encontrado',
+        'No Favourite Food Found': 'Nenhum produto adicionado ao seus favoritos',
+        'No Favourite Restaurant Found': 'Nenhuma Banca favorita',
+    }
     const theme = useTheme()
 
     return (
@@ -32,15 +46,16 @@ const CustomEmptyResult = ({ label, image, height, width, subTitle }) => {
                             : theme.palette.neutral[400]
                     }
                 >
-                    {label ? t(label) : t('Not found')}
+                    {label ? tt(label, fallbacks[label]) : tt('Not found', fallbacks['Not found'])}
                 </Typography>
                 {subTitle && (
                     <Typography
                         color={theme.palette.neutral[400]}
                         fontSize="12px"
                         fontWeight={400}
+                        textAlign="center"
                     >
-                        {t(subTitle)}
+                        {tt(subTitle, fallbacks[subTitle])}
                     </Typography>
                 )}
             </Stack>

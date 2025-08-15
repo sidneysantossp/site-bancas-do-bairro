@@ -79,7 +79,7 @@ const getCombinedCategoriesAndProducts = (
         if (recommendProducts?.products?.length > 0) {
             const recommend = {
                 id: 1233,
-                name: t('Recommend Products'),
+                name: 'Ofertas e Promoções',
                 products: recommendProducts?.products || [],
                 isBgColor: true,
             }
@@ -185,15 +185,8 @@ const RestaurantDetails = ({ restaurantData, configData }) => {
             t
         )
 
-        if (recommendProducts?.products?.length > 0) {
-            const recommend = {
-                id: 1233,
-                name: t('Recommend Products'),
-                products: recommendProducts?.products || [],
-                isBgColor: true,
-            }
-            combined = [recommend, ...combined]
-        }
+        // A seção de recomendados já é inserida em getCombinedCategoriesAndProducts().
+        // Não inserir novamente aqui para evitar duplicação.
 
         if (Array.isArray(combined)) {
             const hasProducts = combined?.filter(
@@ -247,13 +240,16 @@ const RestaurantDetails = ({ restaurantData, configData }) => {
         const combined = getCombinedCategoriesAndProducts(
             allCategories,
             allFoods,
-            restaurantCategoryIds,
             recommendProducts,
             t
             // popularProducts
         )
 
         const filterData = combined?.map((item) => {
+            // Não aplicar filtros à seção de recomendados
+            if (item?.id === 1233 || item?.isBgColor === true) {
+                return item
+            }
             return {
                 ...item,
                 products: item?.products?.filter((foods) => {
@@ -343,7 +339,7 @@ const RestaurantDetails = ({ restaurantData, configData }) => {
                                     <CustomSearch
                                         //key={reRenderSearch}
                                         handleSearchResult={handleSearchResult}
-                                        label={t('Search foods')}
+                                        label={'Buscar produtos'}
                                         //isLoading={isLoadingSearchFood}
                                         searchFrom="restaurantDetails"
                                         selectedValue={searchKey}

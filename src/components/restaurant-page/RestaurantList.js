@@ -140,10 +140,10 @@ const RestaurantList = () => {
                         <Grid item md={12} sm={12} xs={12}>
                             <PageSearchWithTitle
                                 title={t(
-                                    'Choose Food from  your Favourite Restaurants'
+                                    'Encontre uma Banca perto de você!'
                                 )}
                                 handleSearchResult={handleSearchResult}
-                                label="Search restaurants..."
+                                label="Pesquisar Banca"
                             />
                         </Grid>
                         <Grid item md={12} align="right" sm={12} xs={12}>

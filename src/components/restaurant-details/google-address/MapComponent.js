@@ -1,12 +1,12 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import {
     GoogleMap,
-    useJsApiLoader,
     Marker,
     MarkerF,
     InfoWindowF,
     OverlayView,
 } from '@react-google-maps/api'
+import useGoogleMaps from '../../../hooks/useGoogleMaps'
 import {
     Box,
     CircularProgress,
@@ -44,6 +44,10 @@ const MapComponent = ({
     tempDistance,
 }) => {
     const theme = useTheme()
+    const tt = (key, fallback) => {
+        const val = t(key)
+        return val === key ? fallback : val
+    }
     const [directionsResponse, setDirectionsResponse] = useState(null)
 
     const center = {
@@ -66,10 +70,7 @@ const MapComponent = ({
     )
     const [isMounted, setIsMounted] = useState(false)
 
-    const { isLoaded } = useJsApiLoader({
-        id: 'google-map-script',
-        googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAP_KEY,
-    })
+    const { isLoaded } = useGoogleMaps()
 
     const [map, setMap] = useState(null)
     const [zoom, setZoom] = useState(15)
@@ -259,7 +260,7 @@ const MapComponent = ({
                                                         {(
                                                             tempDistance / 1000
                                                         ).toFixed(2)}
-                                                        km {t('away')})
+                                                        km {tt('away', 'de distância')})
                                                     </Box>
                                                 </Box>
                                             </Stack>

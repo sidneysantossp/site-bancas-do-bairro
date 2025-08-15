@@ -21,7 +21,7 @@ import { useSelector } from 'react-redux'
 import Slider from 'react-slick'
 import 'slick-carousel/slick/slick-theme.css'
 import 'slick-carousel/slick/slick.css'
-import FindNearbyIcon from '../../../assets/images/icons/FindNearbyIcon'
+import BancaNearbyIcon from '../../../assets/images/icons/BancaNearbyIcon'
 import { HandleNext, HandlePrev } from '../../CustomSliderIcon'
 import { getToken } from '../../checkout-page/functions/getGuestUserId'
 import CustomModal from '../../custom-modal/CustomModal'
@@ -137,8 +137,8 @@ const VisitAgain = () => {
             refetchRecommended()
         }
         setText({
-            title: `${t('Let’s Try Something New')}`,
-            subTitle: `${t('Our Latest Recommendations Just for You!')}`,
+            title: 'Bancas Perto de Você!',
+            subTitle: 'Faça suas compras em uma Banca perto de você.',
         })
     }
     const handleSuccess3 = (response) => {
@@ -273,14 +273,14 @@ const VisitAgain = () => {
                 <MapSetionWrapper>
                     <div className="map-overly">
                         <CustomStackFullWidth alignItems="center">
-                            <FindNearbyIcon />
+                            <BancaNearbyIcon />
                             <Typography
                                 fontSize="18px"
                                 fontWeight={600}
                                 color={theme.palette.whiteText.main}
                                 component="h2"
                             >
-                                {t('Find Nearby ')}
+                                Bancas Perto de Mim!
                             </Typography>
                             <Typography
                                
@@ -289,7 +289,7 @@ const VisitAgain = () => {
                                 color={theme.palette.whiteText.main}
                                 component="p"
                             >
-                                {t('Restaurant Near from You')}
+                                Conheça as Bancas do seu Bairro
                             </Typography>
                         </CustomStackFullWidth>
                         {isXSmall ? (
@@ -307,7 +307,7 @@ const VisitAgain = () => {
                                     },
                                 }}
                             >
-                                {t('See Location')}
+                                Pesquisar
                             </Button>
                         ) : (
                             <Button
@@ -325,7 +325,7 @@ const VisitAgain = () => {
                                 }}
                                 component="button"
                             >
-                                {t('See Location')}
+                                Pesquisar
                             </Button>
                         )}
                     </div>

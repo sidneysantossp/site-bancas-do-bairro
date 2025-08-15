@@ -225,7 +225,7 @@ const NearbyPopularFood = ({ isLoading }) => {
                                 alignItems="center"
                             >
                                 <Typography fontSize="14px" fontWeight="500">
-                                    {t('View all')}
+                                    {'Ver todos'}
                                 </Typography>
                             </CustomViewAll>
                         </CustomStackFullWidth>

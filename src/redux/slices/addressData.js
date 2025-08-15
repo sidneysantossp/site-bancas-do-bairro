@@ -27,5 +27,5 @@ export const AddressDataSlice = createSlice({
 })
 
 // Action creators are generated for each case reducer function
-export const { setLocation,setFormattedAddress,setZoneIds } = AddressDataSlice.actions
+export const { setLocation,setFormattedAddress,setZoneIds,setUserLocationUpdate } = AddressDataSlice.actions
 export default AddressDataSlice.reducer

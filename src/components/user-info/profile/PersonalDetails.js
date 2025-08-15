@@ -1,12 +1,22 @@
 import React from 'react'
 import { CustomStackFullWidth } from '../../../styled-components/CustomStyles.style'
 import { Grid, Stack, Typography } from '@mui/material'
-import { t } from 'i18next'
+import { useTranslation } from 'react-i18next'
 import { useTheme } from '@mui/material/styles'
 import { CustomDivWithBorder } from './Profile.style'
 
 const PersonalDetails = ({ data }) => {
     const theme = useTheme()
+    const { t } = useTranslation()
+    const tt = (key, fallback) => {
+        const translated = t(key)
+        return translated === key ? (fallback ?? key) : translated
+    }
+    const fallbacks = {
+        'User Name': 'Nome do Usuário',
+        Email: 'Email',
+        Phone: 'Telefone',
+    }
     return (
         <CustomStackFullWidth>
             <CustomDivWithBorder>
@@ -21,7 +31,7 @@ const PersonalDetails = ({ data }) => {
                         <CustomStackFullWidth gap="10px">
                             <Stack direction="row" spacing={2}>
                                 <Typography fontSize="14px" fontWeight="500">
-                                    {t('User Name')}
+                                    {tt('User Name', fallbacks['User Name'])}
                                 </Typography>
                                 <Typography
                                     fontSize="14px"
@@ -34,7 +44,7 @@ const PersonalDetails = ({ data }) => {
                         </CustomStackFullWidth>
                         <Stack direction="row" spacing={2}>
                             <Typography fontSize="14px" fontWeight="500">
-                                {t('Email')}&nbsp;&nbsp;
+                                {tt('Email', fallbacks.Email)}&nbsp;&nbsp;
                             </Typography>
                             <Typography
                                 fontSize="14px"
@@ -49,7 +59,7 @@ const PersonalDetails = ({ data }) => {
                         <CustomStackFullWidth gap="10px">
                             <Stack direction="row" spacing={2}>
                                 <Typography fontSize="14px" fontWeight="500">
-                                    {t('Phone')}
+                                    {tt('Phone', fallbacks.Phone)}
                                 </Typography>
                                 <Typography
                                     fontSize="14px"

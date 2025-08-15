@@ -36,6 +36,10 @@ const CheckoutSelectedAddressGuest = ({
     const { global } = useSelector((state) => state.globalSettings)
     const dispatch = useDispatch()
     const { t } = useTranslation()
+    const tt = (key, fallback) => {
+        const translated = t(key)
+        return translated === key ? (fallback ?? key) : translated
+    }
     const [openGuestUserModal, setOpenGuestUserModal] = useState(false)
     //  const { openAddressModal } = useSelector((state) => state.addressModel);
     const { guestUserInfo } = useSelector((state) => state.guestUserInfo)
@@ -50,7 +54,7 @@ const CheckoutSelectedAddressGuest = ({
 
     return (
         <div>
-            <DeliveryCaption>{t('Delivery Addresses')}</DeliveryCaption>
+            <DeliveryCaption>{tt('Delivery Addresses', 'Endereços de entrega')}</DeliveryCaption>
             <CustomStackFullWidth
                 border={`1px solid ${theme.palette.neutral[300]}`}
                 borderRadius="5px"
@@ -117,7 +121,7 @@ const CheckoutSelectedAddressGuest = ({
                                                             .neutral[400],
                                                 }}
                                             />
-                                            <Typography fontSize="12px">{`House - ${guestUserInfo?.house} , Floor - ${guestUserInfo?.floor}`}</Typography>
+                                            <Typography fontSize="12px">{`${tt('House', 'Casa')} - ${guestUserInfo?.house} , ${tt('Floor', 'Andar')} - ${guestUserInfo?.floor}`}</Typography>
                                         </CustomStackFullWidth>
                                     )}
                             </CustomStackFullWidth>
@@ -134,7 +138,7 @@ const CheckoutSelectedAddressGuest = ({
                                 <Typography
                                     sx={{ color: theme.palette.error.light }}
                                 >
-                                    {t('No Contact Info Added')}
+                                    {tt('No Contact Info Added', 'Nenhuma informação de contato adicionada')}
                                 </Typography>
                             </CustomStackFullWidth>
                         )}

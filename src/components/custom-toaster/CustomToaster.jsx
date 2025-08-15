@@ -138,6 +138,20 @@ export const CustomToaster = (
     borderColor,
     isClose
 ) => {
+    // Normalize common backend messages to PT-BR
+    if (typeof title === 'string') {
+        const lower = title.toLowerCase()
+        if (lower.includes('item already exists')) {
+            title = 'Produto já adicionado em seu carrinho'
+        }
+        // fallback variations
+        if (
+            (lower.includes('already') && lower.includes('in your cart')) ||
+            (lower.includes('already') && lower.includes('cart'))
+        ) {
+            title = 'Produto já adicionado em seu carrinho'
+        }
+    }
     let toasterIcon
     if (icon) {
         toasterIcon = icon

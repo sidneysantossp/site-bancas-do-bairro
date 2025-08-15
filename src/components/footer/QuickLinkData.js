@@ -1,21 +1,21 @@
 export const QuickLinkData = [
     {
-        name: 'About Us',
+        name: 'Sobre Nós',
         value: 'about Us',
         link: '/about-us',
     },
     {
-        name: 'My Wallet',
+        name: 'Minha Carteira',
         value: 'wallets',
         link: '/customer/wallets',
     },
     {
-        name: 'Loyalty Points',
+        name: 'Pontos de Fidelidade',
         value: 'loyalty',
         link: '/customer/loyality',
     },
     {
-        name: 'Cuisines',
+        name: 'Categorias',
         value: 'cuisines',
         link: '/cuisines',
     }

@@ -1,27 +1,27 @@
 export const mockData = [
     {
         id: 0,
-        name: 'Veg',
+        name: 'Vegetariano',
         value: 'veg',
     },
     {
         id: 1,
-        name: 'Non Veg',
+        name: 'Não vegetariano',
         value: 'non_veg',
     },
     {
         id: 2,
-        name: 'Delivery',
+        name: 'Entrega',
         value: 'delivery',
     },
     {
         id: 3,
-        name: 'Take away',
+        name: 'Retirada',
         value: 'take_away',
     },
     {
         id: 4,
-        name: 'Dine In',
+        name: 'No local',
         value: 'dine_in',
     },
 ]

@@ -22,7 +22,6 @@ const PopularResturant = ({ data, latestRestaurantData }) => {
     const router = useRouter()
     const { global } = useSelector((state) => state.globalSettings)
     const languageDirection = localStorage.getItem('direction')
-    const newtext = t('New On')
     return (
         <>
             <Grid
@@ -53,7 +52,7 @@ const PopularResturant = ({ data, latestRestaurantData }) => {
                                         },
                                     }}
                                 >
-                                    {t('Popular Restaurant')}
+                                    Bancas Populares
                                 </Typography>
                                 <Button
                                     onClick={() =>
@@ -63,7 +62,7 @@ const PopularResturant = ({ data, latestRestaurantData }) => {
                                     sx={{ padding: '7px 10px' }}
                                 >
                                     <CustomColouredTypography color="primary">
-                                        {t('View all')}
+                                        Ver todas
                                     </CustomColouredTypography>
                                 </Button>
                             </CustomStackFullWidth>
@@ -130,7 +129,7 @@ const PopularResturant = ({ data, latestRestaurantData }) => {
                                 justifyContent="space-between"
                             >
                                 <Typography variant={isXSmall ? 'h4' : 'h3'}>
-                                    {`${newtext} ${global?.business_name} `}
+                                    Novidades nas Bancas do Bairro
                                 </Typography>
                                 <Button
                                     onClick={() =>
@@ -139,7 +138,7 @@ const PopularResturant = ({ data, latestRestaurantData }) => {
                                 >
                                     {!isXSmall && (
                                         <CustomColouredTypography color="primary">
-                                            {t('View all')}
+                                            Ver todas
                                         </CustomColouredTypography>
                                     )}
                                 </Button>

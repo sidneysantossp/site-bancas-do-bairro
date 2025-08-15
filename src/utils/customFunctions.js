@@ -37,36 +37,26 @@ export const getAmount = (
     currency_symbol,
     digitAfterDecimalPoint
 ) => {
-    let newAmount = truncate(amount?.toString(), digitAfterDecimalPoint)
-    if (newAmount > 10000) {
-        if (newAmount >= 1000000000) {
-            // Billion
-            newAmount =
-                (newAmount / 1000000000)?.toFixed(digitAfterDecimalPoint) + 'B'
-            return `${currency_symbol}${newAmount}`
-        } else if (newAmount >= 1000000) {
-            // Million
-            newAmount =
-                (newAmount / 1000000)?.toFixed(digitAfterDecimalPoint) + 'M'
-            return `${currency_symbol}${newAmount}`
-        } else if (newAmount >= 1000) {
-            // Thousand
-            newAmount =
-                (newAmount / 1000)?.toFixed(digitAfterDecimalPoint) + 'k'
-            return `${currency_symbol}${newAmount}`
-        }
-    } else {
-        if (currency_symbol_direction === 'left') {
-            return `${currency_symbol}${newAmount?.toFixed(
-                digitAfterDecimalPoint
-            )}`
-        } else if (currency_symbol_direction === 'right') {
-            return `${newAmount?.toFixed(
-                digitAfterDecimalPoint
-            )}${currency_symbol}`
-        }
-        return amount
+    const decimalsRaw = Number(digitAfterDecimalPoint)
+    const decimals = Number.isFinite(decimalsRaw)
+        ? Math.min(Math.max(0, decimalsRaw), 20)
+        : 2
+    const safeAmountStr = amount != null ? amount.toString() : '0'
+    const truncated = truncate(safeAmountStr, decimals)
+    const numeric = Number.isFinite(Number(truncated))
+        ? Number(truncated)
+        : 0
+    const formatted = new Intl.NumberFormat('pt-BR', {
+        minimumFractionDigits: decimals,
+        maximumFractionDigits: decimals,
+    }).format(numeric)
+
+    if (currency_symbol_direction === 'left') {
+        return `${currency_symbol}${formatted}`
+    } else if (currency_symbol_direction === 'right') {
+        return `${formatted}${currency_symbol}`
     }
+    return `${currency_symbol}${formatted}`
 }
 const handleVariationValuesSum = (productVariations) => {
     let sum = 0

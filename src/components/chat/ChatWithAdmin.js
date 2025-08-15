@@ -6,6 +6,10 @@ import {useTheme} from "@mui/material/styles";
 const ChatWithAdmin=({handleChannelOnClick})=>{
     const theme=useTheme()
     const {t}=useTranslation()
+    const tt = (key, fallback) => {
+        const translated = t(key)
+        return translated === key ? (fallback ?? key) : translated
+    }
     return(
         <Stack direction="row" justifyContent="flex-start" alignItems="center" backgroundColor={theme.palette.primary.main} spacing={2} padding="1rem" sx={{
             cursor:"pointer"
@@ -17,7 +21,7 @@ const ChatWithAdmin=({handleChannelOnClick})=>{
         })}>
             <ChatIcon/>
             <Typography>
-                {t("Chat with admin")}
+                {tt("Chat with admin", "Conversar com Admin")}
             </Typography>
         </Stack>
     )

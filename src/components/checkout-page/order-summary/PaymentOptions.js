@@ -45,6 +45,13 @@ const PaymentOptions = (props) => {
 
     } = props
     const { t } = useTranslation()
+    const { i18n } = useTranslation()
+    const tt = (key, fallback) => {
+        const translated = t(key)
+        const isPt = i18n?.language?.toLowerCase?.().startsWith('pt')
+        if (isPt) return fallback ?? translated ?? key
+        return translated === key ? (fallback ?? key) : translated
+    }
     const dispatch = useDispatch()
     const [openModal, setOpenModal] = useState(false)
     const { offLineWithPartial } = useSelector((state) => state.offlinePayment)
@@ -106,7 +113,7 @@ const PaymentOptions = (props) => {
                         direction="row"
                         padding="19px 16px 3px 16px"
                     >
-                        <PymentTitle>{t('Payment Options')}</PymentTitle>
+                        <PymentTitle>{tt('Payment Options', 'Opções de pagamento')}</PymentTitle>
                         <BorderColorOutlinedIcon
                             onClick={handleClick}
                             color="primary"
@@ -186,7 +193,7 @@ const PaymentOptions = (props) => {
                                 fontWeight="500"
                                 color={theme.palette.primary.main}
                             >
-                                {t('Add Payment Method')}
+                                {tt('Add Payment Method', 'Adicionar método de pagamento')}
                             </Typography>
                         </Stack>
                     )}

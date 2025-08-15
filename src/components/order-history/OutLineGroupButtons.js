@@ -5,6 +5,15 @@ import { useTranslation } from 'react-i18next'
 const OutlinedGroupButtons = (props) => {
     const { selected, buttonsData, handleSelection } = props
     const { t } = useTranslation()
+    const tt = (key, fallback) => {
+        const translated = t(key)
+        return translated === key ? fallback ?? key : translated
+    }
+    const fallbacks = {
+        Ongoing: 'Em andamento',
+        Previous: 'Anteriores',
+        Subscription: 'Assinaturas',
+    }
 
     return (
         <Stack direction="row" alignItems="center" spacing={2}>
@@ -43,7 +52,7 @@ const OutlinedGroupButtons = (props) => {
                                     md: '18px',
                                 }}
                             >
-                                {t(item?.title)}
+                                {tt(item?.title, fallbacks[item?.title])}
                             </Typography>
                         </Button>
                     )

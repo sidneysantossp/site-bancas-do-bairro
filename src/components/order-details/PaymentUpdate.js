@@ -41,11 +41,11 @@ const PaymentUpdate = ({ id, refetchOrderDetails, refetchTrackData }) => {
                 sx={{ width: '100%' }}
             >
                 <Typography variant="h5">
-                    {t('Switch to cash on delivery')}
+                    Mudar para Pagamento na Entrega
                 </Typography>
             </PrimaryButton>
             <CustomDialogConfirm
-                dialogTexts="Are you sure you want to switch this order to Cash On Delivery?"
+                dialogTexts="Tem certeza que deseja mudar este pedido para Pagamento na Entrega?"
                 open={openModal}
                 onClose={() => setOpenModal(false)}
                 onSuccess={handleOnSuccess}

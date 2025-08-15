@@ -82,7 +82,7 @@ const DigitalPaymentManage = ({
                             variant="contained"
                             onClick={handleOnSuccess}
                         >
-                            {t('Switch to Cash on Delivery')}
+                            Mudar para Pagamento na Entrega
                         </CustomButtonSuccess>
                         <CustomButtonCancel
                             width="13.5rem"

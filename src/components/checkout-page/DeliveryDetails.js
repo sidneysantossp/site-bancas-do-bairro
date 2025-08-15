@@ -36,6 +36,10 @@ const DeliveryDetails = (props) => {
         token,
     } = props
     const { t } = useTranslation()
+    const tt = (key, fallback) => {
+        const translated = t(key)
+        return translated === key ? (fallback ?? key) : translated
+    }
 
     const handleChange = (e) => {
         if (e.target.value === 'take_away') {
@@ -49,8 +53,8 @@ const DeliveryDetails = (props) => {
                 <DeliveryTitle>
                     {global?.cash_on_delivery &&
                         restaurantData?.data?.order_subscription_active &&
-                        t('ORDER TYPE &')}{' '}
-                    {t('DELIVERY DETAILS')}
+                        tt('ORDER TYPE &', 'TIPO DE PEDIDO &')}{' '}
+                    {tt('DELIVERY DETAILS', 'DETALHES DA ENTREGA')}
                 </DeliveryTitle>
                 <FormControl>
                     {page !== 'campaign' &&
@@ -76,7 +80,7 @@ const DeliveryDetails = (props) => {
                         (restaurantData?.data?.take_away &&
                             global?.take_away)) && (
                         <DeliveryCaption id="demo-row-radio-buttons-group-label">
-                            {t('Delivery Options')}
+                            {tt('Delivery Options', 'Opções de Entrega')}
                         </DeliveryCaption>
                     )}
 
@@ -93,7 +97,7 @@ const DeliveryDetails = (props) => {
                                     <FormControlLabel
                                         value="delivery"
                                         control={<Radio />}
-                                        label={t('Home Delivery')}
+                                        label={tt('Home Delivery', 'Entrega em Domicílio')}
                                     />
                                 )}
                             {restaurantData?.data?.take_away &&
@@ -101,7 +105,7 @@ const DeliveryDetails = (props) => {
                                     <FormControlLabel
                                         value="take_away"
                                         control={<Radio />}
-                                        label={t('Take Away')}
+                                        label={tt('Take Away', 'Retirar no Local')}
                                     />
                                 )}
                             {restaurantData?.data?.is_dine_in_active &&
@@ -109,7 +113,7 @@ const DeliveryDetails = (props) => {
                                 <FormControlLabel
                                     value="dine_in"
                                     control={<Radio />}
-                                    label={t('Dine In')}
+                                    label={tt('Dine In', 'Comer no Local')}
                                 />
                             ) : (
                                 ''

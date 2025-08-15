@@ -37,7 +37,7 @@ const TotalAmountVisibility = (props) => {
                     textAlign: 'left',
                 }}
             >
-                {t('Total')} :
+                Total :
                 <Typography
                     fontSize="14px"
                     component="span"

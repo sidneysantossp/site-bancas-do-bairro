@@ -1,32 +1,32 @@
 export const mockData = [
     {
         id: 0,
-        category_name: 'All',
+        category_name: 'Todas',
         value: 'all',
     },
     {
         id: 1,
-        category_name: 'Newly Joined',
+        category_name: 'Novas',
         value: 'latest',
     },
     {
         id: 2,
-        category_name: 'Delivery',
+        category_name: 'Entrega',
         value: 'delivery',
     },
     {
         id: 3,
-        category_name: 'Take Away',
+        category_name: 'Retirada',
         value: 'take_away',
     },
     {
         id: 4,
-        category_name: 'Dine In',
+        category_name: 'No local',
         value: 'dine_in',
     },
     {
         id: 5,
-        category_name: 'Popular',
+        category_name: 'Populares',
         value: 'popular',
     },
 ]

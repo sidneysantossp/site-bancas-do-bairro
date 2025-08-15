@@ -14,6 +14,7 @@ import DirectionsOutlinedIcon from '@mui/icons-material/DirectionsOutlined'
 import FavoriteIcon from '@mui/icons-material/Favorite'
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder'
 import ShareOutlinedIcon from '@mui/icons-material/ShareOutlined'
+import WhatsAppIcon from '@mui/icons-material/WhatsApp'
 import {
     Button,
     Divider,
@@ -161,6 +162,30 @@ const RestaurantLeftDetails = (props) => {
         return !!wishLists?.restaurant?.find(
             (wishRestaurant) => wishRestaurant.id === id
         )
+    }
+    // Try to obtain a WhatsApp-capable number from vendor details
+    const getWhatsAppNumber = () => {
+        const raw =
+            details?.whatsapp_number ||
+            details?.whatsapp ||
+            details?.phone ||
+            details?.phone_number ||
+            details?.contact ||
+            details?.contact_number
+        if (!raw) return null
+        const digits = String(raw).replace(/\D/g, '')
+        return digits && digits.length > 0 ? digits : null
+    }
+    const whatsappNumber = getWhatsAppNumber()
+    const openWhatsApp = () => {
+        if (!whatsappNumber) {
+            toast.error(t('WhatsApp number unavailable'))
+            return
+        }
+        const url = `https://wa.me/${whatsappNumber}`
+        if (typeof window !== 'undefined') {
+            window.open(url, '_blank', 'noopener,noreferrer')
+        }
     }
     const handleCopy = (url) => {
         navigator.clipboard.writeText(url)
@@ -337,6 +362,31 @@ const RestaurantLeftDetails = (props) => {
                                             sm: '18px',
                                             md: '20px',
                                         },
+                                    }}
+                                />
+                            </IconButton>
+                            <IconButton
+                                sx={{
+                                    borderRadius: '8px',
+                                    border: `1px solid ${theme.palette.primary.main}`,
+                                    background: (theme) =>
+                                        theme.palette.neutral[100],
+                                    padding: {
+                                        xs: '3px',
+                                        sm: '5px',
+                                        md: '7px',
+                                    },
+                                    opacity: whatsappNumber ? 1 : 0.5,
+                                    cursor: whatsappNumber ? 'pointer' : 'not-allowed',
+                                }}
+                                onClick={openWhatsApp}
+                                disabled={!whatsappNumber}
+                                aria-label="WhatsApp"
+                            >
+                                <WhatsAppIcon
+                                    sx={{
+                                        color: theme.palette.success.main,
+                                        fontSize: { xs: '16px', sm: '18px', md: '20px' },
                                     }}
                                 />
                             </IconButton>
@@ -551,20 +601,7 @@ const RestaurantLeftDetails = (props) => {
                     </Grid>
                 ) : null}
 
-                {details?.delivery_time ? (
-                    <Grid xs={4} sm={4} md={4}>
-                        <RestaurantCommonTypography>
-                            {details?.delivery_time}
-                        </RestaurantCommonTypography>
-                        <RestaurantCommonTypography
-                            fontSize="12px"
-                            smFontSize="12px"
-                            fontWeight="400"
-                        >
-                            {t('Delivery Time')}
-                        </RestaurantCommonTypography>
-                    </Grid>
-                ) : null}
+                {/* Delivery time hidden for now */}
                 {details?.minimum_order ? (
                     <Grid xs={4} sm={4} md={4}>
                         <RestaurantCommonTypography>

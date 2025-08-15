@@ -124,7 +124,7 @@ const PaidAddsCard = ({
             pathname: `/restaurant/[id]`,
             query: {
                 id: `${item?.slug ? item?.slug : item?.restaurant?.id}`,
-                restaurant_zone_id: item?.restaurant?.zone_id,
+                banca_zone_id: item?.restaurant?.zone_id,
             },
         })
     }

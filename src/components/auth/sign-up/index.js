@@ -124,7 +124,7 @@ const SignUpPage = ({ handleClose, setModalFor, verificationId, sendOTP }) => {
             if (typeof window !== 'undefined') {
                 localStorage.setItem('token', response?.token)
             }
-            CustomToaster('success', 'Signup successfully.')
+            CustomToaster('success', t('Sign Up Success'))
             dispatch(setToken(response?.token))
             handleClose?.()
             router.push('/interest', {
@@ -232,7 +232,7 @@ const SignUpPage = ({ handleClose, setModalFor, verificationId, sendOTP }) => {
                         <CustomTypography
                             sx={{ fontWeight: 'bold', fontSize: '22px' }}
                         >
-                            {t('Sign Up')}
+                            Criar conta
                         </CustomTypography>
                     </CustomStackFullWidth>
                     <form onSubmit={signUpFormik.handleSubmit} noValidate>
@@ -251,8 +251,8 @@ const SignUpPage = ({ handleClose, setModalFor, verificationId, sendOTP }) => {
                                         required
                                         fullWidth
                                         id="name"
-                                        label={t('User name')}
-                                        placeholder={t('User name')}
+                                        label={'Nome'}
+                                        placeholder={'Nome'}
                                         InputLabelProps={{
                                             shrink:
                                                 !!signUpFormik.values.name ||
@@ -297,10 +297,8 @@ const SignUpPage = ({ handleClose, setModalFor, verificationId, sendOTP }) => {
                                         <CustomSignUpTextField
                                             fullWidth
                                             id="ref_code"
-                                            label={t('Refer Code (Optional)')}
-                                            placeholder={t(
-                                                'Refer Code (Optional)'
-                                            )}
+                                            label={'Código de indicação (opcional)'}
+                                            placeholder={'Código de indicação (opcional)'}
                                             name="ref_code"
                                             autoComplete="ref_code"
                                             value={signUpFormik.values.ref_code}
@@ -345,15 +343,15 @@ const SignUpPage = ({ handleClose, setModalFor, verificationId, sendOTP }) => {
                                 ) : (
                                     ''
                                 )}
-                                <Grid item xs={12} md={6}>
+                                <Grid item xs={12} md={12}>
                                     <CustomSignUpTextField
                                         required
                                         fullWidth
                                         id="email"
-                                        label={t('Email')}
+                                        label={'E-mail'}
                                         name="email"
                                         autoComplete="email"
-                                        placeholder={t('Email')}
+                                        placeholder={'E-mail'}
                                         value={signUpFormik.values.email}
                                         onChange={signUpFormik.handleChange}
                                         error={
@@ -385,7 +383,7 @@ const SignUpPage = ({ handleClose, setModalFor, verificationId, sendOTP }) => {
                                         }}
                                     />
                                 </Grid>
-                                <Grid item xs={12} md={6}>
+                                <Grid item xs={12} md={12}>
                                     <CustomPhoneInput
                                         value={signUpFormik.values.phone}
                                         onHandleChange={handleOnChange}
@@ -395,7 +393,7 @@ const SignUpPage = ({ handleClose, setModalFor, verificationId, sendOTP }) => {
                                         rtlChange="true"
                                     />
                                 </Grid>
-                                <Grid item xs={12} md={6}>
+                                <Grid item xs={12} md={12}>
                                     <FormControl variant="outlined" fullWidth>
                                         <InputLabel
                                             required
@@ -410,7 +408,7 @@ const SignUpPage = ({ handleClose, setModalFor, verificationId, sendOTP }) => {
                                             }}
                                             htmlFor="password"
                                         >
-                                            {t('Password')}
+                                            Senha
                                         </InputLabel>
                                         <CustomSigninOutLine
                                             width="100%"
@@ -422,7 +420,7 @@ const SignUpPage = ({ handleClose, setModalFor, verificationId, sendOTP }) => {
                                             }
                                             id="password"
                                             name="password"
-                                            placeholder={t('6+ Character')}
+                                            placeholder={'6+ caracteres'}
                                             value={signUpFormik.values.password}
                                             onChange={signUpFormik.handleChange}
                                             error={
@@ -528,7 +526,7 @@ const SignUpPage = ({ handleClose, setModalFor, verificationId, sendOTP }) => {
                                         )}
                                     </FormControl>
                                 </Grid>
-                                <Grid item xs={12} md={6}>
+                                <Grid item xs={12} md={12}>
                                     <FormControl variant="outlined" fullWidth>
                                         <InputLabel
                                             required
@@ -541,9 +539,9 @@ const SignUpPage = ({ handleClose, setModalFor, verificationId, sendOTP }) => {
                                                             .neutral[1000],
                                                 },
                                             }}
-                                            htmlFor="outlined-adornment-password"
+                                            htmlFor="confirm_password"
                                         >
-                                            {t('Confirm Password')}
+                                            Confirmar senha
                                         </InputLabel>
                                         <CustomSigninOutLine
                                             width="100%"
@@ -555,7 +553,7 @@ const SignUpPage = ({ handleClose, setModalFor, verificationId, sendOTP }) => {
                                             }
                                             id="confirm_password"
                                             name="confirm_password"
-                                            placeholder={t('8+ Character')}
+                                            placeholder={'8+ caracteres'}
                                             value={
                                                 signUpFormik.values
                                                     .confirm_password
@@ -653,7 +651,7 @@ const SignUpPage = ({ handleClose, setModalFor, verificationId, sendOTP }) => {
                                                     </IconButton>
                                                 </InputAdornment>
                                             }
-                                            label="confirm_password"
+                                            label="Confirmar senha"
                                         />
                                         {signUpFormik.errors
                                             .confirm_password && (
@@ -711,7 +709,7 @@ const SignUpPage = ({ handleClose, setModalFor, verificationId, sendOTP }) => {
                                                 required="true"
                                             />
                                         }
-                                        label={t('I accept all the')}
+                                        label={'Eu aceito os'}
                                     />
                                     <CustomColouredTypography
                                         color={theme.palette.primary.main}
@@ -726,7 +724,7 @@ const SignUpPage = ({ handleClose, setModalFor, verificationId, sendOTP }) => {
                                             },
                                         }}
                                     >
-                                        {t('Terms and conditions')}
+                                        Termos e Condições
                                     </CustomColouredTypography>
                                 </CustomStackFullWidth>
                                 {signUpFormik.touched.tandc &&
@@ -739,9 +737,7 @@ const SignUpPage = ({ handleClose, setModalFor, verificationId, sendOTP }) => {
                                                     theme.palette.error.main,
                                             }}
                                         >
-                                            {t(
-                                                'You must accept the terms and conditions'
-                                            )}
+                                            Você deve aceitar os Termos e Condições
                                         </CustomTypography>
                                     )}
                             </CustomStackFullWidth>
@@ -764,7 +760,7 @@ const SignUpPage = ({ handleClose, setModalFor, verificationId, sendOTP }) => {
                                         variant="contained"
                                         disabled
                                     >
-                                        {t('Sign Up')}
+                                        Cadastrar
                                     </LoadingButton>
                                 ) : (
                                     <LoadingButton
@@ -789,7 +785,7 @@ const SignUpPage = ({ handleClose, setModalFor, verificationId, sendOTP }) => {
                 </CustomStackFullWidth>
                 <Box>
                     <CustomTypography align="center" fontSize="14px">
-                        {t('Already have an account?')}
+                        Já possui uma conta?
                         <CustomLink
                             onClick={() => {
                                 setModalFor('sign-in')
@@ -798,7 +794,7 @@ const SignUpPage = ({ handleClose, setModalFor, verificationId, sendOTP }) => {
                             variant="body2"
                             sx={{ ml: '5px' }}
                         >
-                            {t('Sign In')}
+                            Entrar
                         </CustomLink>
                     </CustomTypography>
                 </Box>

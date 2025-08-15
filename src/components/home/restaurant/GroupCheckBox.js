@@ -55,7 +55,14 @@ const GroupCheckBox = ({
                             }
                             label={
                                 <CustomTypographyLabel>
-                                    {t(item?.name)}
+                                    {(() => {
+                                        const n = item?.name
+                                        if (n === 'Currently Available')
+                                            return 'Disponível agora'
+                                        if (n === 'Discounted')
+                                            return 'Com desconto'
+                                        return t(n)
+                                    })()}
                                 </CustomTypographyLabel>
                             }
                         />

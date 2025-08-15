@@ -20,42 +20,40 @@ const NavLinks = ({ zoneid, t, languageDirection }) => {
 
     return (
         <Stack direction="row" spacing={2.5}>
-            {zoneid && (
-                <>
-                    <NavLinkStyle
-                        onClick={handleClick}
-                        underline="none"
-                        languageDirection={languageDirection}
-                        sx={{
-                            cursor: 'pointer',
-                            paddingInlineEnd:
-                                languageDirection === 'rtl' && '1.5rem',
-                        }}
-                    >
-                        <Typography fontSize="14px">{t('Home')}</Typography>
-                    </NavLinkStyle>
+            <NavLinkStyle
+                onClick={handleClick}
+                underline="none"
+                languageDirection={languageDirection}
+                sx={{
+                    cursor: 'pointer',
+                    paddingInlineEnd:
+                        languageDirection === 'rtl' && '1.5rem',
+                }}
+            >
+                <Typography fontSize="14px">Home</Typography>
+            </NavLinkStyle>
 
-                    <NavCatagory
-                        openModal={openCategoryModal}
-                        setModal={setCategoryModal}
-                        setRestaurantModal={setRestaurantModal}
-                        languageDirection={languageDirection}
-                    />
-                    <NavCuisines
-                        openModal={openCategoryModal}
-                        setModal={setCategoryModal}
-                        setRestaurantModal={setRestaurantModal}
-                        languageDirection={languageDirection}
-                    />
+            <NavCatagory
+                openModal={openCategoryModal}
+                setModal={setCategoryModal}
+                setRestaurantModal={setRestaurantModal}
+                languageDirection={languageDirection}
+            />
+            {/* Opção "Produtos por Banca" ocultada conforme solicitado
+            <NavCuisines
+                openModal={openCategoryModal}
+                setModal={setCategoryModal}
+                setRestaurantModal={setRestaurantModal}
+                languageDirection={languageDirection}
+            />
+            */}
 
-                    <NavResturant
-                        openModal={openRestaurantModal}
-                        setModal={setRestaurantModal}
-                        zoneid={zoneid}
-                        languageDirection={languageDirection}
-                    />
-                </>
-            )}
+            <NavResturant
+                openModal={openRestaurantModal}
+                setModal={setRestaurantModal}
+                zoneid={zoneid}
+                languageDirection={languageDirection}
+            />
         </Stack>
     )
 }

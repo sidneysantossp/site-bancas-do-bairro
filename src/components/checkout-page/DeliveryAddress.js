@@ -36,7 +36,12 @@ const DeliveryAddress = ({
     handleAddressSetSuccess,
 }) => {
     const theme = useTheme()
-    const { t } = useTranslation()
+    const { t, i18n } = useTranslation()
+    const tt = (key, fallback) => {
+        const translated = t(key)
+        // Force fallback when provided for checkout labels
+        return fallback ?? translated ?? key
+    }
     const [allAddress, setAllAddress] = useState()
     const [selectedAddress, setSelectedAddress] = useState({})
     const [data, setData] = useState(null)
@@ -138,7 +143,7 @@ const DeliveryAddress = ({
                     alignItems="center"
                     justifyContent="space-between"
                 >
-                    <DeliveryCaption>{t('Delivery Addresses')}</DeliveryCaption>
+                    <DeliveryCaption>Endereços de entrega</DeliveryCaption>
                     <SaveAddressBox onClick={handleClick}>
                         <Typography
                             color={theme.palette.primary.main}
@@ -146,7 +151,7 @@ const DeliveryAddress = ({
                             fontSize="12px"
                             // onClick={handleRoute}
                         >
-                            {t('Saved Address')}
+                            Endereços salvos
                         </Typography>
                     </SaveAddressBox>
                 </Stack>
@@ -192,7 +197,7 @@ const DeliveryAddress = ({
                         no_margin_top="true"
                         textAlign="left"
                     >
-                        {t('Saved Address')}
+                        Endereços salvos
                     </DeliveryCaption>
                     <AddressSelectionList
                         data={data}
@@ -239,13 +244,13 @@ const DeliveryAddress = ({
                                 }}
                                 onClick={handleClose}
                             >
-                                {t('Cancel')}
+                                {tt('Cancel', 'Cancelar')}
                             </Button>
                             <PrimaryButton
                                 variant="contained"
                                 onClick={handleSelectedAddress}
                             >
-                                {t('Select')}
+                                {tt('Select', 'Selecionar')}
                             </PrimaryButton>
                         </Stack>
                     )}

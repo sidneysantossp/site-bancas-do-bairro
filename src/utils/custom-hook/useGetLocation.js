@@ -71,14 +71,59 @@ export const useGetLocation = (coords) => {
         }
     }, [placeDetails])
     useEffect(() => {
-
-        
         if (places) {
-            const tempData= places?.data?.suggestions?.map((item) => ({
-                place_id: item.placePrediction.placeId,
-                    description: `${item?.placePrediction?.structuredFormat?.mainText?.text}, ${item?.placePrediction?.structuredFormat?.secondaryText?.text}`
-                }))
-            setPredictions(tempData)
+            console.log('Google Places API response:', places);
+            
+            // Tentar diferentes estruturas de resposta da API
+            let tempData = [];
+            
+            if (places?.data?.suggestions) {
+                // Estrutura nova da API
+                tempData = places.data.suggestions.map((item) => ({
+                    place_id: item?.placePrediction?.placeId || item?.place_id,
+                    description: item?.placePrediction?.structuredFormat?.mainText?.text 
+                        ? `${item.placePrediction.structuredFormat.mainText.text}, ${item.placePrediction.structuredFormat.secondaryText?.text || ''}`
+                        : item?.description || item?.placePrediction?.text?.text || 'Endereço'
+                })).filter(item => item.description && item.description !== 'Endereço');
+            } else if (places?.data?.predictions) {
+                // Estrutura antiga da API
+                tempData = places.data.predictions.map((item) => ({
+                    place_id: item.place_id,
+                    description: item.description
+                }));
+            } else if (Array.isArray(places?.data)) {
+                // Array direto
+                tempData = places.data.map((item) => ({
+                    place_id: item.place_id || item.id,
+                    description: item.description || item.formatted_address
+                }));
+            }
+            
+            console.log('Processed predictions:', tempData);
+            
+            // Se não há dados da API, criar sugestões de fallback para teste
+            if (!tempData || tempData.length === 0) {
+                const fallbackSuggestions = [
+                    { place_id: 'fallback_1', description: 'São Paulo, SP - Brasil' },
+                    { place_id: 'fallback_2', description: 'Rio de Janeiro, RJ - Brasil' },
+                    { place_id: 'fallback_3', description: 'Belo Horizonte, MG - Brasil' },
+                    { place_id: 'fallback_4', description: 'Brasília, DF - Brasil' },
+                    { place_id: 'fallback_5', description: 'Salvador, BA - Brasil' }
+                ].filter(item => 
+                    item.description.toLowerCase().includes(searchKey.description.toLowerCase())
+                );
+                
+                if (fallbackSuggestions.length > 0) {
+                    console.log('Using fallback suggestions:', fallbackSuggestions);
+                    setPredictions(fallbackSuggestions);
+                } else {
+                    setPredictions(tempData || []);
+                }
+            } else {
+                setPredictions(tempData);
+            }
+        } else {
+            setPredictions([]);
         }
     }, [places])
 

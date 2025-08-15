@@ -2,7 +2,6 @@ import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined'
 import KeyboardArrowDownOutlinedIcon from '@mui/icons-material/KeyboardArrowDownOutlined'
 import { Button, Popover, Stack, Tab, Tabs, Typography } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
-import { t } from 'i18next'
 import { useEffect, useState } from 'react'
 import { handleFilterData } from '../../category/helper'
 import RestaurantFilterCard from './RestaurantFilterCard'
@@ -92,7 +91,7 @@ const RestaurantTab = (props) => {
                                     color: (theme) =>
                                         theme.palette.customColor?.six,
                                 }}
-                                label={t(item?.category_name)}
+                                label={item?.category_name}
                             />
                         )
                     })}
@@ -116,7 +115,7 @@ const RestaurantTab = (props) => {
                             fontWeight="500"
                             color={theme.palette.customColor?.six}
                         >
-                            {t('Filter')}
+                            Filtrar
                         </Typography>
                         <KeyboardArrowDownOutlinedIcon
                             style={{

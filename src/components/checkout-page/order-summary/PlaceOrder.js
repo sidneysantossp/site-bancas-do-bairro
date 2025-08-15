@@ -87,9 +87,7 @@ const PlaceOrder = (props) => {
                             }
                             label={
                                 <CustomTypography sx={{ fontSize: '13px' }}>
-                                    {t(
-                                        `I agree that placing the order places me under`
-                                    )}{' '}
+                                    Concordo que ao fazer o pedido aceito os{' '}
                                     <Link
                                         href="/terms-and-conditions"
                                         style={{ textDecoration: 'underline' }}
@@ -115,7 +113,7 @@ const PlaceOrder = (props) => {
                         loading={orderLoading || distanceLoading}
                         disabled={!checked}
                     >
-                        {t('Place Order')}
+                        Finalizar Pedido
                     </LoadingButton>
                 </>
             ) : (
@@ -134,16 +132,14 @@ const PlaceOrder = (props) => {
                                         <CustomTypography
                                             sx={{ fontSize: '13px' }}
                                         >
-                                            {t(
-                                                `I agree that placing the order places me under`
-                                            )}{' '}
+                                            Concordo que ao fazer o pedido aceito os{' '}
                                             <Link
                                                 href="/terms-and-conditions"
                                                 style={{
                                                     textDecoration: 'underline',
                                                 }}
                                             >
-                                                {t('Terms and Conditions')}
+                                                Termos e Condições
                                             </Link>{' '}
                                             {t('&')}
                                             <Link
@@ -152,7 +148,7 @@ const PlaceOrder = (props) => {
                                                     textDecoration: 'underline',
                                                 }}
                                             >
-                                                {t('Privacy Policy')}
+                                                Política de Privacidade
                                             </Link>
                                         </CustomTypography>
                                     }
@@ -170,7 +166,7 @@ const PlaceOrder = (props) => {
                                 }
                                 disabled={!checked}
                             >
-                                {t('Place Order')}
+                                Finalizar Pedido
                             </LoadingButton>
                         </>
                     ) : (

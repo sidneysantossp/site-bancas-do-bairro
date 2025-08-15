@@ -126,7 +126,7 @@ const ProductCardMedia = (props) => {
                         ) ? (
                             <CustomOverlayBox>
                                 <Typography align="center" variant="h5">
-                                    {t('Not Available now')}
+                                    Indisponível
                                 </Typography>
                             </CustomOverlayBox>
                         ) : (
@@ -164,26 +164,7 @@ const ProductCardMedia = (props) => {
                             objectFit="cover"
                             smHeight="130px"
                         />
-                        {router.pathname !== `/restaurant/[id]` && (
-                            <CustomStackForFoodModal
-                                padding="12px"
-                                direction="row"
-                                width="100%"
-                                right="0"
-                                spacing={1}
-                                justifyContent="flex-end"
-                                alignItems="flex-end"
-                            >
-                                <Typography
-                                    fontSize="12px"
-                                    fontWeight={500}
-                                    color={theme.palette.whiteContainer.main}
-                                >
-                                    {product?.min_delivery_time}-
-                                    {product?.max_delivery_time} {t('min')}
-                                </Typography>
-                            </CustomStackForFoodModal>
-                        )}
+                        {/* Delivery time overlay hidden as per localization request */}
                     </CardWrapper>
                 </Stack>
             )}

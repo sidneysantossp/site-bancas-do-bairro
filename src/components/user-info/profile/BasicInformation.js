@@ -27,33 +27,43 @@ const BasicInformation = ({ data, refetch, deleteUserHandler }) => {
     const { mutate: fireBaseOtpMutation, isLoading: fireIsLoading } =
         useFireBaseOtpVerify()
     const setUpRecaptcha = () => {
-        if (!window.recaptchaVerifier) {
-            window.recaptchaVerifier = new RecaptchaVerifier(
-                'recaptcha-update',
-                {
-                    size: 'invisible',
-                    callback: (response) => {
-                        console.log('Recaptcha verified', response)
-                    },
-                    'expired-callback': () => {
-                        window.recaptchaVerifier?.reset()
-                    },
-                },
-                auth
-            )
-        } else {
-            window.recaptchaVerifier.clear()
-            window.recaptchaVerifier = null
-            // setUpRecaptcha()
+        if (typeof window === 'undefined') return
+        if (!auth) {
+            // Firebase disabled: skip recaptcha
+            return
+        }
+        const containerId = 'recaptcha-update'
+        if (!document.getElementById(containerId)) return
+        try {
+            if (!window.recaptchaVerifier) {
+                // Firebase v9 modular API: new RecaptchaVerifier(auth, container, params)
+                window.recaptchaVerifier = new RecaptchaVerifier(
+                    auth,
+                    containerId,
+                    {
+                        size: 'invisible',
+                        callback: (response) => {
+                            console.log('Recaptcha verified', response)
+                        },
+                        'expired-callback': () => {
+                            window.recaptchaVerifier?.reset()
+                        },
+                    }
+                )
+            }
+        } catch (e) {
+            console.error('Recaptcha init failed', e)
         }
     }
 
     useEffect(() => {
         setUpRecaptcha()
         return () => {
-            if (recaptchaWrapperRef.current) {
-                recaptchaWrapperRef.current.clear() // Clear Recaptcha when component unmounts
-                recaptchaWrapperRef.current = null
+            if (typeof window !== 'undefined' && window.recaptchaVerifier) {
+                try {
+                    window.recaptchaVerifier.clear()
+                } catch (_) {}
+                window.recaptchaVerifier = null
             }
         }
     }, [])
@@ -64,10 +74,18 @@ const BasicInformation = ({ data, refetch, deleteUserHandler }) => {
             return
         }
 
-        if (!window.recaptchaVerifier) {
-            setUpRecaptcha()
+        if (typeof window === 'undefined') return
+        if (!auth) {
+            // Fallback: open modal without OTP when Firebase is disabled
+            setOpen(true)
+            return
         }
+        if (!window.recaptchaVerifier) setUpRecaptcha()
         const appVerifier = window.recaptchaVerifier
+        if (!appVerifier) {
+            setOpen(true)
+            return
+        }
 
         signInWithPhoneNumber(auth, phoneNumber, appVerifier)
             .then((confirmationResult) => {

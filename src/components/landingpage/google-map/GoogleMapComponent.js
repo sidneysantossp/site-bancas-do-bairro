@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { GoogleMap, useJsApiLoader } from '@react-google-maps/api'
+import { GoogleMap } from '@react-google-maps/api'
+import useGoogleMaps from '../../../hooks/useGoogleMaps'
 import {
     CircularProgress,
     IconButton,
@@ -57,10 +58,7 @@ const GoogleMapComponent = ({
         }),
         []
     )
-    const { isLoaded } = useJsApiLoader({
-        id: 'google-map-script',
-        googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAP_KEY,
-    })
+    const { isLoaded } = useGoogleMaps()
     const [isMounted, setIsMounted] = useState(false)
     const [openInfoWindow, setOpenInfoWindow] = useState(false)
     const [mapSetup, setMapSetup] = useState(false)
@@ -81,7 +79,7 @@ const GoogleMapComponent = ({
         if (location && placeDetailsEnabled) {
             setCenterPosition(location)
         }
-        if (map?.center && mapSetup) {
+        if (map?.center && mapSetup && typeof map.center.lat === 'function' && typeof map.center.lng === 'function') {
             setCenterPosition({
                 lat: map.center.lat(),
                 lng: map.center.lng(),
@@ -172,19 +170,22 @@ const GoogleMapComponent = ({
                     setMapSetup(false)
                     setDisablePickButton(false)
                     setLocationEnabled(true)
-                    setLocation({
-                        lat: map?.center?.lat(),
-                        lng: map?.center?.lng(),
-                    })
-                    setCenterPosition({
-                        lat: map?.center?.lat(),
-                        lng: map?.center?.lng(),
-                    })
+                    // Verificar se map.center existe e tem funções lat e lng válidas
+                    if (map?.center && typeof map.center.lat === 'function' && typeof map.center.lng === 'function') {
+                        setLocation({
+                            lat: map.center.lat(),
+                            lng: map.center.lng(),
+                        })
+                        setCenterPosition({
+                            lat: map.center.lat(),
+                            lng: map.center.lng(),
+                        })
+                    }
                     setPlaceDetailsEnabled(false)
                     setPlaceDescription(undefined)
                 }}
                 onZoomChanged={() => {
-                    if (map) {
+                    if (map?.center && typeof map.center.lat === 'function' && typeof map.center.lng === 'function') {
                         setLocationEnabled(true)
                         setLocation({
                             lat: map.center.lat(),

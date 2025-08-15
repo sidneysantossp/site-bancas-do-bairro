@@ -102,6 +102,19 @@ export const ChoiceValues = (props) => {
         )} ${choice?.min} ${t('and maximum')} ${choice?.max} ${t('items.')}`
     }
 
+    // Compute a localized display name for variation headers
+    const getDisplayName = (choiceName, idx) => {
+        if (!choiceName) return `Variação-${idx + 1}`
+        const nameStr = String(choiceName)
+        // Matches "Variation-1", "Variation 1", and common typo "Vatiation-1"
+        const match = nameStr.match(/(var|vat)iation[-\s]?(\d+)/i)
+        if (match && match[2]) {
+            return `Variação-${match[2]}`
+        }
+        // Fallback: keep original name
+        return choiceName
+    }
+
     const isShowStockText = (option) => {
         return selectedOptions?.some((item) => {
             return (
@@ -125,7 +138,7 @@ export const ChoiceValues = (props) => {
                     textAlign: 'left',
                 }}
             >
-                {choice.name} :
+                {getDisplayName(choice.name, choiceIndex)} :
                 {choice?.type === 'multi' && (
                     <CustomTooltip title={text} placement="top-start">
                         <InfoIcon

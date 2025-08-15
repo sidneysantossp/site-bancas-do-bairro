@@ -469,7 +469,7 @@ const DrawerMenu = ({ zoneid, cartListRefetch }) => {
                             startIcon={<LockIcon />}
                             onClick={() => handleOpenAuthModal('sign-in')}
                         >
-                            {t('Sign In')}
+                            Minha Conta
                         </Button>
                         <CustomStackFullWidth
                             direction="row"

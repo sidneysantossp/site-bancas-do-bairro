@@ -4,7 +4,7 @@ import useMediaQuery from '@mui/material/useMediaQuery'
 import ContactLists from './ContactLists'
 import ChatContactSearch from './ChatContactSearch'
 import ChatWithAdmin from './ChatWithAdmin'
-import { t } from 'i18next'
+import { useTranslation } from 'react-i18next'
 import ChatUserTab from './ChatUserTab'
 import Skeleton from '@mui/material/Skeleton'
 
@@ -29,6 +29,11 @@ const ChatContent = (props) => {
     } = props
     const [channelListItems, setChannelListItems] = useState([])
     const mdUp = useMediaQuery((theme) => theme.breakpoints.up('md'))
+    const { t } = useTranslation()
+    const tt = (key, fallback) => {
+        const translated = t(key)
+        return translated === key ? (fallback ?? key) : translated
+    }
 
     const handleChatWithAdmin = () => {
         if (isFetched) {
@@ -50,7 +55,7 @@ const ChatContent = (props) => {
                 fontSize="18px"
                 fontWeight="700"
             >
-                {t('Messages')}
+                {tt('Messages', 'Mensagens')}
             </Typography>
             <ChatContactSearch
                 searchValue={searchValue}

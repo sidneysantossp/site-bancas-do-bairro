@@ -26,7 +26,7 @@ const SearchPage = ({ configData }) => {
 export default SearchPage
 export const getServerSideProps = async () => {
     const configRes = await fetch(
-        `${process.NEXT_PUBLIC_BASE_URL}/api/v1/config`,
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/config`,
         {
             method: 'GET',
             headers: CustomHeader,

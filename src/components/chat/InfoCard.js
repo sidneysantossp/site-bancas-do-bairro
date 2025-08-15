@@ -128,7 +128,7 @@ const InfoCard = (props) => {
                     >
                         {last_message?.message !== null
                             ? last_message?.message
-                            : t('Sent attachment')}{' '}
+                            : 'Anexo Enviado'}{' '}
                     </CustomTypographyEllipsis>
                     {!isLoading && !isSender && unRead > 0 ? (
                         <Stack

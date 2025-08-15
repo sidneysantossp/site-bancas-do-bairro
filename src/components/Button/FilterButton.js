@@ -65,7 +65,7 @@ const FilterButton = ({ handleClick, activeFilters, forSearch }) => {
                         fontWeight="500"
                         color={theme.palette.primary.main}
                     >
-                        {t('Filter')}
+                        {'Filtros'}
                     </Typography>
                 )}
             </Stack>

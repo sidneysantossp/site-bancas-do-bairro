@@ -156,7 +156,7 @@ const Cuisines = () => {
                                                 }
                                                 sx={{ marginInlineEnd: '10px' }}
                                             >
-                                                {t('Explore More')}
+                                                {'Ver Todos'}
                                             </CustomViewAll>
                                         </Stack>
                                     </CustomStackFullWidth>

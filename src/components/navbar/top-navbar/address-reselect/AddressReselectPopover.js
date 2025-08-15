@@ -130,12 +130,12 @@ const AddressReselectPopover = (props) => {
                         >
                             {token && !mapOpen ? (
                                 <>
-                                    {t('Select from saved addresses')}{' '}
+                                    {'Selecione dos endereços salvos'}{' '}
                                     {/* <br /> */}
-                                    {t('or pick from map')}
+                                    {'ou escolha no mapa'}
                                 </>
                             ) : (
-                                t('Type your address here or pick from map')
+                                'Digite seu endereço aqui ou escolha no mapa'
                             )}
                         </Typography>
                         {token && !mapOpen ? (
@@ -159,7 +159,7 @@ const AddressReselectPopover = (props) => {
                                     }}
                                     onClick={setUserCurrentLocation}
                                 >
-                                    {t('Use Current Location')}
+                                    {'Usar Localização Atual'}
                                 </Button>
                                 <CustomButtonPrimary
                                     paddingLeft="25px"
@@ -169,7 +169,7 @@ const AddressReselectPopover = (props) => {
                                     maxWidth="200px"
                                     onClick={() => setMapOpen(true)}
                                 >
-                                    {t('Pick from Map')}
+                                    {'Escolher no Mapa'}
                                 </CustomButtonPrimary>
                             </CustomStackFullWidth>
                         ) : (
@@ -227,7 +227,7 @@ const AddressReselectPopover = (props) => {
                                             paddingBottom="10px"
                                             onClick={getLocation}
                                         >
-                                            {t('Select')}
+                                            {'Selecionar'}
                                         </Button>
                                     )}
                                     <IconButton

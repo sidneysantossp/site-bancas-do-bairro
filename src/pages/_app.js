@@ -43,6 +43,11 @@ function App({ Component, pageProps, emotionCache = clientSideEmotionCache }) {
         ssr: false,
     })
     useEffect(() => {
+        // Temporary: Force clear language settings to test pt-br translations
+        localStorage.removeItem('language')
+        localStorage.removeItem('i18nextLng')
+        localStorage.setItem('language', 'pt-br')
+        
         const userLanguage = localStorage.getItem('language')
         if (!userLanguage) {
             localStorage.setItem('language', i18n.language)
@@ -52,10 +57,19 @@ function App({ Component, pageProps, emotionCache = clientSideEmotionCache }) {
     useEffect(() => {
         const userLanguage = localStorage.getItem('language')
         if (userLanguage) {
-            i18n.changeLanguage(userLanguage?.toLowerCase())
+            const normalized = userLanguage?.toLowerCase()
+            const lang =
+                normalized === 'pt' || normalized?.startsWith('pt-')
+                    ? 'pt-br'
+                    : normalized
+            i18n.changeLanguage(lang)
+            if (lang !== normalized) {
+                localStorage.setItem('language', lang)
+            }
         }
         if (!userLanguage) {
             i18n.changeLanguage(i18n.language)
+            localStorage.setItem('language', i18n.language)
         }
         setViewFooter(true)
     }, [])

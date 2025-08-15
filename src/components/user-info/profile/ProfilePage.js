@@ -14,6 +14,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { getAmount } from "@/utils/customFunctions"
 import { CustomPaperBigCard, CustomStackFullWidth, SliderCustom } from "@/styled-components/CustomStyles.style"
 import { t } from 'i18next'
+import { useTranslation } from 'react-i18next'
 import { useUserDelete } from "@/hooks/react-query/user-delete/useUserDelete"
 import AuthModal from '../../auth'
 import { useRouter } from 'next/router'
@@ -39,6 +40,11 @@ import { setEditProfile } from "@/redux/slices/editProfile"
 
 const ProfilePage = () => {
     const router = useRouter()
+    const { t: ti } = useTranslation()
+    const tt = (key, fallback) => {
+        const translated = ti(key)
+        return translated === key ? (fallback ?? key) : translated
+    }
     const [authModalOpen, setOpen] = useState(false)
     const [modalFor, setModalFor] = useState('sign-in')
     const [anchorEl, setAnchorEl] = useState(null);
@@ -265,7 +271,7 @@ const ProfilePage = () => {
                                 >
                                     {(!isSmall) &&
                                         <Typography fontSize="16px" fontWeight="500" padding="0">
-                                            {t('Personal Details')}
+                                            {tt('Personal Details', 'Detalhes Pessoais')}
                                         </Typography>
                                     }
                                     {isEditProfile === true ? (
@@ -275,7 +281,7 @@ const ProfilePage = () => {
                                                     <IconButton sx={{ width: "30px", height: "30px", color: theme => theme.palette.primary.main }}>
                                                         <ArrowBackIosNewIcon sx={{ fontSize: "10px" }} />
                                                     </IconButton>
-                                                    <Typography fontSize="13px" color={theme.palette.primary.main}>{t("Go Back")}</Typography>
+                                                    <Typography fontSize="13px" color={theme.palette.primary.main}>{tt("Go Back", 'Voltar')}</Typography>
                                                 </Stack>
                                             }
                                             <IconButton onClick={handleClick} sx={{ padding: "0 0 0 16px" }}>
@@ -305,7 +311,7 @@ const ProfilePage = () => {
                                                             fontSize="14px"
                                                             fontWeight="400"
                                                         >
-                                                            {t('Edit Profile')}
+                                                            {tt('Edit Profile', 'Editar Perfil')}
                                                         </Typography>
                                                     )}
                                                     <EditSvg />
@@ -355,7 +361,7 @@ const ProfilePage = () => {
                 >
                     <UserIcon />
                     <Typography fontSize="14px" fontWeight={500} color={theme.palette.text.secondary}>
-                        {t("Delete Account")}
+                        {tt("Delete Account", 'Excluir Conta')}
                     </Typography>
                 </CustomStackFullWidth>
                 {deleteModal &&

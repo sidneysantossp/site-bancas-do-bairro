@@ -24,9 +24,11 @@ export const buttonsData = [
 ]
 import Meta from '../Meta'
 import { noOrderFound } from '@/utils/LocalImages'
+import { useTranslation } from 'react-i18next'
 
 const OrderHistoryPage = () => {
     const dispatch = useDispatch()
+    const { t } = useTranslation()
     const theme = useTheme()
     const { global } = useSelector((state) => state.globalSettings)
     const { orderType } = useSelector((state) => state.orderType)
@@ -52,7 +54,7 @@ const OrderHistoryPage = () => {
     return (
         <>
             <Meta
-                title={` My Order-${global?.business_name}`}
+                title={`${t('My Order')}-${global?.business_name}`}
                 description=""
                 keywords=""
             />

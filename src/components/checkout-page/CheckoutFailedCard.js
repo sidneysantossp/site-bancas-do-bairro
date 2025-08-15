@@ -56,7 +56,7 @@ const CheckoutFailedCard = ({ id }) => {
                     fullWidth
                     onClick={handleOnSuccess}
                 >
-                    {t('Switch to Cash On Delivery')}
+                    Mudar para Pagamento na Entrega
                 </Button>
                 <Button variant="contained" fullWidth onClick={handleOrderFail}>
                     {t('Continue with Order Fail')}

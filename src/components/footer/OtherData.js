@@ -1,11 +1,11 @@
 export const OtherData = [
     {
-        name: 'Privacy Policy',
+        name: 'Política de Privacidade',
         value: 'privacy-policy',
         link: '/privacy-policy',
     },
     {
-        name: 'Term & Conditions',
+        name: 'Termos e Condições',
         value: 'term-&-Conditions',
         link: '/terms-and-conditions',
     },

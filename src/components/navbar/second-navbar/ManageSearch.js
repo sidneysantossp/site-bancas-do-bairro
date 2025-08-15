@@ -3,11 +3,13 @@ import Box from '@mui/material/Box'
 import CustomSearch from '../../custom-search/CustomSearch'
 import SearchSuggestionsBottom from '../../search/SearchSuggestionsBottom'
 import { useTheme } from "@emotion/react";
+import { useTranslation } from 'react-i18next'
 
 const ManageSearch = ({ zoneid, token, router }) => {
     const [openSearchSuggestions, setOpenSearchSuggestions] = useState(false)
     const [selectedValue, setSelectedValue] = useState('')
     const theme=useTheme()
+    const { t } = useTranslation()
     const [onSearchdiv, setOnSearchdiv] = useState(false)
     const handleKeyPress = (value) => {
         // if (e.key === 'Enter') {
@@ -78,7 +80,7 @@ const ManageSearch = ({ zoneid, token, router }) => {
                     {zoneid && router.pathname !== '/' && (
                         <>
                             <CustomSearch
-                                label="Search foods and restaurants..."
+                                label="Busque por um Produto ou uma Banca"
                                 handleSearchResult={handleKeyPress}
                                 selectedValue={selectedValue}
                                 borderRadius="8px"

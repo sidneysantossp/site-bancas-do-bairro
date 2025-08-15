@@ -11,12 +11,12 @@ export const CustomBoxFullWidth = styled(Box)(({ theme }) => ({
 
 export const ChatSidebarDesktop = styled(Drawer)(({ theme }) => ({
     flexShrink: 0,
-    width: 260,
+    width: 300,
     minHeight: '77vh',
     height: '100%',
     '& .MuiDrawer-paper': {
         position: 'relative',
-        width: 260,
+        width: 300,
         height: '100%',
         background:
             theme.palette.mode === 'dark'

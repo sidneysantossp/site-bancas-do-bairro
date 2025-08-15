@@ -187,8 +187,8 @@ const RestaurantBoxCard = (props) => {
                             }}
                         >
                             {opening_time === 'closed'
-                                ? t('Closed Now')
-                                : ` Open at ${moment(
+                                ? 'Banca Fechada'
+                                : ` Abre às ${moment(
                                       opening_time,
                                       'HH:mm:ss'
                                   ).format('hh:mm A')}`}
@@ -220,7 +220,7 @@ const RestaurantBoxCard = (props) => {
                         color={theme.palette.whiteContainer.main}
                         sx={{ textTransform: 'uppercase', fontWeight: '700' }}
                     >
-                        {t('Closed Now')}
+                        Banca Fechada
                     </Typography>
                 </Stack>
             )
@@ -231,7 +231,7 @@ const RestaurantBoxCard = (props) => {
             pathname: `/restaurant/[id]`,
             query: {
                 id: `${slug ? slug : id}`,
-                restaurant_zone_id: zone_id,
+                banca_zone_id: zone_id,
                 isDineIn: dine_in ?? dine_in,
             },
         })
@@ -372,23 +372,13 @@ const RestaurantBoxCard = (props) => {
                                 )}
                             </Stack>
                         )}
-                        {!visitAgain && (
+                        {!visitAgain && freeDelivery && (
                             <Typography
                                 align="left"
                                 fontSize="12px"
                                 color={theme.palette.neutral[600]}
                             >
-                                {delivery_time}
-                                {freeDelivery && (
-                                    <Typography
-                                        component="span"
-                                        fontSize="12px"
-                                        color={theme.palette.neutral[600]}
-                                        marginLeft="5px"
-                                    >
-                                        {t('Free Delivery')}
-                                    </Typography>
-                                )}
+                                {'Entrega Grátis'}
                             </Typography>
                         )}
                     </CustomStackFullWidth>

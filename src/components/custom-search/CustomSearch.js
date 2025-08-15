@@ -57,7 +57,7 @@ const CustomSearch = ({
                 >
                     <NoSsr>
                         <StyledInputBase
-                            placeholder={t(label)}
+                            placeholder={label}
                             value={value}
                             onChange={(e) => handleChange(e.target.value)}
                             inputProps={{ 'aria-label': 'search' }}

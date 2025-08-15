@@ -125,9 +125,7 @@ const Navigation = () => {
             }
             isSmall={isSmall}
         >
-            {(isSmall || userLocation) && (
-                <TopNav cartListRefetch={cartListRefetch} />
-            )}
+            <TopNav cartListRefetch={cartListRefetch} />
             {!isSmall && (
                 <SecondNavbar
                     isSticky={isSticky}

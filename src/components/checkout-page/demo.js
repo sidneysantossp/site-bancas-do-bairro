@@ -1,13 +1,13 @@
 export const productUnavailableData = [
-    'Remove it form my cart',
-    'I will wait until it is restocked',
-    'Please cancel the order',
-    'Call me ASAP',
-    'Notify me when it is back',
+    'Remover do meu carrinho',
+    'Vou aguardar até ser reposto',
+    'Por favor cancele o pedido',
+    'Me ligue o mais rápido possível',
+    'Me avise quando voltar',
 ]
 export const deliveryInstructions = [
-    'Deliver to the front door',
-    'Deliver to the reception desk',
-    'Avoid calling phone',
-    'Come with no sound',
+    'Entregar na porta da frente',
+    'Entregar na recepção',
+    'Evitar ligar no telefone',
+    'Vir sem fazer barulho',
 ]

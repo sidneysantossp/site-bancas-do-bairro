@@ -26,7 +26,7 @@ const ClosedNowOverlay = (props) => {
                 align="center"
                 color={theme.palette.neutral[100]}
             >
-                {t('Closed Now')}
+                Banca Fechada
             </Typography>
         </Stack>
     )

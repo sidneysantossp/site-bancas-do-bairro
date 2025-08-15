@@ -59,8 +59,10 @@ export const getSelectedVariations = (variations) => {
     return selectedItem
 }
 
-export const CustomNavBox = styled(Box)(({ theme, isSticky }) => ({
-    display: isSticky ? 'visible' : 'hidden',
+export const CustomNavBox = styled(Box, {
+    shouldForwardProp: (prop) => prop !== 'isSticky'
+})(({ theme, isSticky }) => ({
+    display: 'block',
     background: theme.palette.navbarBg,
     boxShadow: '0px 5px 15px 0px rgba(0, 0, 0, 0.05)',
 }))
@@ -158,7 +160,7 @@ const SecondNavbar = ({ isSticky, cartListRefetch }) => {
                                             theme.palette.whiteContainer.main,
                                     }}
                                 >
-                                    {t('Sign In')}
+                                    Minha Conta
                                 </CustomTypography>
                                 <LockIcon fontSize="small" />
                             </CustomStackFullWidth>
@@ -288,26 +290,11 @@ const SecondNavbar = ({ isSticky, cartListRefetch }) => {
                                 justifyContent="center"
                                 gap="1rem"
                             >
-                                {!location && (
-                                    <LogoSide
-                                        global={global}
-                                        width="unset"
-                                        businessLogo={businessLogo}
-                                    />
-                                )}
-                                {!location && (
-                                    <AddressReselect
-                                        location={location}
-                                        userLocationUpdate={userLocationUpdate}
-                                    />
-                                )}
-                                {!isSmall && location && (
-                                    <NavLinks
-                                        languageDirection={languageDirection}
-                                        t={t}
-                                        zoneid={zoneid}
-                                    />
-                                )}
+                                <NavLinks
+                                    languageDirection={languageDirection}
+                                    t={t}
+                                    zoneid={zoneid}
+                                />
                             </Stack>
                             <Stack direction="row" alignItems="center">
                                 {handleShowSearch()}
@@ -321,10 +308,12 @@ const SecondNavbar = ({ isSticky, cartListRefetch }) => {
                                         >
                                             <ThemeSwitches />
                                         </Stack>
+                                        {/* Widget de idioma removido conforme solicitado
                                         <CustomLanguage
                                             countryCode={countryCode}
                                             language={language}
                                         />
+                                        */}
                                     </Stack>
                                 )}
                                 <Box
@@ -337,12 +326,14 @@ const SecondNavbar = ({ isSticky, cartListRefetch }) => {
                                 >
                                     {handleAuthBasedOnRoute()}
                                 </Box>
+                                {/* Widget de idioma removido conforme solicitado
                                 {!isSmall && location && (
                                     <CustomLanguage
                                         countryCode={countryCode}
                                         language={language}
                                     />
                                 )}
+                                */}
                             </Stack>
                         </CustomStackFullWidth>
                     </Toolbar>

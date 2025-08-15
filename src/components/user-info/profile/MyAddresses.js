@@ -5,7 +5,7 @@ import {
 } from '@/styled-components/CustomStyles.style'
 import { Grid, Stack, useMediaQuery } from '@mui/material'
 import { CustomTypography } from '../../custom-tables/Tables.style'
-import { t } from 'i18next'
+import { useTranslation } from 'react-i18next'
 import { useTheme } from '@mui/material/styles'
 import { useQuery } from 'react-query'
 import { AddressApi } from '@/hooks/react-query/config/addressApi'
@@ -18,6 +18,11 @@ import { noAddressFound } from '@/utils/LocalImages'
 
 const MyAddresses = () => {
     const theme = useTheme()
+    const { t } = useTranslation()
+    const tt = (key, fallback) => {
+        const translated = t(key)
+        return translated === key ? (fallback ?? key) : translated
+    }
     const isXs = useMediaQuery(theme.breakpoints.down('sm'))
     const { data, refetch, isFetching } = useQuery(
         ['address-list'],
@@ -36,7 +41,7 @@ const MyAddresses = () => {
                     pb="10px"
                 >
                     <CustomTypography fontWeight="500">
-                        {t('My Addresses')}
+                        {tt('My Addresses', 'Meus Endereços')}
                     </CustomTypography>
                     <AddNewAddress refetch={refetch} />
                 </CustomStackFullWidth>

@@ -16,9 +16,11 @@ const HomeGuard = (props) => {
             if(from==="checkout" && cartList?.length===0 && page !== 'campaign'){
                 router.push('/home')
             }
-            const zoneId = JSON.parse(localStorage.getItem('zoneid'))
+            const zoneId = localStorage.getItem('zoneid')
             const location = localStorage.getItem('location')
-            if (zoneId?.length > 0 && location) {
+            
+            // Verificar se há localização válida (mais flexível)
+            if (location && location !== 'null' && location !== 'undefined' && location.trim() !== '') {
                 setChecked(true)
             } else {
                 router.push('/')

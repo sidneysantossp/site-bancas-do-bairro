@@ -35,7 +35,7 @@ const WishListRestaurantCard = ({ restaurant, deleteWishlistRes }) => {
             pathname: `/restaurant/[id]`,
             query: {
                 id: `${slug ? slug : id}`,
-                restaurant_zone_id: zone_id,
+                banca_zone_id: zone_id,
             },
         })
     }

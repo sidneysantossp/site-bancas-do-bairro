@@ -39,7 +39,13 @@ const RestaurantScheduleTime = (props) => {
     const maxDate = new Date()
     maxDate.setDate(currentDate.getDate() + global?.customer_order_date - 1)
     const [selectedDate, setSelectedDate] = useState(null)
-    const { t } = useTranslation()
+    const { t, i18n } = useTranslation()
+    const tt = (key, fallback) => {
+        const translated = t(key)
+        const isPt = i18n?.language?.toLowerCase?.().startsWith('pt')
+        if (isPt) return fallback ?? translated ?? key
+        return translated === key ? (fallback ?? key) : translated
+    }
     const [time, setTime] = useState('Now')
     const [day, setday] = useState('Today')
     const [slot, setSlot] = useState(null)
@@ -138,14 +144,14 @@ const RestaurantScheduleTime = (props) => {
                     <Grid container spacing={3}>
                         <Grid item xs={12} md={12}>
                             <CustomTypographyBold>
-                                {t('Preferable Time')}
+                                {tt('Preferable Time', 'Horário preferido')}
                             </CustomTypographyBold>
                         </Grid>
                         <Grid item md={6} sm={6} xs={12}>
                             <FormControl fullWidth>
-                                <InputLabel>{t('Time')}</InputLabel>
+                                <InputLabel>{tt('Time', 'Dia')}</InputLabel>
                                 <Select
-                                    label={t('Time')}
+                                    label={tt('Time', 'Dia')}
                                     onChange={(event, newValue) => {
                                         handleTime(event, newValue)
                                     }}
@@ -159,7 +165,7 @@ const RestaurantScheduleTime = (props) => {
                                             },
                                         }}
                                     >
-                                        {t('Today')}
+                                        {tt('Today', 'Hoje')}
                                     </MenuItem>
                                     <MenuItem
                                         value={getDayNumber(tomorrow)}
@@ -169,7 +175,7 @@ const RestaurantScheduleTime = (props) => {
                                             },
                                         }}
                                     >
-                                        {t('Tomorrow')}
+                                        {tt('Tomorrow', 'Amanhã')}
                                     </MenuItem>
                                     {global?.customer_date_order_sratus && (
                                         <MenuItem
@@ -181,7 +187,7 @@ const RestaurantScheduleTime = (props) => {
                                                 },
                                             }}
                                         >
-                                            {t('Custom Date')}
+                                            {tt('Custom Date', 'Data personalizada')}
                                         </MenuItem>
                                     )}
                                 </Select>
@@ -194,10 +200,10 @@ const RestaurantScheduleTime = (props) => {
                                         {day === 'Today' ? (
                                             <FormControl fullWidth>
                                                 <InputLabel>
-                                                    {t('Schedule')}
+                                                    {tt('Schedule', 'Agendar')}
                                                 </InputLabel>
                                                 <Select
-                                                    label={t('Schedule')}
+                                                    label={tt('Schedule', 'Agendar')}
                                                     onChange={(
                                                         event,
                                                         newValue
@@ -220,7 +226,7 @@ const RestaurantScheduleTime = (props) => {
                                                             },
                                                         }}
                                                     >
-                                                        {t('Now')}
+                                                        {tt('Now', 'Agora')}
                                                     </MenuItem>
                                                     <MenuItem
                                                         value={'Later'}
@@ -231,7 +237,7 @@ const RestaurantScheduleTime = (props) => {
                                                             },
                                                         }}
                                                     >
-                                                        {t('Later')}
+                                                        {tt('Later', 'Mais tarde')}
                                                     </MenuItem>
                                                 </Select>
                                             </FormControl>
@@ -254,7 +260,7 @@ const RestaurantScheduleTime = (props) => {
                                                         }
                                                     >
                                                         <DatePicker
-                                                            label="Schedule"
+                                                            label={tt('Schedule', 'Agendar')}
                                                             value={selectedDate}
                                                             onChange={
                                                                 handleDateChange
@@ -331,7 +337,7 @@ const RestaurantScheduleTime = (props) => {
                                         fontSize="14px"
                                         fontWeight="700"
                                     >
-                                        {t('Restaurant is close')}
+                                        {tt('Restaurant is close', 'O restaurante está fechado')}
                                     </Typography>
                                 </Stack>
                             )}

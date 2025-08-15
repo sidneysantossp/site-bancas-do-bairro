@@ -125,7 +125,7 @@ const HorizontalFoodCard = (props) => {
                             ) ? (
                                 <CustomOverlayBox>
                                     <Typography align="center" variant="h5">
-                                        {t('Not Available now')}
+                                        Indisponível
                                     </Typography>
                                 </CustomOverlayBox>
                             ) : (

@@ -75,6 +75,10 @@ const OrderCalculation = (props) => {
     const { token } = useSelector((state) => state.userToken)
     const tempExtraCharge = extraCharge ?? 0
     const { t } = useTranslation()
+    const tt = (key, fallback) => {
+        const translated = t(key)
+        return translated === key ? (fallback ?? key) : translated
+    }
     const [freeDelivery, setFreeDelivery] = useState('false')
     const [anchorEl, setAnchorEl] = useState(null)
     const theme = useTheme()
@@ -145,7 +149,7 @@ const OrderCalculation = (props) => {
             tempExtraCharge
         )
         if (price === 0) {
-            return <Typography variant="h4">{t('Free')}</Typography>
+            return <Typography variant="h4">{tt('Free', 'Grátis')}</Typography>
         } else {
             return (
                 <Stack
@@ -231,7 +235,7 @@ const OrderCalculation = (props) => {
     }, [subscriptionStates])
     const totalAmountAfterPartial = totalPrice - walletBalance
 
-    const vat = t('VAT/TAX')
+    const vat = tt('VAT/TAX', 'IVA/Imposto')
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget)
     }
@@ -256,8 +260,8 @@ const OrderCalculation = (props) => {
             Number.parseInt(item.id) ===
             Number.parseInt(restaurantData?.data?.zone_id)
     )
-    const extraText = t('This charge includes extra vehicle charge')
-    const badText = t('and bad weather charge')
+    const extraText = tt('This charge includes extra vehicle charge', 'Esta taxa inclui cobrança extra de veículo')
+    const badText = tt('and bad weather charge', 'e taxa por mau tempo')
     const deliveryToolTipsText = `${extraText} ${getAmount(
         tempExtraCharge,
         currencySymbolDirection,
@@ -279,8 +283,8 @@ const OrderCalculation = (props) => {
             <CalculationGrid container md={12} xs={12} spacing={1}>
                 <Grid item md={8} xs={8}>
                     {subscriptionOrderCount > 0
-                        ? t('Items price')
-                        : t('Subtotal')}
+                        ? tt('Items price', 'Preço dos itens')
+                        : tt('Subtotal', 'Subtotal')}
                 </Grid>
                 <Grid
                     item
@@ -298,7 +302,7 @@ const OrderCalculation = (props) => {
                     </Typography>
                 </Grid>
                 <Grid item md={8} xs={8}>
-                    {t('Discount')}
+                    {tt('Discount', 'Desconto')}
                 </Grid>
                 <Grid item md={4} xs={4} align="right">
                     <Stack
@@ -326,11 +330,11 @@ const OrderCalculation = (props) => {
                 {couponDiscount ? (
                     <>
                         <Grid item md={8} xs={8}>
-                            {t('Voucher Discount')}
+                            {tt('Voucher Discount', 'Desconto do Cupom')}
                         </Grid>
                         <Grid item md={4} xs={4} align="right">
                             {couponDiscount.coupon_type === 'free_delivery' ? (
-                                <p>{t('Free Delivery')}</p>
+                                <p>{tt('Free Delivery', 'Entrega Grátis')}</p>
                             ) : (
                                 <Stack
                                     direction="row"
@@ -354,7 +358,7 @@ const OrderCalculation = (props) => {
                 {referDiscount ? (
                     <>
                         <Grid item md={8} xs={8}>
-                            {t('Referral Discount')}
+                            {tt('Referral Discount', 'Desconto por Indicação')}
                         </Grid>
                         <Grid item md={4} xs={4} align="right">
                             <Typography fontWeight="700">
@@ -374,8 +378,8 @@ const OrderCalculation = (props) => {
                         <Grid item md={8} xs={8}>
                             {`${vat} (${restaurantData?.data?.tax}% ${
                                 global?.tax_included === 1
-                                    ? t('Included')
-                                    : t('Excluded')
+                                    ? tt('Included', 'Incluído')
+                                    : tt('Excluded', 'Excluído')
                             })`}
                         </Grid>
                         <Grid item md={4} xs={4} align="right">
@@ -411,7 +415,7 @@ const OrderCalculation = (props) => {
                 deliveryTip > 0 ? (
                     <>
                         <Grid item md={8} xs={8}>
-                            {t('Deliveryman tips')}
+                            {tt('Deliveryman tips', 'Gorjeta do Entregador')}
                         </Grid>
                         <Grid item md={4} xs={4} align="right">
                             <Stack
@@ -437,7 +441,7 @@ const OrderCalculation = (props) => {
                 {Number.parseInt(global?.additional_charge_status) === 1 ? (
                     <>
                         <Grid item md={8} xs={8}>
-                            {t(global?.additional_charge_name)}
+                            {tt(global?.additional_charge_name, global?.additional_charge_name)}
                         </Grid>
                         <Grid item md={4} xs={4} align="right">
                             <Stack
@@ -464,7 +468,7 @@ const OrderCalculation = (props) => {
                     extraPackagingCharge > 0 && (
                         <>
                             <Grid item md={8} xs={8}>
-                                {t('Extra Packaging Charge')}
+                                {tt('Extra Packaging Charge', 'Taxa Extra de Embalagem')}
                             </Grid>
                             <Grid item md={4} xs={4} align="end">
                                 <Typography fontWeight="700">
@@ -489,7 +493,7 @@ const OrderCalculation = (props) => {
                                 color={theme.palette.neutral[1000]}
                                 fontSize="15px"
                             >
-                                {t('Delivery fee')}
+                                {tt('Delivery fee', 'Taxa de Entrega')}
                                 {Number.parseInt(
                                     restaurantData?.data?.self_delivery_system
                                 ) !== 1 && (
@@ -551,7 +555,7 @@ const OrderCalculation = (props) => {
                                 fontWeight="600"
                                 color={theme.palette.neutral[1000]}
                             >
-                                {t('Promo Code')}
+                                {tt('Promo Code', 'Cupom')}
                             </Typography>
                             <Button
                                 endIcon={
@@ -564,7 +568,7 @@ const OrderCalculation = (props) => {
                                 }
                                 onClick={handleClick}
                             >
-                                {t('Add Voucher')}
+                                {tt('Add Voucher', 'Adicionar Cupom')}
                             </Button>
                         </Stack>
                     </Grid>
@@ -592,7 +596,7 @@ const OrderCalculation = (props) => {
                     <>
                         <TotalGrid container md={12} xs={12} mt="1rem">
                             <Grid item md={8} xs={8} pl=".5rem">
-                                <Typography>{t('Subtotal')}</Typography>
+                                <Typography>{tt('Subtotal', 'Subtotal')}</Typography>
                             </Grid>
                             <Grid
                                 item
@@ -613,7 +617,7 @@ const OrderCalculation = (props) => {
                         </TotalGrid>
                         <Grid item md={8} xs={8}>
                             <Typography color={theme.palette.primary.main}>
-                                {t('Subscription Order Count')}
+                                {tt('Subscription Order Count', 'Quantidade de Pedidos da Assinatura')}
                             </Typography>
                         </Grid>
                         <Grid
@@ -641,7 +645,7 @@ const OrderCalculation = (props) => {
                 <TotalGrid container md={12} xs={12} mt="1rem">
                     <Grid item md={8} xs={8} pl=".5rem">
                         <Typography color={theme.palette.primary.main}>
-                            {t('Total')}
+                            {tt('Total', 'Total')}
                         </Typography>
                     </Grid>
                     <Grid
@@ -666,7 +670,7 @@ const OrderCalculation = (props) => {
                 subscriptionStates?.order !== '1' ? (
                     <>
                         <Grid item md={8} xs={8}>
-                            {t('Paid by wallet')}
+                            {tt('Paid by wallet', 'Pago com carteira')}
                         </Grid>
                         <Grid item md={4} xs={4} align="right">
                             <Stack
@@ -693,7 +697,7 @@ const OrderCalculation = (props) => {
                 subscriptionStates?.order !== '1' ? (
                     <>
                         <Grid item md={8} xs={8}>
-                            {t('Due Payment')}
+                            {tt('Due Payment', 'Pagamento pendente')}
                         </Grid>
                         <Grid item md={4} xs={4} align="right">
                             <Stack

@@ -47,8 +47,8 @@ const ThemeSwitches = ({ noText }) => {
             {!noText ? (
                 <Typography fontSize="14px" color={theme.palette.neutral[1000]}>
                     {settings.theme === 'light'
-                        ? t('Light Mode')
-                        : t('Dark Mode')}
+                        ? 'Tema Claro'
+                        : 'Tema Escuro'}
                 </Typography>
             ) : null}
         </Stack>

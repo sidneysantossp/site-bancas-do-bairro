@@ -19,6 +19,10 @@ import { noDataFound } from '@/utils/LocalImages'
 
 const CouponList = () => {
     const { t } = useTranslation()
+    const tt = (key, fallback) => {
+        const translated = t(key)
+        return translated === key ? (fallback ?? key) : translated
+    }
     const theme = useTheme()
     const matches = useMediaQuery('(max-width:745px)')
     const isXSmall = useMediaQuery(theme.breakpoints.down('sm'))
@@ -45,10 +49,17 @@ const CouponList = () => {
         }
     }, [zoneId, refetch])
 
+    // Normalize API shape safely
+    const items = Array.isArray(data?.data)
+        ? data?.data
+        : Array.isArray(data?.data?.data)
+        ? data?.data?.data
+        : []
+
     return (
         <>
             <Meta
-                title={` My Coupons-${global?.business_name}`}
+                title={` ${tt('My Coupons', 'Meus Cupons')}-${global?.business_name}`}
                 description=""
                 keywords=""
             />
@@ -63,7 +74,7 @@ const CouponList = () => {
                 <CustomStackFullWidth spacing={2}>
                     {!isXSmall && (
                         <Typography fontWeight="600" fontSize="16px">
-                            {t('My Coupons')}
+                            {tt('My Coupons', 'Meus Cupons')}
                         </Typography>
                     )}
                     <Grid
@@ -72,7 +83,7 @@ const CouponList = () => {
                         columnSpacing={isXSmall ? 0 : 2}
                         sx={{ paddingRight: !isXSmall && '10px' }}
                     >
-                        {data?.data?.map((item) => (
+                        {items.map((item) => (
                             <Grid
                                 item
                                 xs={12}
@@ -110,8 +121,7 @@ const CouponList = () => {
                                 </Grid>
                             </Grid>
                         )}
-                        {((data?.data?.length === 0 && !isLoading) ||
-                            (data === undefined && !isLoading)) && (
+                        {(!isLoading && items.length === 0) && (
                             <Stack
                                 justifyContent="center"
                                 alignItems="center"

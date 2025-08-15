@@ -63,7 +63,6 @@ import DineIn from '@/components/home/dine-in'
 import NearByRestaurant from '@/components/home/visit-again/NearByRestaurant'
 import CloseIcon from '@mui/icons-material/Close'
 import CustomImageContainer from '@/components/CustomImageContainer'
-
 const Homes = ({ configData }) => {
     const theme = useTheme()
     const [fetchedData, setFetcheedData] = useState({})
@@ -89,6 +88,39 @@ const Homes = ({ configData }) => {
 
     const { welcomeModal, isNeedLoad } = useSelector((state) => state.utilsData)
     const dispatch = useDispatch()
+    
+    // Função para garantir zona válida
+    const ensureValidZone = () => {
+        const zoneId = localStorage.getItem('zoneid')
+        const location = localStorage.getItem('location')
+        
+        if (!zoneId || zoneId === 'null' || zoneId === 'undefined' || zoneId === '[]' ||
+            !location || location === 'null' || location === 'undefined' || location === '') {
+            
+            console.log('Definindo zona e localização padrão para carregamento das bancas')
+            localStorage.setItem('zoneid', JSON.stringify([1]))
+            localStorage.setItem('location', 'São Paulo, SP - Brasil')
+            
+            // Tentar obter geolocalização se disponível
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const coords = { lat: position.coords.latitude, lng: position.coords.longitude }
+                        localStorage.setItem('currentLatLng', JSON.stringify(coords))
+                        console.log('Geolocalização obtida:', coords)
+                    },
+                    (error) => {
+                        console.log('Erro na geolocalização, usando padrão:', error.message)
+                    },
+                    { enableHighAccuracy: false, timeout: 5000, maximumAge: 300000 }
+                )
+            }
+            
+            return true
+        }
+        return false
+    }
+
     const onSuccessHandler = (response) => {
         setFetcheedData(response)
         dispatch(setWishList(fetchedData))
@@ -169,9 +201,16 @@ const Homes = ({ configData }) => {
             }
         }
     useEffect(() => {
+        // Garantir zona válida antes de carregar APIs
+        ensureValidZone()
         
+        // Aguardar um pouco para garantir que a zona foi definida
+        const timer = setTimeout(() => {
+            console.log('Iniciando carregamento das APIs das bancas')
+            apiRefetch()
+        }, 500) // Reduzido para 500ms
 
-        apiRefetch()
+        return () => clearTimeout(timer)
     }, [])
 
     useEffect(() => {
@@ -182,7 +221,13 @@ const Homes = ({ configData }) => {
             dispatch(setCampaignFoods(campaignData?.data))
         }
         if (data) {
-            dispatch(setBanners(data?.data))
+            // Normalize local/demo backend differences:
+            // - Demo often returns { data: { banners: [], campaigns: [] } }
+            // - Local may return { data: [ ... ] } (raw array of banners)
+            const normalized = Array.isArray(data?.data)
+                ? { banners: data.data, campaigns: [] }
+                : data?.data
+            dispatch(setBanners(normalized))
         }
         if (mostReviewedData) {
             dispatch(setBestReviewedFood(mostReviewedData?.data?.products))
@@ -266,7 +311,7 @@ const Homes = ({ configData }) => {
                             color={theme.palette.neutral[1000]}
                             component="h1"
                         >
-                            {t('Find Best Restaurants and Foods')}
+                            {'Tudo o que você precisa, na Banca tem!'}
                         </Typography>
 
                         <>
@@ -327,7 +372,7 @@ const Homes = ({ configData }) => {
                 page={page}
                 restaurantType={restaurantType}
             />
-            {query || page || restaurantType || tags ? (
+            {query || page || restaurantType ? (
                 <CustomContainer>
                     <ProductSearchPage
                         tags={tags}
@@ -407,7 +452,7 @@ const Homes = ({ configData }) => {
                             mb={1}
                             color={theme.palette.neutral[1000]}
                         >
-                            {t('Welcome to ' + configData?.business_name)}
+                            Bem-vindo ao Portal Guia das Bancas!
                         </Typography>
                         <Typography
                             variant="body2"
@@ -422,9 +467,7 @@ const Homes = ({ configData }) => {
                                   '.'
                                 : ''}
                             {'  '}
-                            {t(
-                                `  Start exploring the best services around you.`
-                            )}
+                            Descubra as melhores bancas do seu bairro e compre com rapidez e praticidade!
                         </Typography>
                     </Box>
                 </Box>

@@ -215,7 +215,7 @@ const FloatingCart = (props) => {
                                     fontSize: '12px',
                                 }}
                             >
-                                {t('Items')}
+                                {cartList?.length === 1 ? 'Item' : 'Itens'}
                             </Typography>
                         </Box>
                     </div>
@@ -318,9 +318,9 @@ const FloatingCart = (props) => {
                                                     fontWeight: 'bold',
                                                 }}
                                             >
-                                                {cartList?.length} {t('Items')}
+                                                {cartList?.length} Itens
                                             </Typography>{' '}
-                                            {t('in your cart')}
+                                            no seu carrinho
                                         </Typography>
                                         {restaurantData?.data
                                             ?.delivery_time && (
@@ -401,7 +401,7 @@ const FloatingCart = (props) => {
                                             fontSize="14px"
                                             fontWeight={500}
                                         >
-                                            {t('Total Price')}
+                                            Preço total
                                         </Typography>
                                         <Typography
                                             fontSize="15px"
@@ -427,7 +427,7 @@ const FloatingCart = (props) => {
                                             fullWidth
                                             borderRadius="7px"
                                         >
-                                            {t('Proceed To Checkout')}
+                                            Finalizar compra
                                         </PrimaryButton>
                                     </Stack>
                                 </Stack>

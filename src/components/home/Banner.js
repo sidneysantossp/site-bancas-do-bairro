@@ -170,23 +170,21 @@ const Banner = ({ bannerIsLoading }) => {
                 paddingBottom: { xs: '30px', md: '20px' },
             }}
         >
-            {!bannerIsLoading ? (
+            {!bannerIsLoading && bannerData?.length > 0 ? (
                 <SliderCustom
                     gap=".8rem"
                     onMouseEnter={() => setHoverOn(true)}
                     onMouseLeave={() => setHoverOn(false)}
-                    sx={{minHeight:{xs:"165px",md:"185px"}}}
-                                    >
+                    sx={{ minHeight: { xs: '165px', md: '185px' } }}
+                >
                     <Slider {...bannerSettings}>
-                        {bannerData?.slice(0, 8).map((banner) => {
-                            return (
-                                <BannerCard
-                                    banner={banner}
-                                    key={banner?.id}
-                                    handleBannerClick={handleBannerClick}
-                                />
-                            )
-                        })}
+                        {bannerData.slice(0, 8).map((banner) => (
+                            <BannerCard
+                                banner={banner}
+                                key={banner?.id}
+                                handleBannerClick={handleBannerClick}
+                            />
+                        ))}
                     </Slider>
                 </SliderCustom>
             ) : (

@@ -39,14 +39,14 @@ const RestaurantFilterCard = (props) => {
                         alignItems="center"
                     >
                         <Typography fontSize="14px" fontWeight="500">
-                            {t('Filter By')}
+                            Filtrar por
                         </Typography>
                         <Button
                             onClick={handleReset}
                             fontSize="14px"
                             fontWeight="500"
                         >
-                            {t('Reset')}
+                            Limpar
                         </Button>
                     </Stack>
                     <Stack direction="row">
@@ -65,7 +65,7 @@ const RestaurantFilterCard = (props) => {
                                         fontSize="14px"
                                         fontWeight="500"
                                     >
-                                        {t('Price')}
+                                        Preço
                                     </Typography>
                                     <CustomSlider
                                         handleChangePrice={handlePrice}
@@ -79,7 +79,7 @@ const RestaurantFilterCard = (props) => {
                                 alignItems="center"
                             >
                                 <Typography fontSize="14px" fontWeight="500">
-                                    {t('Rating')}
+                                    Avaliação
                                 </Typography>
                                 <CustomRatings
                                     handleChangeRatings={handleChangeRatings}

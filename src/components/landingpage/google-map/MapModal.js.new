@@ -1,0 +1,480 @@
+import React, { useEffect, useState } from 'react'
+import {
+    Box,
+    Modal,
+    Paper,
+    Typography,
+    styled,
+    Button,
+    Autocomplete,
+    TextField,
+    Grid,
+    useTheme,
+}
+from '@mui/material'
+import LoadingButton from '@mui/lab/LoadingButton'
+import GpsFixedIcon from '@mui/icons-material/GpsFixed'
+import CloseIcon from '@mui/icons-material/Close'
+import CircularProgress from '@mui/material/CircularProgress'
+import { GoogleApi } from '../../../api/GoogleApi'
+import { useQuery } from 'react-query'
+import { useDispatch, useSelector } from 'react-redux'
+import { useRouter } from 'next/router'
+import { toast } from 'react-hot-toast'
+import Skeleton from '@mui/material/Skeleton'
+import GoogleMapComponent from './GoogleMapComponent'
+import { useTranslation } from 'react-i18next'
+import { RTL } from '@/components/rtl/RTL'
+import {
+    setGeoLocationEnable,
+    setOpenMapDrawer,
+    setUserLocationUpdate,
+    setCurrentLocation,
+} from '@/redux/slices/global'
+import { CustomStackFullWidth } from '@/styled-components/CustomStyles.style'
+import { CustomTypographyGray } from '../../error/Errors.style'
+import { CustomToaster } from '@/components/custom-toaster/CustomToaster'
+import MapCustomStyle from './MapCustomStyle'
+
+const CustomBoxWrapper = styled(Box)(({ theme }) => ({
+    outline: 'none',
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    bgColor: 'background.paper',
+    boxShadow: 24,
+    padding: '20px',
+    borderRadius: '10px',
+    maxWidth: '900px',
+    width: '100%',
+    height: {
+        xs: '80vh',
+        sm: '70vh',
+        md: '75vh',
+    },
+    overflow: 'hidden',
+}))
+const CssTextField = styled(TextField)(({ theme }) => ({
+    '& label.Mui-focused': {
+        color: theme.palette.primary.main,
+        background: theme.palette.neutral[100],
+    },
+    '& .MuiInput-underline:after': {
+        borderBottomColor: theme.palette.primary.main,
+    },
+    '& .MuiOutlinedInput-notchedOutline': {
+        border: 'none',
+    },
+}))
+
+const PrimaryButton = styled(LoadingButton)(({ theme }) => ({
+    borderRadius: '30px',
+    minWidth: '100px',
+}))
+
+const MapModal = ({
+    open,
+    handleClose,
+    locationAndZoneAfterClick,
+    redirectUrl,
+}) => {
+    const theme = useTheme()
+    const router = useRouter()
+    const { t } = useTranslation()
+    const [searchKey, setSearchKey] = useState('')
+    const [enabled, setEnabled] = useState(false)
+    const [locationEnabled, setLocationEnabled] = useState(false)
+    const [placeDetailsEnabled, setPlaceDetailsEnabled] = useState(false)
+    const [placeId, setPlaceId] = useState('')
+    const [location, setLocation] = useState(null)
+    const [zoneId, setZoneId] = useState(undefined)
+    const [isLoadingCurrentLocation, setIsLoadingCurrentLocation] =
+        useState(false)
+    const [locationLoading, setLocationLoading] = useState(false)
+    const [currentLocation, setCurrentLocation] = useState({})
+    const [rerenderMap, setRerenderMap] = useState(false)
+    const [currentLocationValue, setCurrentLocationValue] = useState({
+        description: ''
+    })
+    
+    // Limpar o campo de busca ao abrir o modal
+    useEffect(() => {
+        if (open) {
+            setSearchKey('')
+            setCurrentLocationValue({
+                description: ''
+            })
+        }
+    }, [open])
+    const [loadingAuto, setLoadingAuto] = useState(false)
+    const dispatch = useDispatch()
+    const { geoLocation, openMapDrawer, userLocationUpdate } = useSelector(
+        (state) => state.globalSettings
+    )
+
+    const { data: places, isLoading: placesIsLoading } = useQuery(
+        ['places', searchKey],
+        async () => GoogleApi.placeApiAutocomplete(searchKey),
+        {
+            enabled: !!searchKey && enabled,
+            onError: (error) => {
+                console.error('Erro ao buscar endereços:', error)
+            },
+        }
+    )
+
+    useEffect(() => {
+        if (places) {
+            setLoadingAuto(false)
+        }
+    }, [places])
+
+    const {
+        data: geoCodeResults,
+        refetch: refetchGeoCode,
+        isLoading: isGeoCodeLoading,
+    } = useQuery(
+        ['geocode-api', location],
+        async () => GoogleApi.geoCodeApi(location),
+        {
+            enabled: false,
+            onSuccess: (response) => {
+                setLocationLoading(false)
+                try {
+                    if (response?.data?.results?.length > 0) {
+                        const headerAddress = {
+                            description: response?.data?.results[0]?.formatted_address || '',
+                        }
+                        setCurrentLocationValue(headerAddress)
+                    }
+                } catch (error) {
+                    // Tratar erro silenciosamente
+                    console.error('Erro ao processar dados de geocode:', error)
+                }
+            },
+            onError: (error) => {
+                setLocationLoading(false)
+                console.error('Erro ao obter geocode:', error)
+            },
+        }
+    )
+
+    const { data, refetch, isLoading: isPlaceLoading } = useQuery(
+        ['placeDetails', placeId],
+        async () => GoogleApi.placeApiDetails(placeId),
+        {
+            enabled: false,
+            onSuccess: (res) => {
+                const result = res?.data?.result
+                const newLatLng = {
+                    lat: result?.geometry?.location?.lat,
+                    lng: result?.geometry?.location?.lng,
+                }
+                setLocation(newLatLng)
+                // Atualizar direto no localStorage
+                if (result?.formatted_address) {
+                    localStorage.setItem('location', result.formatted_address)
+                }
+                setLocationLoading(false)
+            },
+            onError: (error) => {
+                setLocationLoading(false)
+                console.error('Erro em placeDetails:', error)
+            },
+        }
+    )
+
+    const predictions = places?.data?.predictions
+
+    useEffect(() => {
+        if (placeId && placeDetailsEnabled) {
+            refetch()
+        }
+    }, [placeId, placeDetailsEnabled])
+
+    useEffect(() => {
+        if (location && locationEnabled) {
+            refetchGeoCode()
+        }
+    }, [location, locationEnabled])
+
+    useEffect(() => {
+        if (data && locationEnabled) {
+            dispatch(setUserLocationUpdate(true))
+            localStorage.setItem('location', data?.formatted_address)
+            localStorage.setItem('zoneid', zoneId)
+            // Atualiza diretamente o valor de localização no localStorage para evitar undefined
+            if (data?.formatted_address) {
+                localStorage.setItem('currentLatLng', JSON.stringify({
+                    lat: location?.lat,
+                    lng: location?.lng
+                }))
+            }
+            if (redirectUrl) {
+                router.push(
+                    {
+                        pathname: '/home',
+                    },
+                    undefined,
+                    { shallow: true }
+                )
+            }
+            handleClose()
+        }
+    }, [data, locationEnabled])
+
+    const handleAgreeLocation = () => {
+        setIsLoadingCurrentLocation(true)
+        if (navigator?.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const newCurrentLocation = {
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude,
+                    }
+                    setCurrentLocation(newCurrentLocation)
+                    setLocation(newCurrentLocation)
+                    setIsLoadingCurrentLocation(false)
+                    dispatch(setCurrentLocation(newCurrentLocation))
+                },
+                (error) => {
+                    setIsLoadingCurrentLocation(false)
+                    toast.error('Localização não encontrada.')
+                },
+                {
+                    enableHighAccuracy: true,
+                    timeout: 5000,
+                    maximumAge: 0,
+                }
+            )
+        } else {
+            setIsLoadingCurrentLocation(false)
+            toast.error('A geolocalização não é suportada pelo seu navegador.')
+        }
+    }
+    const handleLocationSelection = (value) => {
+        if (value) {
+            setCurrentLocationValue(value)
+            setPlaceId(value?.place_id)
+        }
+        setLoadingAuto(false)
+    }
+    const handleLocationSet = (values) => {
+        setLocation(values)
+    }
+    const handlePickLocationOnClick = () => {
+        if (zoneId && geoCodeResults && location) {
+            localStorage.setItem('zoneid', zoneId)
+            localStorage.setItem(
+                'location',
+                geoCodeResults?.data?.results[0]?.formatted_address || 'Localização selecionada'
+            )
+            localStorage.setItem('currentLatLng', JSON.stringify(location))
+            dispatch(setUserLocationUpdate(!userLocationUpdate))
+            CustomToaster('success', 'Nova localização foi definida.')
+            if (redirectUrl) {
+                if (redirectUrl?.query === undefined) {
+                    router.push({ pathname: redirectUrl?.pathname })
+                } else {
+                    router.push({
+                        pathname: redirectUrl?.pathname,
+                        query: {
+                            restaurantType: redirectUrl?.query,
+                        },
+                    })
+                }
+            } else {
+                router.push('/home')
+            }
+        }
+        handleClose()
+    }
+
+    return (
+        <Modal
+            keepMounted
+            open={open}
+            onClose={handleClose}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+            disableAutoFocus
+        >
+            <MapCustomStyle />
+            <CustomBoxWrapper>
+                <Grid container spacing={1}>
+                    <Grid item md={12}>
+                        <Typography
+                            fontWeight="600"
+                            fontSize={{ xs: '14px', sm: '16px' }}
+                            color={theme.palette.neutral[1000]}
+                        >
+                            Digite seu endereço ou escolha no mapa
+                        </Typography>
+                        <Typography
+                            fontSize={{ xs: '12px', sm: '14px' }}
+                            color={theme.palette.neutral[1000]}
+                        >
+                            Compartilhar sua localização exata melhora a precisão das entregas e garante que os produtos cheguem até você com facilidade.
+                        </Typography>
+                    </Grid>
+                    <Grid item xs={12} sm={12} md={8}>
+                        <Paper sx={{ outline: 'none' }}>
+                            {loadingAuto ? (
+                                <Skeleton
+                                    width="100%"
+                                    height="55px"
+                                    variant="rectangular"
+                                />
+                            ) : (
+                                <Autocomplete
+                                    fullWidth
+                                    freeSolo
+                                    id="combo-box-demo"
+                                    getOptionLabel={(option) => {
+                                        // Garantindo que nunca mostre undefined
+                                        if (!option) return ''
+                                        if (option.description === 'undefined') return ''
+                                        return option?.description || ''
+                                    }}
+                                    options={predictions || []}
+                                    onChange={(event, value) => {
+                                        if (value) {
+                                            if (
+                                                value !== '' &&
+                                                typeof value === 'string'
+                                            ) {
+                                                setLoadingAuto(true)
+                                                const value = predictions[0]
+                                                handleLocationSelection(value)
+                                            } else {
+                                                handleLocationSelection(value)
+                                            }
+                                            setPlaceDetailsEnabled(true)
+                                        }
+                                    }}
+                                    clearOnBlur={false}
+                                    value={currentLocationValue || {description: ''}}
+                                    loading={placesIsLoading}
+                                    loadingText="Buscando sugestões..."
+                                    renderInput={(params) => (
+                                        <CssTextField
+                                            label={null}
+                                            {...params}
+                                            placeholder="Pesquise seu endereço aqui..."
+                                            InputProps={{
+                                                ...params.InputProps,
+                                                style: {
+                                                    ...params.InputProps.style,
+                                                }
+                                            }}
+                                            onChange={(event) => {
+                                                setSearchKey(event.target.value)
+                                                if (event.target.value) {
+                                                    setEnabled(true)
+                                                } else {
+                                                    setEnabled(false)
+                                                }
+                                            }}
+                                            onKeyPress={(e) => {
+                                                if (e.key === 'Enter') {
+                                                    setSearchKey(e.target.value)
+                                                }
+                                            }}
+                                        />
+                                    )}
+                                />
+                            )}
+                        </Paper>
+                    </Grid>
+                    <Grid item xs={12} sm={12} md={4}>
+                        <LoadingButton
+                            sx={{
+                                fontSize: { xs: '13px', sm: '14px' },
+                                width: '100%',
+                                padding: { xs: '12px', sm: '13.5px' },
+                                color: (theme) =>
+                                    theme.palette.whiteContainer.main,
+                            }}
+                            onClick={() => handleAgreeLocation()}
+                            startIcon={<GpsFixedIcon />}
+                            loadingPosition="start"
+                            variant="contained"
+                            loading={isLoadingCurrentLocation}
+                        >
+                            Usar Localização Atual
+                        </LoadingButton>
+                    </Grid>
+                    <Grid item xs={12} sm={12} md={12}>
+                        <Box
+                            sx={{
+                                width: '100%',
+                                height: { xs: '310px', sm: '400px' },
+                            }}
+                        >
+                            <GoogleMapComponent
+                                setDisablePickButton={() => {}}
+                                setLocationEnabled={setLocationEnabled}
+                                setLocation={setLocation}
+                                setCurrentLocation={setCurrentLocation}
+                                locationLoading={locationLoading}
+                                location={
+                                    location
+                                        ? location
+                                        : {
+                                              lat: -22.9068467,
+                                              lng: -43.1728965,
+                                          }
+                                }
+                                setPlaceDetailsEnabled={setPlaceDetailsEnabled}
+                                placeDetailsEnabled={placeDetailsEnabled}
+                                locationEnabled={locationEnabled}
+                                setPlaceDescription={(address) => {
+                                    if (address) {
+                                        const headerAddress = {
+                                            description: address,
+                                        }
+                                        setCurrentLocationValue(headerAddress)
+                                        localStorage.setItem('location', address)
+                                    }
+                                }}
+                                setZoneId={setZoneId}
+                                setPlaceName={() => {}}
+                                setLocationType={() => {}}
+                                rerenderMap={rerenderMap}
+                                setRerenderMap={setRerenderMap}
+                            />
+                        </Box>
+                    </Grid>
+
+                    <Grid item xs={12} sm={12} md={12}>
+                        <CustomStackFullWidth
+                            direction="row"
+                            alignItems="center"
+                            justifyContent="space-between"
+                            spacing={1}
+                        >
+                            <Button
+                                variant="outlined"
+                                onClick={() => handleClose()}
+                                startIcon={<CloseIcon />}
+                            >
+                                Cancelar
+                            </Button>
+                            <PrimaryButton
+                                aria-label="picklocation"
+                                disabled={locationLoading}
+                                variant="contained"
+                                onClick={() => handlePickLocationOnClick()}
+                            >
+                                Selecionar Localização
+                            </PrimaryButton>
+                        </CustomStackFullWidth>
+                    </Grid>
+                </Grid>
+            </CustomBoxWrapper>
+        </Modal>
+    )
+}
+
+export default MapModal

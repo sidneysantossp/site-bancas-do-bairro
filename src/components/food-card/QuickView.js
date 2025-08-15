@@ -4,14 +4,14 @@ import { IconButton, Tooltip, styled, useTheme } from '@mui/material'
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye'
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder'
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart'
-import { t } from 'i18next'
+import { useTranslation } from 'react-i18next'
 import AfterAddToCart from './AfterAddToCart'
 import FavoriteIcon from '@mui/icons-material/Favorite'
 
 const PrimaryToolTip = ({ theme, children, text }) => {
     return (
         <Tooltip
-            title={t(text)}
+            title={text}
             arrow
             placement="top"
             componentsProps={{
@@ -64,6 +64,11 @@ const QuickView = (props) => {
         horizontal,
     } = props
     const theme = useTheme()
+    const { t } = useTranslation()
+    const tt = (key, fallback) => {
+        const translated = t(key)
+        return translated === key ? (fallback ?? key) : translated
+    }
 
     return (
         <CustomStackFullWidth
@@ -73,7 +78,7 @@ const QuickView = (props) => {
             height="100%"
         >
             {!noQuickview && (
-                <PrimaryToolTip theme={theme} text="Quick View">
+                <PrimaryToolTip theme={theme} text={tt('Quick View','Ver Produto')}>
                     <IconButtonStyled onClick={(e) => quickViewHandleClick(e)}>
                         <RemoveRedEyeIcon />
                     </IconButtonStyled>
@@ -95,7 +100,7 @@ const QuickView = (props) => {
                             </IconButtonStyled>
                         </PrimaryToolTip>
                     ) : (
-                        <PrimaryToolTip theme={theme} text="Add to wishlist">
+                        <PrimaryToolTip theme={theme} text={tt('Add to wishlist','Adicionar Meus Favoritos')}>
                             <IconButtonStyled
                                 onClick={(e) => addToWishlistHandler(e)}
                             >
@@ -112,8 +117,8 @@ const QuickView = (props) => {
                     text={
                         product?.item_stock === 0 &&
                         product?.stock_type !== 'unlimited'
-                            ? t('out of stock')
-                            : t('Add to cart')
+                            ? 'Indisponível'
+                            : 'Comprar'
                     }
                 >
                     <IconButtonStyled onClick={(e) => addToCart(e)}>

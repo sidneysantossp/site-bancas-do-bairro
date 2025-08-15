@@ -1,12 +1,28 @@
 import React from 'react'
 import { CustomStackFullWidth } from '@/styled-components/CustomStyles.style'
 import { alpha, List, MenuItem, Typography } from '@mui/material'
-import { t } from 'i18next'
+import { useTranslation } from 'react-i18next'
 import CustomImageContainer from '../CustomImageContainer'
 import Router from 'next/router'
 import { useSelector } from 'react-redux'
 
 const MenuBar = ({ tabData, onClose, sidedrawer, page, setAttributeId }) => {
+    const { t } = useTranslation()
+    const tt = (key, fallback) => {
+        const translated = t(key)
+        return translated === key ? fallback ?? key : translated
+    }
+    const fallbacks = {
+        'My Profile': 'Meu Perfil',
+        Orders: 'Pedidos',
+        Coupons: 'Cupons',
+        'Wish List': 'Meus Favoritos',
+        Wallets: 'Carteiras',
+        'Loyalty Points': 'Pontos de Fidelidade',
+        'Referral Code': 'Código de Indicação',
+        Inbox: 'Caixa de Entrada',
+        Settings: 'Configurações',
+    }
     const { global } = useSelector((state) => state.globalSettings)
     const handleClick = (item) => {
         setAttributeId('')
@@ -63,7 +79,7 @@ const MenuBar = ({ tabData, onClose, sidedrawer, page, setAttributeId }) => {
                                     width="20px"
                                 />
                                 <Typography fontSize="14px" fontWeight="500">
-                                    {t(item.label.replaceAll('-', ' '))}
+                                    {tt(item.label.replaceAll('-', ' '), fallbacks[item.label])}
                                 </Typography>
                             </CustomStackFullWidth>
                         </MenuItem>

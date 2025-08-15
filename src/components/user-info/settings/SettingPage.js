@@ -32,6 +32,10 @@ const SettingPage = () => {
     const { settings, saveSettings } = useSettings()
     const isXSmall = useMediaQuery(theme.breakpoints.down('sm'))
     const { t } = useTranslation()
+    const tt = (key, fallback) => {
+        const translated = t(key)
+        return translated === key ? (fallback ?? key) : translated
+    }
     const dispatch = useDispatch()
     const [anchorEl, setAnchorEl] = useState(null)
     const [theme_mode, setThemeMode] = useState('')
@@ -131,116 +135,15 @@ const SettingPage = () => {
                                     }}
                                 >
                                     {settings?.theme === 'light'
-                                        ? t('Light Mode')
-                                        : t('Dark Mode')}
+                                        ? tt('Light Mode', 'Tema Claro')
+                                        : tt('Dark Mode', 'Tema Escuro')}
                                 </Typography>
                                 <ThemeSwitches noText />
                             </CustomStackFullWidth>
                         </Card>
                     </Grid>
 
-                    <Grid item md={4} xs={12}>
-                        <Card
-                            sx={{
-                                borderRadius: '10px',
-                                display: 'flex',
-                                alignItems: 'center',
-                                maxWidth: '247px',
-                                height: '168px',
-                                marginLeft: 'auto',
-                                marginRight: 'auto',
-                                backgroundColor: (theme) =>
-                                    theme.palette.cardBackground1,
-                            }}
-                        >
-                            <CustomStackFullWidth
-                                spacing={2}
-                                justifyContent="center"
-                                alignItems="center"
-                            >
-                                <Typography
-                                    sx={{
-                                        fontSize: '18px',
-                                        fontWeight: '700',
-                                        textAlign: 'center',
-                                    }}
-                                >
-                                    {t('Language')}
-                                </Typography>
-
-                                <TopBarButton
-                                    variant="text"
-                                    size="small"
-                                    aria-controls={
-                                        open
-                                            ? 'demo-customized-menu'
-                                            : undefined
-                                    }
-                                    aria-haspopup="true"
-                                    aria-expanded={open ? 'true' : undefined}
-                                    disableElevation
-                                    onClick={handleClick}
-                                    startIcon={
-                                        <Stack
-                                            color={theme.palette.neutral[1000]}
-                                        >
-                                            <CustomImageContainer
-                                                width="20px"
-                                                src={activeFlag?.countryFlag}
-                                            />
-                                        </Stack>
-                                    }
-                                    endIcon={<KeyboardArrowDownIcon />}
-                                    sx={{
-                                        color: (theme) =>
-                                            theme.palette.neutral[1000],
-                                    }}
-                                >
-                                    <span
-                                        style={{
-                                            padding: '0 10px',
-                                            color: lanColor,
-                                        }}
-                                    >
-                                        {languageValue(language)?.languageName}
-                                    </span>
-                                </TopBarButton>
-                                <StyledMenu
-                                    id="demo-customized-menu"
-                                    MenuListProps={{
-                                        'aria-labelledby':
-                                            'demo-customized-button',
-                                    }}
-                                    anchorEl={anchorEl}
-                                    open={open}
-                                    onClose={handleClose}
-                                >
-                                    {languageLists?.map((lan, index) => (
-                                        <MenuItem
-                                            onClick={() => handleLanguage(lan)}
-                                            disableRipple
-                                            key={index}
-                                            sx={{
-                                                '&:hover': {
-                                                    backgroundColor:
-                                                        'primary.main',
-                                                },
-                                            }}
-                                        >
-                                            <ListItemIcon>
-                                                <img
-                                                    alt=""
-                                                    width="20"
-                                                    src={lan?.countryFlag}
-                                                />
-                                            </ListItemIcon>
-                                            {lan.languageName}
-                                        </MenuItem>
-                                    ))}
-                                </StyledMenu>
-                            </CustomStackFullWidth>
-                        </Card>
-                    </Grid>
+                    {/* Language card hidden as requested */}
                 </Grid>
             </CustomPaperBigCard>
         </>

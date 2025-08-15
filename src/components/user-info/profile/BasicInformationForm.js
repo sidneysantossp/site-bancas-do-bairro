@@ -35,6 +35,10 @@ const BasicInformationForm = ({
     const theme = useTheme()
     const isXSmall = useMediaQuery(theme.breakpoints.down('sm'))
     const { t } = useTranslation()
+    const tt = (key, fallback) => {
+        const translated = t(key)
+        return translated === key ? (fallback ?? key) : translated
+    }
     let { f_name, l_name, phone, email, image_full_url } = data
     const { global } = useSelector((state) => state.globalSettings)
     const customerImageUrl = global?.base_urls?.customer_image_url
@@ -100,7 +104,7 @@ const BasicInformationForm = ({
                         >
                             <ImageUploaderWithPreview
                                 type="file"
-                                labelText={t('Upload your photo')}
+                                labelText={tt('Upload your photo', 'Enviar sua foto')}
                                 hintText="Image format - jpg, png, jpeg, gif Image Size - maximum size 2 MB Image Ratio - 1:1"
                                 file={profileFormik.values.image}
                                 isIcon
@@ -158,7 +162,7 @@ const BasicInformationForm = ({
                                 name="name"
                                 value={profileFormik.values.name}
                                 onChange={profileFormik.handleChange}
-                                label={t('Name')}
+                                label={tt('Name', 'Nome')}
                                 required
                                 error={
                                     profileFormik.touched.name &&
@@ -176,13 +180,13 @@ const BasicInformationForm = ({
                                 <CustomProfileTextfield
                                     label={
                                         <span>
-                                            {t('Phone')}{' '}
+                                            {tt('Phone', 'Telefone')}{' '}
                                             {data?.is_phone_verified === 1 && (
                                                 <>
                                                     <span
                                                         style={{ color: 'red' }}
                                                     >
-                                                        ({t('Not Changeable')})
+                                                        ({tt('Not Changeable', 'Não editável')})
                                                     </span>{' '}
                                                 </>
                                             )}
@@ -268,7 +272,7 @@ const BasicInformationForm = ({
                                     name="email"
                                     value={profileFormik.values.email}
                                     onChange={profileFormik.handleChange}
-                                    label={t('Email')}
+                                    label={tt('Email', 'E-mail')}
                                     required
                                     error={
                                         profileFormik.touched.email &&
@@ -324,11 +328,11 @@ const BasicInformationForm = ({
                         pt={{ xs: '20px', md: 0 }}
                     >
                         <CancelButton variant="outlined" onClick={handleReset}>
-                            {t('Reset')}
+                            {tt('Reset', 'Redefinir')}
                         </CancelButton>
                         <ButtonBox>
                             <SaveButton variant="contained" type="submit">
-                                {t('Update Profile')}
+                                {tt('Update Profile', 'Atualizar Perfil')}
                             </SaveButton>
                         </ButtonBox>
                     </Grid>

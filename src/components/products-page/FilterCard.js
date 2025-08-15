@@ -58,7 +58,7 @@ const FilterCard = ({
                     <Stack spacing={3} width="100%">
                         <Stack spacing={1}>
                             <Typography variant="h4">
-                                {t('Filter By')}
+                                Filtrar por
                             </Typography>
                             <CustomGroupCheckbox
                                 handleChangeFilter={handleFilterBy}

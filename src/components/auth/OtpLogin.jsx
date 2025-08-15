@@ -51,7 +51,7 @@ const OtpLogin = ({
                                 },
                             }}
                         >
-                            {t('* By login I Agree with all the')}
+                            Ao entrar, eu concordo com os{' '}
                             <Typography
                                 component="span"
                                 color={theme.palette.primary.main}
@@ -59,9 +59,10 @@ const OtpLogin = ({
                                     textAlign: 'center',
                                     fontWeight: '400',
                                     fontSize: '12px',
+                                    ml: '4px',
                                 }}
                             >
-                                {t(' Terms & Conditions')}
+                                Termos e Condições
                             </Typography>
                         </CustomColouredTypography>
                     </CustomStackFullWidth>
@@ -79,7 +80,7 @@ const OtpLogin = ({
                         loading={isLoading}
                         id={fireBaseId}
                     >
-                        {t('Login')}
+                        Entrar
                     </LoadingButton>
                 </CustomStackFullWidth>
             </form>

@@ -121,7 +121,7 @@ const CouponCard = ({
                         textAlign="center"
                     >
                         {coupon?.coupon_type === 'free_delivery'
-                            ? 'Free Delivery'
+                            ? 'Entrega Grátis'
                             : coupon?.discount_type === 'percent'
                             ? `${coupon?.discount} %`
                             : getAmount(

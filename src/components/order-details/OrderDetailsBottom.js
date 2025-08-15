@@ -122,7 +122,7 @@ const OrderDetailsBottom = ({
                             color={theme.palette.primary.main}
                         >
                             {t(
-                                'Switch to Cash on Delivery or Cancel the order'
+                                'Mudar para Pagamento na Entrega ou Cancelar o pedido'
                             )}
                         </Typography>
                     </CustomButton>
@@ -138,7 +138,7 @@ const OrderDetailsBottom = ({
                                 variant="h5"
                                 color={theme.palette.primary.main}
                             >
-                                {t('Cancel Order')}
+                                Cancelar Pedido
                             </Typography>
                         </CustomButton>
                     )

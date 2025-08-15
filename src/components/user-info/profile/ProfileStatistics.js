@@ -12,6 +12,16 @@ import Router from 'next/router'
 const ProfileStatistics = ({ value, title, image, pathname }) => {
     const theme = useTheme()
     const { t } = useTranslation()
+    const tt = (key, fallback) => {
+        const translated = t(key)
+        return translated === key ? (fallback ?? key) : translated
+    }
+    const fallbacks = {
+        Orders: 'Pedidos',
+        'Amount in Wallet': 'Saldo na Carteira',
+        'Loyalty Points': 'Pontos de Fidelidade',
+        'Products in wishlist': 'Meus Favoritos',
+    }
     const handleRoute = (value) => {
         Router.push(
             {
@@ -64,7 +74,7 @@ const ProfileStatistics = ({ value, title, image, pathname }) => {
                         }}
                         color={theme.palette.neutral[500]}
                     >
-                        {t(title)}
+                        {tt(title, fallbacks[title])}
                     </Typography>
                 </CustomStackFullWidth>
             </CustomPaperBigCard>

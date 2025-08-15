@@ -100,7 +100,7 @@ const CollapsableMenu = ({ value, setOpenDrawer, pathName }) => {
                                         textDecoration: 'underLine',
                                     }}
                                 >
-                                    {t('View all')}
+                                    {'Ver todos'}
                                 </Typography>
                             }
                         ></ListItemText>

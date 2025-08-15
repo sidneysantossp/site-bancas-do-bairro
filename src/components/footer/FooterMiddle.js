@@ -113,7 +113,7 @@ const FooterMiddle = ({ landingPageData, isLoading }) => {
                             <RouteLinks
                                 token={token}
                                 global={global}
-                                title="Quick Links"
+                                title="Links Rápidos"
                                 RouteLinksData={QuickLinkData}
                             />
                         </Box>
@@ -132,7 +132,7 @@ const FooterMiddle = ({ landingPageData, isLoading }) => {
                             <RouteLinks
                                 token={token}
                                 global={global}
-                                title="Quick Links"
+                                title="Links Rápidos"
                                 RouteLinksData={QuickLinkData1}
                             />
                         </Box>
@@ -151,7 +151,7 @@ const FooterMiddle = ({ landingPageData, isLoading }) => {
                             <RouteLinks
                                 token={token}
                                 global={global}
-                                title="Other"
+                                title="Outros"
                                 RouteLinksData={OtherData}
                                 isCenter={isSmall && true}
                             />

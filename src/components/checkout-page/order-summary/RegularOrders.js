@@ -17,7 +17,13 @@ import { handleTotalAmountWithAddonsFF } from '@/utils/customFunctions'
 
 const RegularOrders = ({ orderType }) => {
     const theme = useTheme()
-    const { t } = useTranslation()
+    const { t, i18n } = useTranslation()
+    const tt = (key, fallback) => {
+        const translated = t(key)
+        const isPt = i18n?.language?.toLowerCase?.().startsWith('pt')
+        if (isPt) return fallback ?? translated ?? key
+        return translated === key ? (fallback ?? key) : translated
+    }
     const { cartList } = useSelector((state) => state.cart)
     const { global } = useSelector((state) => state.globalSettings)
     let currencySymbol
@@ -65,14 +71,18 @@ const RegularOrders = ({ orderType }) => {
                                     justifyContent: 'center',
                                     borderBottomRightRadius: '10px',
                                     borderBottomLeftRadius: '10px',
+                                    display: 'none', // Oculta o rótulo Veg/Não Veg
                                 }}
                             >
                                 <Typography
                                     variant="h5"
                                     align="center"
                                     color={theme.palette.neutral[100]}
+                                    sx={{ display: 'none' }} // Oculta o texto Veg/Não Veg
                                 >
-                                    {item?.veg === 0 ? t('non-veg') : t('veg')}
+                                    {item?.veg === 0
+                                        ? tt('non-veg', 'Não veg')
+                                        : tt('veg', 'Veg')}
                                 </Typography>
                             </Stack>
                         </Stack>
@@ -93,7 +103,7 @@ const RegularOrders = ({ orderType }) => {
                                     spacing={0.5}
                                 >
                                     <OrderFoodSubtitle>
-                                        {t('Addon')}
+                                        {tt('Addon', 'Adicional')}
                                     </OrderFoodSubtitle>
                                     <OrderFoodSubtitle>:</OrderFoodSubtitle>
                                     <OrderFoodSubtitle>
@@ -107,7 +117,7 @@ const RegularOrders = ({ orderType }) => {
                                 spacing={0.5}
                             >
                                 <OrderFoodSubtitle>
-                                    {t('Qty')}
+                                    {tt('Qty', 'Qtd')}
                                 </OrderFoodSubtitle>
                                 <OrderFoodSubtitle>:</OrderFoodSubtitle>
                                 <OrderFoodSubtitle>

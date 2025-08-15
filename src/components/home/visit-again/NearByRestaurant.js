@@ -73,7 +73,7 @@ const NearByRestaurant = ({ dineIn }) => {
             pathname: `/restaurant/[id]`,
             query: {
                 id: `${restaurant?.slug ? restaurant?.slug : restaurant?.id}`,
-                restaurant_zone_id: restaurant?.zone_id,
+                banca_zone_id: restaurant?.zone_id,
             },
         })
     }

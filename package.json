@@ -65,6 +65,7 @@
         "styled-jsx": "^5.1.0",
         "stylis": "^4.3.5",
         "stylis-plugin-rtl": "^2.1.1",
+        "twilio": "^5.8.0",
         "use-debounce": "^9.0.4",
         "web-vitals": "^2.1.4",
         "yup": "^0.32.11"

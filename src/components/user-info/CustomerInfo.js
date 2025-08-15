@@ -1,12 +1,20 @@
 import { Avatar, Typography, useTheme } from '@mui/material'
-import { t } from 'i18next'
+import { useTranslation } from 'react-i18next'
 import moment from 'moment'
+import 'moment/locale/pt-br'
 import { useSelector } from 'react-redux'
 import { CustomStackFullWidth } from '@/styled-components/CustomStyles.style'
 
 const CustomerInfo = () => {
     const theme = useTheme()
     const { userData } = useSelector((state) => state.user)
+    const { t } = useTranslation()
+    const tt = (key, fallback) => {
+        const translated = t(key)
+        return translated === key ? (fallback ?? key) : translated
+    }
+    // Ensure moment uses Portuguese locale
+    moment.locale('pt-br')
 
     return (
         <CustomStackFullWidth
@@ -44,8 +52,8 @@ const CustomerInfo = () => {
                     fontWeight="400"
                     color={theme.palette.neutral[500]}
                 >
-                    {t('Joined')}{' '}
-                    {moment(userData?.created_at).format('MMM Do YY')}
+                    {tt('Joined', 'Entrou em')}{' '}
+                    {moment(userData?.created_at).format('LL')}
                 </Typography>
             </CustomStackFullWidth>
         </CustomStackFullWidth>
