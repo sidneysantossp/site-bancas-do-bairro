@@ -41,7 +41,7 @@ package-lock.json
 # arquivos de configuração desnecessários
 .prettierrc.json
 .prettierignore
-jsconfig.json
+# jsconfig.json
 deploy.sh
 get_changed_files.sh
 DEPLOY_INSTRUCTIONS.md
@@ -148,3 +148,4 @@ yarn-debug.log*
 yarn-.log*
 
 .yarn
+.vercel

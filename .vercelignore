@@ -16,7 +16,7 @@
 # Arquivos de configuração local
 .prettierrc.json
 .prettierignore
-jsconfig.json
+# jsconfig.json
 deploy.sh
 get_changed_files.sh
 DEPLOY_INSTRUCTIONS.md
