@@ -6,6 +6,7 @@ const nextConfig = {
     images: {
         domains: [
             'stackfood.6am.one',
+            'stackfood-admin.6amtech.com',
             'localhost',
             // Adicione outros domínios de API conforme necessário
         ],
