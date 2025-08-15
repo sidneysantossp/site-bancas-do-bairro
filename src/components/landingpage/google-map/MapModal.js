@@ -26,7 +26,7 @@ import { toast } from 'react-hot-toast'
 import Skeleton from '@mui/material/Skeleton'
 import GoogleMapComponent from './GoogleMapComponent'
 import { useTranslation } from 'react-i18next'
-import { RTL } from '@/components/rtl/RTL'
+import { RTL } from '@/components/RTL/RTL'
 import {
     setOpenMapDrawer,
 } from '@/redux/slices/global'
