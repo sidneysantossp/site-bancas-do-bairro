@@ -23,7 +23,7 @@ import FooterBG from '../../../public/static/footer/footerBG.png'
 
 const FooterTop = ({ landingPageData }) => {
     const theme = useTheme()
-    const [emailAddress, setEmailAddress] = useState(null)
+    const [emailAddress, setEmailAddress] = useState('')
     const [errorText, setErrorText] = useState(null)
 
     const { t } = useTranslation()

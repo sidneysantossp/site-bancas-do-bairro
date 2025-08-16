@@ -225,7 +225,26 @@ export const CustomFab = styled(Fab)(({ theme }) => ({
         height: '35px',
     },
 }))
-export const CustomImageContainerStyled = styled(Box)(
+export const CustomImageContainerStyled = styled(Box, {
+    shouldForwardProp: (prop) =>
+        ![
+            'smWidth',
+            'maxWidth',
+            'marginBottom',
+            'width',
+            'smHeight',
+            'height',
+            'objectFit',
+            'minwidth',
+            'borderRadu',
+            'smMb',
+            'smMaxWidth',
+            'mdHeight',
+            'cursor',
+            'aspectRatio',
+            'boxShadow',
+        ].includes(String(prop)),
+})(
     ({
         theme,
         smWidth,

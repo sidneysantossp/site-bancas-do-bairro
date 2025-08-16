@@ -84,7 +84,7 @@ const ImagePreviewOnModal = (props) => {
             <Slider {...settings} ref={sliderRef} className="slick__slider">
                 {imagesToShow?.map((image,index)=>{
                     return(
-                        <CustomImageContainer  src={image} width="100%" height="400px" smHeight="250px" mdHeight='350px'   objectFit="cover" />
+                        <CustomImageContainer key={image || index} src={image} width="100%" height="400px" smHeight="250px" mdHeight='350px'   objectFit="cover" />
                     )
                 })}
             </Slider>

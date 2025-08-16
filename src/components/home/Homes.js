@@ -76,6 +76,7 @@ const Homes = ({ configData }) => {
     const { searchTagData, cuisineData } = useSelector(
         (state) => state.searchTags
     )
+    const { global } = useSelector((state) => state.globalSettings)
     const router = useRouter()
     const { query, page, restaurantType, tags } = router.query
     const {
@@ -473,7 +474,7 @@ const Homes = ({ configData }) => {
                 </Box>
             </CustomModal>
             {getToken && <CashBackPopup />}
-            {open && (
+            {openDineInRes && (
                 <CustomModal
                     openModal={openDineInRes}
                     setModalOpen={setOpenDineInRes}

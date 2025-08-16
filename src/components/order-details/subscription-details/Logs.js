@@ -287,7 +287,7 @@ const Logs = (props) => {
                                             fontSize="13px"
                                             fontWeight="600"
                                         >
-                                            {t('Log id:-')}{' '}
+                                            {t('Log id')}:{' '}
                                             <span>{`#${log?.id}`}</span>
                                         </Typography>
                                         <Typography
