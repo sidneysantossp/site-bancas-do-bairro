@@ -37,26 +37,34 @@ export const getAmount = (
     currency_symbol,
     digitAfterDecimalPoint
 ) => {
+    // Safe defaults to avoid displaying 'undefined' in UI
+    const symbol =
+        typeof currency_symbol === 'string' && currency_symbol.trim() !== ''
+            ? currency_symbol
+            : 'R$'
+    const direction =
+        currency_symbol_direction === 'right' ? 'right' : 'left'
+
     const decimalsRaw = Number(digitAfterDecimalPoint)
     const decimals = Number.isFinite(decimalsRaw)
         ? Math.min(Math.max(0, decimalsRaw), 20)
         : 2
+
     const safeAmountStr = amount != null ? amount.toString() : '0'
     const truncated = truncate(safeAmountStr, decimals)
-    const numeric = Number.isFinite(Number(truncated))
-        ? Number(truncated)
-        : 0
+    const numeric = Number.isFinite(Number(truncated)) ? Number(truncated) : 0
+
     const formatted = new Intl.NumberFormat('pt-BR', {
         minimumFractionDigits: decimals,
         maximumFractionDigits: decimals,
     }).format(numeric)
 
-    if (currency_symbol_direction === 'left') {
-        return `${currency_symbol}${formatted}`
-    } else if (currency_symbol_direction === 'right') {
-        return `${formatted}${currency_symbol}`
+    if (direction === 'left') {
+        return `${symbol}${formatted}`
+    } else {
+        // 'right'
+        return `${formatted}${symbol}`
     }
-    return `${currency_symbol}${formatted}`
 }
 const handleVariationValuesSum = (productVariations) => {
     let sum = 0
