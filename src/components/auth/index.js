@@ -24,6 +24,7 @@ import { getGuestId } from '@/components/checkout-page/functions/getGuestUserId'
 import { auth } from '@/firebase'
 import { RecaptchaVerifier, signInWithPhoneNumber } from 'firebase/auth'
 import { useRouter } from 'next/router'
+import { useTranslation } from 'react-i18next'
 
 const SignInPage = dynamic(() => import('./sign-in'))
 
@@ -103,7 +104,7 @@ const AuthModal = ({
     const { refetch } = useWishListGet(onSuccessHandler)
     const handleSuccess = async (value) => {
         localStorage.setItem('token', value)
-        CustomToaster('success', loginSuccessFull)
+        CustomToaster('success', t('Logged in successfully'))
         if (zoneid) {
             await refetch()
         }

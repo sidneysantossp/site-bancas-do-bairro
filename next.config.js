@@ -42,6 +42,17 @@ const nextConfig = {
             },
         ]
     },
+
+    // Redirect raiz -> /home
+    async redirects() {
+        return [
+            {
+                source: '/',
+                destination: '/home',
+                permanent: true,
+            },
+        ]
+    },
     
     // Experimental features (removidas para evitar erros)
     // experimental: {

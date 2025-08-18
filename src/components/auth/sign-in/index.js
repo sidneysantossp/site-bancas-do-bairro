@@ -198,7 +198,7 @@ const SignInPage = ({
             zoneid && (await wishlistRefetch())
             await profileRefatch()
             await cartListRefetch()
-            CustomToaster('success', loginSuccessFull)
+            CustomToaster('success', t('Logged in successfully'))
             dispatch(setToken(response.token))
             if (
                 router.pathname === `/order-history/[id]` ||
