@@ -56,7 +56,7 @@ const PopularResturant = ({ data, latestRestaurantData }) => {
                                 </Typography>
                                 <Button
                                     onClick={() =>
-                                        router.push('/restaurant/popular')
+                                        router.push('/banca/popular')
                                     }
                                     size="small"
                                     sx={{ padding: '7px 10px' }}
@@ -133,7 +133,7 @@ const PopularResturant = ({ data, latestRestaurantData }) => {
                                 </Typography>
                                 <Button
                                     onClick={() =>
-                                        router.push('/restaurant/latest')
+                                        router.push('/banca/latest')
                                     }
                                 >
                                     {!isXSmall && (

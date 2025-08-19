@@ -6,20 +6,22 @@ import {
 } from '@/styled-components/CustomStyles.style'
 import CustomShimmerCategories from '../../CustomShimmer/CustomShimmerCategories'
 import { Grid, Stack, Typography } from '@mui/material'
-import { t } from 'i18next'
+import { useTranslation } from 'react-i18next'
 import { useRouter } from 'next/router'
 import Slider from 'react-slick'
 import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
 import CuisinesCard from './CuisinesCard'
 import CustomImageContainer from '../../CustomImageContainer'
-import cuisine_image from '../../../../public/static/cuisine_image.svg'
+// removed: import cuisine_image from '../../../../public/static/cuisine_image.svg'
 import { useTheme } from '@emotion/react'
 import Skeleton from '@mui/material/Skeleton'
 import { HandleNext, HandlePrev } from '../../CustomSliderIcon'
 import { useSelector } from 'react-redux'
+import i18n from 'i18next'
 
 const Cuisines = () => {
+    const { t } = useTranslation()
     const [hoverOn, setHoverOn] = useState(false)
     const theme = useTheme()
     const router = useRouter()
@@ -127,7 +129,7 @@ const Cuisines = () => {
                                         >
                                             <Stack direction="row" spacing={1}>
                                                 <CustomImageContainer
-                                                    src={cuisine_image.src}
+                                                    src={cuisinesIconUrl}
                                                     width="26px"
                                                     height="26px"
                                                 />
@@ -146,7 +148,7 @@ const Cuisines = () => {
                                                     }
                                                     component="h2"
                                                 >
-                                                    {t('Cuisines')}
+                                                    {t('Cuisines') === 'Cuisines' && i18n.language?.toLowerCase()?.startsWith('pt') ? 'Categorias em Destaque' : t('Cuisines')}
                                                 </Typography>
                                             </Stack>
 
@@ -156,7 +158,7 @@ const Cuisines = () => {
                                                 }
                                                 sx={{ marginInlineEnd: '10px' }}
                                             >
-                                                {'Ver Todos'}
+                                                {t('View all') === 'View all' && i18n.language?.toLowerCase()?.startsWith('pt') ? 'Ver todas' : t('View all')}
                                             </CustomViewAll>
                                         </Stack>
                                     </CustomStackFullWidth>
@@ -207,3 +209,5 @@ const Cuisines = () => {
 }
 
 export default Cuisines
+
+const cuisinesIconUrl = 'https://cdn-icons-png.flaticon.com/128/4715/4715128.png'

@@ -41,7 +41,7 @@ const PaymentSelect = ({ submitBusiness, resData, isLoading, configData }) => {
             callback:
                 selectType === 'free_trial'
                     ? null
-                    : `${window.location.origin}/restaurant-registration`,
+                    : `${window.location.origin}/banca-registration`,
             payment_platform: 'web',
             type: 'new_join',
         })

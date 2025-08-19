@@ -228,7 +228,7 @@ const RestaurantBoxCard = (props) => {
     }
     const handleClick = () => {
         router.push({
-            pathname: `/restaurant/[id]`,
+            pathname: `/banca/[id]`,
             query: {
                 id: `${slug ? slug : id}`,
                 banca_zone_id: zone_id,

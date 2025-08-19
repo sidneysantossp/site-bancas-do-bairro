@@ -35,12 +35,14 @@ import { useRouter } from 'next/router'
 import { useQuery } from 'react-query'
 import { RestaurantsApi } from '@/hooks/react-query/config/restaurantApi'
 import CustomImageContainer from '../CustomImageContainer'
+import { useTranslation } from 'react-i18next'
 
 const CustomDrawerCart = () => {
     const router = useRouter()
     const dispatch = useDispatch()
     const [open, setDrawerOpen] = useState(false)
     const { cartList } = useSelector((state) => state.cart)
+    const { t } = useTranslation()
 
     const { data: restaurantData, refetch } = useQuery(
         [`restaurant-details`],
@@ -80,7 +82,7 @@ const CustomDrawerCart = () => {
                         <OrderSummaryGrid sx={{ width: 370 }} container item>
                             <Box sx={{ overflow: 'auto', width: '100%' }}>
                                 <CustomTypographyBold align="center">
-                                    Cart is Empty
+                                    {t('Cart is Empty')}
                                 </CustomTypographyBold>
                             </Box>
                         </OrderSummaryGrid>

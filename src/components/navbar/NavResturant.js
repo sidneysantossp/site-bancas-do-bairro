@@ -73,7 +73,7 @@ const NavResturant = ({ zoneid }) => {
     const viewAll = () => {
         Router.push(
             {
-                pathname: '/restaurant',
+                pathname: '/banca',
             },
             undefined,
             { shallow: true }
@@ -142,7 +142,7 @@ const NavResturant = ({ zoneid }) => {
                                                         <Link
                                                             href={{
                                                                 pathname:
-                                                                    '/restaurant/[id]',
+                                                                    '/banca/[id]',
                                                                 query: {
                                                                     id: `${restaurantIdOrSlug}`,
                                                                     banca_zone_id:
@@ -219,7 +219,7 @@ const NavResturant = ({ zoneid }) => {
                                                         key={restaurant.id}
                                                     >
                                                         <Link
-                                                            href={`/restaurant/${restaurantIdOrSlug}`}
+                                                            href={`/banca/${restaurantIdOrSlug}`}
                                                             passHref
                                                             style={{textDecoration: 'none'}}
                                                         >

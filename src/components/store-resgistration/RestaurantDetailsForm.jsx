@@ -103,9 +103,9 @@ const RestaurantDetailsForm = ({
                 </Grid>
                 <Grid item xs={12} sm={12} md={12}>
                     <CustomMultiSelectTags
-                        label="Cuisines"
+                        label={t('Cuisines')}
                         options={cuisinesData}
-                        placeholder={t('Select Cuisines')}
+                        placeholder={t('Select Categories')}
                         onChange={cuisinesHandler}
                         value={cuisinesData?.filter((option) =>
                             RestaurantJoinFormik.values.cuisine_ids.includes(
@@ -222,186 +222,22 @@ const RestaurantDetailsForm = ({
                                 </Tooltip>
                             </Box>
                         }
+                        name="tags"
+                        height="45px"
                         borderRadius="8px"
-                        selectedValues={RestaurantJoinFormik.values.tags}
-                        fieldName="tags"
                         startIcon={
                             <SubjectIcon
                                 sx={{
-                                    color:
-                                        RestaurantJoinFormik.touched.vat &&
-                                        !RestaurantJoinFormik.errors.vat
-                                            ? theme.palette.primary.main
-                                            : alpha(
-                                                  theme.palette.neutral[400],
-                                                  0.7
-                                              ),
+                                    color: (theme) => theme.palette.neutral[400],
                                     fontSize: '18px',
                                 }}
                             />
                         }
-                        formik={RestaurantJoinFormik}
                     />
-                </Grid>
-                <Grid item xs={12} sm={12} md={12}>
-                    <CustomTextFieldWithFormik
-                        required
-                        type="number"
-                        borderRadius="8px"
-                        fieldsetGap="9px"
-                        label={
-                            <span>
-                                {t('VAT/TAX')}
-                                <Tooltip title={t('Enter vat/tax')} placement="top">
-                                    <ErrorOutlineIcon
-                                        sx={{
-                                            fontSize: '12px',
-                                            cursor: 'pointer',
-                                            ml: 0.3,
-                                        }}
-                                    />
-                                </Tooltip>
-                            </span>
-                        }
-                        // label={t('VAT/TAX')}
-                        placeholder={t('VAT/TAX')}
-                        touched={RestaurantJoinFormik.touched.vat}
-                        errors={RestaurantJoinFormik.errors.vat}
-                        fieldProps={RestaurantJoinFormik.getFieldProps('vat')}
-                        onChangeHandler={restaurantNameHandler}
-                        value={RestaurantJoinFormik.values.vat}
-                        fontSize="12px"
-                        startIcon={
-                            <InputAdornment position="start">
-                                <PaidIcon
-                                    sx={{
-                                        color:
-                                            RestaurantJoinFormik.touched.vat &&
-                                            !RestaurantJoinFormik.errors.vat
-                                                ? theme.palette.primary.main
-                                                : alpha(
-                                                      theme.palette
-                                                          .neutral[400],
-                                                      0.7
-                                                  ),
-                                        fontSize: '18px',
-                                    }}
-                                />
-                            </InputAdornment>
-                        }
-                    />
-                </Grid>
-                <Grid item container xs={12} sm={12} md={12} spacing={2}>
-                    <Grid item md={4} xs={12}>
-                        <CustomTextFieldWithFormik
-                            placeholder={t('Min Delivery Time')}
-                            required
-                            type="number"
-                            label={t('Minimum Delivery Time')}
-                            borderRadius="8px"
-                            touched={
-                                RestaurantJoinFormik.touched.min_delivery_time
-                            }
-                            errors={
-                                RestaurantJoinFormik.errors.min_delivery_time
-                            }
-                            fieldProps={RestaurantJoinFormik.getFieldProps(
-                                'min_delivery_time'
-                            )}
-                            onChangeHandler={restaurantNameHandler}
-                            value={
-                                RestaurantJoinFormik.values.min_delivery_time
-                            }
-                            fontSize="14px"
-                            startIcon={
-                                <InputAdornment position="start">
-                                    <LocalShippingIcon
-                                        sx={{
-                                            color:
-                                                RestaurantJoinFormik.touched
-                                                    .min_delivery_time &&
-                                                !RestaurantJoinFormik.errors
-                                                    .min_delivery_time
-                                                    ? theme.palette.primary.main
-                                                    : alpha(
-                                                          theme.palette
-                                                              .neutral[400],
-                                                          0.7
-                                                      ),
-                                            fontSize: '18px',
-                                        }}
-                                    />
-                                </InputAdornment>
-                            }
-                        />
-                    </Grid>
-                    <Grid item md={4} xs={12}>
-                        <CustomTextFieldWithFormik
-                            placeholder={t('Max Delivery Time')}
-                            required="true"
-                            type="number"
-                            label={t('Maximum Delivery Time')}
-                            borderRadius="8px"
-                            touched={
-                                RestaurantJoinFormik.touched.max_delivery_time
-                            }
-                            errors={
-                                RestaurantJoinFormik.errors.max_delivery_time
-                            }
-                            fieldProps={RestaurantJoinFormik.getFieldProps(
-                                'max_delivery_time'
-                            )}
-                            onChangeHandler={restaurantNameHandler}
-                            value={
-                                RestaurantJoinFormik.values.max_delivery_time
-                            }
-                            fontSize="12px"
-                            startIcon={
-                                <InputAdornment position="start">
-                                    <LocalShippingIcon
-                                        sx={{
-                                            color:
-                                                RestaurantJoinFormik.touched
-                                                    .max_delivery_time &&
-                                                !RestaurantJoinFormik.errors
-                                                    .max_delivery_time
-                                                    ? theme.palette.primary.main
-                                                    : alpha(
-                                                          theme.palette
-                                                              .neutral[400],
-                                                          0.7
-                                                      ),
-                                            fontSize: '18px',
-                                        }}
-                                    />
-                                </InputAdornment>
-                            }
-                        />
-                    </Grid>
-                    <Grid item xs={12} sm={12} md={4}>
-                        <CustomSelectWithFormik
-                            selectFieldData={timeType}
-                            inputLabel={t('Duration Type')}
-                            value={
-                                RestaurantJoinFormik.values?.delivery_time_type
-                            }
-                            borderRadius="8px"
-                            passSelectedValue={handleTimeTypeChangeHandler}
-                            touched={
-                                RestaurantJoinFormik.touched.delivery_time_type
-                            }
-                            errors={
-                                RestaurantJoinFormik.errors.delivery_time_type
-                            }
-                            fieldProps={RestaurantJoinFormik.getFieldProps(
-                                'delivery_time_type'
-                            )}
-                            height="45px"
-                        />
-                    </Grid>
                 </Grid>
             </Grid>
         </CustomStackFullWidth>
     )
 }
+
 export default RestaurantDetailsForm

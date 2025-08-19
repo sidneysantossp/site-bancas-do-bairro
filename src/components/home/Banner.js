@@ -59,7 +59,7 @@ const Banner = ({ bannerIsLoading }) => {
         if (banner.type === 'restaurant_wise') {
             router.push(
                 {
-                    pathname: '/restaurant/[id]',
+                    pathname: '/banca/[id]',
                     query: {
                         id: `${
                             banner?.restaurant?.slug

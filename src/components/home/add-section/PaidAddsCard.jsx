@@ -121,7 +121,7 @@ const PaidAddsCard = ({
 
     const handleClick = () => {
         router.push({
-            pathname: `/restaurant/[id]`,
+            pathname: `/banca/[id]`,
             query: {
                 id: `${item?.slug ? item?.slug : item?.restaurant?.id}`,
                 banca_zone_id: item?.restaurant?.zone_id,

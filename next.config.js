@@ -8,6 +8,7 @@ const nextConfig = {
             'stackfood.6am.one',
             'stackfood-admin.6amtech.com',
             'localhost',
+            'cdn-icons-png.flaticon.com',
             // Adicione outros domínios de API conforme necessário
         ],
         formats: ['image/webp', 'image/avif'],
@@ -51,8 +52,45 @@ const nextConfig = {
                 destination: '/home',
                 permanent: true,
             },
+            // Redirecionar antigas rotas de restaurant para banca
+            {
+                source: '/restaurant',
+                destination: '/banca',
+                permanent: true,
+            },
+            {
+                source: '/restaurant/:path*',
+                destination: '/banca/:path*',
+                permanent: true,
+            },
+            // Redirecionar antigas rotas de cadastro para nova rota banca-registration
+            {
+                source: '/restaurant-registration',
+                destination: '/banca-registration',
+                permanent: true,
+            },
+            {
+                source: '/restaurant-registration/:path*',
+                destination: '/banca-registration/:path*',
+                permanent: true,
+            },
         ]
     },
+
+    // Removido: Rewrites que mapeavam /banca -> /restaurant
+    // Agora as páginas de /banca existem nativamente em src/pages/banca
+    // async rewrites() {
+    //     return [
+    //         {
+    //             source: '/banca',
+    //             destination: '/restaurant',
+    //         },
+    //         {
+    //             source: '/banca/:path*',
+    //             destination: '/restaurant/:path*',
+    //         },
+    //     ]
+    // },
     
     // Experimental features (removidas para evitar erros)
     // experimental: {

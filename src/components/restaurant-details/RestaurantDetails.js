@@ -401,14 +401,14 @@ const RestaurantDetails = ({ restaurantData, configData }) => {
                                             }}
                                         >
                                             <Box
-                                                sx={{
-                                                    fontSize: '4rem',
-                                                    marginBottom: '1rem',
-                                                    opacity: 0.5,
-                                                }}
-                                            >
-                                                🍽️
-                                            </Box>
+                                                 sx={{
+                                                     fontSize: '4rem',
+                                                     marginBottom: '1rem',
+                                                     opacity: 0.5,
+                                                 }}
+                                             >
+                                                 📦
+                                             </Box>
                                             <Box
                                                 sx={{
                                                     fontSize: '1.2rem',
@@ -417,7 +417,7 @@ const RestaurantDetails = ({ restaurantData, configData }) => {
                                                     color: theme.palette.text.primary,
                                                 }}
                                             >
-                                                Nenhum produto encontrado
+                                                Nenhum Produto Encontrado
                                             </Box>
                                             <Box
                                                 sx={{
@@ -426,7 +426,7 @@ const RestaurantDetails = ({ restaurantData, configData }) => {
                                                     marginBottom: '1.5rem',
                                                 }}
                                             >
-                                                Este restaurante ainda não possui produtos cadastrados ou há um problema temporário no servidor.
+                                                Esta Banca não possui produtos cadastrados ou há um problema temporário no servidor.
                                             </Box>
                                             <Box
                                                 sx={{

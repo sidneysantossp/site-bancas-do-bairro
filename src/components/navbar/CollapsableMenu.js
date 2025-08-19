@@ -7,13 +7,14 @@ import ExpandLess from '@mui/icons-material/ExpandLess'
 import ExpandMore from '@mui/icons-material/ExpandMore'
 import { useRouter } from 'next/router'
 import { getDataLimit } from '@/utils/customFunctions'
-import { t } from 'i18next'
+import { useTranslation } from 'react-i18next'
 import { useTheme } from '@emotion/react'
 
 const CollapsableMenu = ({ value, setOpenDrawer, pathName }) => {
     const router = useRouter()
     const theme = useTheme()
     const [open, setOpen] = useState(false)
+    const { t } = useTranslation()
     const handleClick = () => setOpen(!open)
     const handleRoute = (id, name) => {
         router.push(`${value.path}/${id}?name=${name}`)
@@ -100,7 +101,7 @@ const CollapsableMenu = ({ value, setOpenDrawer, pathName }) => {
                                         textDecoration: 'underLine',
                                     }}
                                 >
-                                    {'Ver todos'}
+                                    {t('View all')}
                                 </Typography>
                             }
                         ></ListItemText>

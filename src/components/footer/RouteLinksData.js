@@ -3,7 +3,7 @@ export const RouteLinksData = [
         name: 'Para Jornaleiros',
         value: 'restaurant_owner',
         // link: `${process.env.NEXT_PUBLIC_BASE_URL}/restaurant/apply`,
-        link: '/restaurant-registration?active=active',
+        link: '/banca-registration?active=active',
     },
     {
         name: 'Para Entregadores',

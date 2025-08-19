@@ -70,7 +70,7 @@ const NearByRestaurant = ({ dineIn }) => {
 
     const handleRouteToRestaurant = (restaurant) => {
         router.push({
-            pathname: `/restaurant/[id]`,
+            pathname: `/banca/[id]`,
             query: {
                 id: `${restaurant?.slug ? restaurant?.slug : restaurant?.id}`,
                 banca_zone_id: restaurant?.zone_id,

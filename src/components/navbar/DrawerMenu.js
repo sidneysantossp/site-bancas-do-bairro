@@ -133,22 +133,22 @@ const DrawerMenu = ({ zoneid, cartListRefetch }) => {
     }, [categoryData, data])
     const collapsableMenu = {
         cat: {
-            text: 'Categories',
+            text: t('Categories'),
             items: featuredCategories?.map((item) => item),
             path: '/category',
         },
         res: {
-            text: 'Restaurants',
+            text: t('Restaurants'),
             items: popularRestuarants?.data?.map((i) => i),
-            path: '/restaurant',
+            path: '/banca',
         },
         cuisine: {
-            text: 'Cuisines',
+            text: t('Cuisines'),
             items: cuisines?.map((i) => i),
             path: '/cuisines',
         },
         profile: {
-            text: 'Profile',
+            text: t('Profile'),
         },
     }
     let location = undefined
@@ -202,7 +202,7 @@ const DrawerMenu = ({ zoneid, cartListRefetch }) => {
                                             {t('Home')}
                                         </Typography>
                                     }
-                                    onClick={() => handleRoute('/home')}
+                                    onClick={() => handleRoute('home')}
                                 />
                             )}
                         </ListItemButton>
@@ -213,13 +213,13 @@ const DrawerMenu = ({ zoneid, cartListRefetch }) => {
                                     value={collapsableMenu.cat}
                                     setOpenDrawer={setOpenDrawer}
                                     toggleDrawers={toggleDrawer}
-                                    pathName="/categories"
+                                    pathName="/category"
                                 />
                                 <CollapsableMenu
                                     value={collapsableMenu.res}
                                     setOpenDrawer={setOpenDrawer}
                                     toggleDrawers={toggleDrawer}
-                                    pathName="/restaurant"
+                                    pathName="/banca"
                                 />
                                 <CollapsableMenu
                                     value={collapsableMenu.cuisine}
@@ -366,7 +366,7 @@ const DrawerMenu = ({ zoneid, cartListRefetch }) => {
                                                 {t('Home')}
                                             </Typography>
                                         }
-                                        onClick={() => handleRoute('/home')}
+                                        onClick={() => handleRoute('home')}
                                     />
                                 )}
                             </ListItemButton>
@@ -376,20 +376,20 @@ const DrawerMenu = ({ zoneid, cartListRefetch }) => {
                                         value={collapsableMenu.cat}
                                         setOpenDrawer={setOpenDrawer}
                                         toggleDrawers={toggleDrawer}
-                                        pathName="/categories"
-                                    />
-                                    <CollapsableMenu
-                                        value={collapsableMenu.res}
-                                        setOpenDrawer={setOpenDrawer}
-                                        toggleDrawers={toggleDrawer}
-                                        pathName="/restaurant"
-                                    />
-                                    <CollapsableMenu
-                                        value={collapsableMenu.cuisine}
-                                        setOpenDrawer={setOpenDrawer}
-                                        toggleDrawers={toggleDrawer}
-                                        pathName="/cuisines"
-                                    />
+                                        pathName="/category"
+                                        />
+                                        <CollapsableMenu
+                                            value={collapsableMenu.res}
+                                            setOpenDrawer={setOpenDrawer}
+                                            toggleDrawers={toggleDrawer}
+                                            pathName="/banca"
+                                        />
+                                        <CollapsableMenu
+                                            value={collapsableMenu.cuisine}
+                                            setOpenDrawer={setOpenDrawer}
+                                            toggleDrawers={toggleDrawer}
+                                            pathName="/cuisines"
+                                        />
                                 </>
                             )}
 

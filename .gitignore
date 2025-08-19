@@ -60,8 +60,10 @@ netlify.toml
 .env.development.local
 .env.test.local
 .env.production.local
-
-# local env files
+# environment files (do not commit secrets)
+.env.development
+.env.production
+# ensure all env files are ignored
 .env*.local
 
 # logs

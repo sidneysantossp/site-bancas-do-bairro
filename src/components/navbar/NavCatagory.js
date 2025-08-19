@@ -91,7 +91,7 @@ const NavCatagory = ({ setRestaurantModal, languageDirection }) => {
                 fontSize="14px"
                 alignItems="center"
             >
-                Categorias{' '}
+                {t('Cuisines')}{' '}
                 <KeyboardArrowDownIcon
                     style={{ width: '16px', marginLeft: '5px' }}
                 />
@@ -468,7 +468,7 @@ const NavCatagory = ({ setRestaurantModal, languageDirection }) => {
                                 size="medium"
                                 onClick={handleClick}
                             >
-                                {'Ver todos'}
+                                {t('View all')}
                             </Button>
                         </Grid>
                     )}

@@ -88,7 +88,7 @@ const RestaurantCard = (props) => {
         }
     }
     return (
-        <Link href={`/restaurant/${id}`} passHref>
+        <Link href={`/banca/${id}`} passHref>
             <Box className="cardpopular" sx={{ cursor: 'pointer' }}>
                 {restaurantDiscountTag(
                     props.restaurantDiscount,

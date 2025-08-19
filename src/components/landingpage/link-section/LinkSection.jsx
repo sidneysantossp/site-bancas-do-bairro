@@ -18,7 +18,7 @@ const LinkSection = ({
         router.push(delivery_section_link)
     }
     const RestaurantRegister = () => {
-        const restaurant_section_link ='/restaurant-registration?active=active'
+        const restaurant_section_link = '/banca-registration?active=active'
         router.push(`${restaurant_section_link}`)
     }
 

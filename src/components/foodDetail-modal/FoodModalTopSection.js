@@ -26,7 +26,7 @@ const FoodModalTopSection = ({
     }
     const theme = useTheme()
     const handleClick = () => {
-        router.push(`/restaurant/${product?.restaurant_id}`)
+        router.push(`/banca/${product?.restaurant_id}`)
         handleModalClose()
     }
     return (
@@ -62,7 +62,7 @@ const FoodModalTopSection = ({
                     {!product?.available_date_ends && (
                         <FoodRating product_avg_rating={product?.avg_rating} />
                     )}
-                    {router.pathname !== `/restaurant/[id]` ? (
+                    {router.pathname !== `/banca/[id]` ? (
                         <Typography
                             sx={{
                                 cursor: 'pointer',
