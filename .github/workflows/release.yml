@@ -1,0 +1,44 @@
+name: Auto Release and Tag
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Bump version, update changelog and tag (patch by default)
+        run: npx standard-version -a --release-as patch || echo "standard-version completed with non-zero exit (no changes?)"
+
+      - name: Push changes and tags
+        run: |
+          if [[ -n "$(git status --porcelain)" ]]; then
+            git push --follow-tags origin "${{ github.ref_name }}"
+          else
+            echo "No release changes to push."
+          fi
