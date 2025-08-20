@@ -32,10 +32,37 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
+      - name: Determine last tag
+        id: lasttag
+        run: |
+          if git describe --tags --abbrev=0 >/dev/null 2>&1; then
+            echo "tag=$(git describe --tags --abbrev=0)" >> $GITHUB_OUTPUT
+          else
+            echo "tag=" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Check commits for feat/fix/BREAKING
+        id: check
+        run: |
+          if [ -z "${{ steps.lasttag.outputs.tag }}" ]; then
+            echo "should=true" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          range="${{ steps.lasttag.outputs.tag }}..HEAD"
+          subjects=$(git log --format=%s $range)
+          bodies=$(git log --format=%b $range)
+          if echo "$subjects" | grep -Eiq '^(feat|fix)(\(|:)' || echo "$subjects" | grep -Eiq '!:' || echo "$bodies" | grep -Eiq 'BREAKING CHANGE'; then
+            echo "should=true" >> $GITHUB_OUTPUT
+          else
+            echo "should=false" >> $GITHUB_OUTPUT
+          fi
+
       - name: Bump version, update changelog and tag (auto by commit type)
+        if: steps.check.outputs.should == 'true'
         run: npx standard-version -a || echo "standard-version completed with non-zero exit (no changes?)"
 
       - name: Push changes and tags
+        if: steps.check.outputs.should == 'true'
         run: |
           if [[ -n "$(git status --porcelain)" ]]; then
             git push --follow-tags origin "${{ github.ref_name }}"

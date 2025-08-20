@@ -1,0 +1,11 @@
+# Ensure mod_rewrite is enabled on Apache
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # Redirecionar raiz do site para /home
+  # Usando caminho relativo para funcionar tanto na raiz do domínio quanto em subdiretórios
+  RewriteRule ^$ home [L,R=301]
+</IfModule>
+
+# Caso mod_rewrite não esteja disponível, um fallback simples
+RedirectMatch 301 ^/$ /home

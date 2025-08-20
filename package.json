@@ -78,7 +78,8 @@
         "release:patch": "standard-version --release-as patch",
         "release:minor": "standard-version --release-as minor",
         "release:major": "standard-version --release-as major",
-        "push:tags": "git push --follow-tags origin main"
+        "push:tags": "git push --follow-tags origin main",
+        "prepare": "husky install"
     },
     "browserslist": {
         "production": [
@@ -95,6 +96,9 @@
     "devDependencies": {
         "eslint": "^8.18.0",
         "prettier": "2.5.1",
-        "standard-version": "^9.5.0"
+        "standard-version": "^9.5.0",
+        "husky": "^9.1.6",
+        "@commitlint/cli": "^19.0.0",
+        "@commitlint/config-conventional": "^19.0.0"
     }
 }
