@@ -2,10 +2,9 @@
 <IfModule mod_rewrite.c>
   RewriteEngine On
 
-  # Redirecionar raiz do site para /home
-  # Usando caminho relativo para funcionar tanto na raiz do domínio quanto em subdiretórios
-  RewriteRule ^$ home [L,R=301]
+  # Redirecionar raiz do site para /home (temporário para evitar cache durante testes)
+  RewriteRule ^$ home [L,R=302]
 </IfModule>
 
-# Caso mod_rewrite não esteja disponível, um fallback simples
-RedirectMatch 301 ^/$ /home
+# Fallback caso mod_rewrite não esteja disponível (também temporário)
+RedirectMatch 302 ^/$ /home
