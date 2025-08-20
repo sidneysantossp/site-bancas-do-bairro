@@ -10,6 +10,9 @@ const nextConfig = {
             'localhost',
             'cdn-icons-png.flaticon.com',
             // Adicione outros domínios de API conforme necessário
+            'admin.guiadasbancas.com.br',
+            'guiadasbancas.com.br',
+            'www.guiadasbancas.com.br',
         ],
         formats: ['image/webp', 'image/avif'],
         deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
