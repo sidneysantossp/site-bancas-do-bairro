@@ -73,7 +73,12 @@
     "scripts": {
         "dev": "next dev",
         "build": "next build",
-        "start": "next start"
+        "start": "next start",
+        "release": "standard-version",
+        "release:patch": "standard-version --release-as patch",
+        "release:minor": "standard-version --release-as minor",
+        "release:major": "standard-version --release-as major",
+        "push:tags": "git push --follow-tags origin main"
     },
     "browserslist": {
         "production": [
@@ -89,6 +94,7 @@
     },
     "devDependencies": {
         "eslint": "^8.18.0",
-        "prettier": "2.5.1"
+        "prettier": "2.5.1",
+        "standard-version": "^9.5.0"
     }
 }
