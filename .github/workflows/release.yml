@@ -32,8 +32,8 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-      - name: Bump version, update changelog and tag (patch by default)
-        run: npx standard-version -a --release-as patch || echo "standard-version completed with non-zero exit (no changes?)"
+      - name: Bump version, update changelog and tag (auto by commit type)
+        run: npx standard-version -a || echo "standard-version completed with non-zero exit (no changes?)"
 
       - name: Push changes and tags
         run: |
