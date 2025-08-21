@@ -2,6 +2,36 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.0.5](https://github.com/sidneysantossp/guiadasbancas/compare/v3.0.2...v3.0.5) (2025-08-21)
+
+
+### Continuous Integration
+
+* **release:** auto bump version, changelog and tag on push to main ([2915f47](https://github.com/sidneysantossp/guiadasbancas/commit/2915f47965c9f257a1c115d6757d099f5dbe4216))
+* **release:** inferir versão automaticamente (feat/fix/BREAKING) no standard-version ([52df6d6](https://github.com/sidneysantossp/guiadasbancas/commit/52df6d66df1ee1ec25be9ccc1a4f50f2b68915b1))
+* **web:** redirecionar raiz para /home via Next.js e .htaccess (Apache) ([58bcecb](https://github.com/sidneysantossp/guiadasbancas/commit/58bcecb6d652de1bb105df5a616086786bacbcc5))
+* **web:** usar redirect temporário (302) de / para /home no Next.js e Apache para evitar cache durante testes ([ff9694d](https://github.com/sidneysantossp/guiadasbancas/commit/ff9694d1746224c51c699a2a8bcf28221aa29627))
+
+### [3.0.4](https://github.com/sidneysantossp/guiadasbancas/compare/v3.0.2...v3.0.4) (2025-08-21)
+
+
+### Continuous Integration
+
+* **release:** auto bump version, changelog and tag on push to main ([2915f47](https://github.com/sidneysantossp/guiadasbancas/commit/2915f47965c9f257a1c115d6757d099f5dbe4216))
+* **release:** inferir versão automaticamente (feat/fix/BREAKING) no standard-version ([52df6d6](https://github.com/sidneysantossp/guiadasbancas/commit/52df6d66df1ee1ec25be9ccc1a4f50f2b68915b1))
+* **web:** redirecionar raiz para /home via Next.js e .htaccess (Apache) ([58bcecb](https://github.com/sidneysantossp/guiadasbancas/commit/58bcecb6d652de1bb105df5a616086786bacbcc5))
+* **web:** usar redirect temporário (302) de / para /home no Next.js e Apache para evitar cache durante testes ([ff9694d](https://github.com/sidneysantossp/guiadasbancas/commit/ff9694d1746224c51c699a2a8bcf28221aa29627))
+
+### [3.0.3](https://github.com/sidneysantossp/guiadasbancas/compare/v3.0.2...v3.0.3) (2025-08-21)
+
+
+### Continuous Integration
+
+* **release:** auto bump version, changelog and tag on push to main ([2915f47](https://github.com/sidneysantossp/guiadasbancas/commit/2915f47965c9f257a1c115d6757d099f5dbe4216))
+* **release:** inferir versão automaticamente (feat/fix/BREAKING) no standard-version ([52df6d6](https://github.com/sidneysantossp/guiadasbancas/commit/52df6d66df1ee1ec25be9ccc1a4f50f2b68915b1))
+* **web:** redirecionar raiz para /home via Next.js e .htaccess (Apache) ([58bcecb](https://github.com/sidneysantossp/guiadasbancas/commit/58bcecb6d652de1bb105df5a616086786bacbcc5))
+* **web:** usar redirect temporário (302) de / para /home no Next.js e Apache para evitar cache durante testes ([ff9694d](https://github.com/sidneysantossp/guiadasbancas/commit/ff9694d1746224c51c699a2a8bcf28221aa29627))
+
 ### [3.0.2](https://github.com/sidneysantossp/guiadasbancas/compare/v0.1.0...v3.0.2) (2025-08-20)
 
 

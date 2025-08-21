@@ -1,6 +1,6 @@
 {
     "name": "StackFood",
-    "version": "3.0.2",
+    "version": "3.0.5",
     "private": true,
     "dependencies": {
         "@emotion/cache": "^11.14.0",
@@ -71,9 +71,9 @@
         "yup": "^0.32.11"
     },
     "scripts": {
-        "dev": "next dev",
+        "dev": "next dev -p 3002",
         "build": "next build",
-        "start": "next start",
+        "start": "next start -p 3002",
         "release": "standard-version",
         "release:patch": "standard-version --release-as patch",
         "release:minor": "standard-version --release-as minor",
