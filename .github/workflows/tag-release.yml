@@ -1,0 +1,62 @@
+name: Create Release from Tag
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag a publicar (ex: v3.0.6). Se vazio, usa a última tag.'
+        required: false
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Determinar tag alvo
+        id: detag
+        shell: bash
+        run: |
+          if [ -n "${{ github.event.inputs.tag }}" ]; then
+            TAG="${{ github.event.inputs.tag }}"
+          else
+            # Para push de tag, o ref já é a tag; para dispatch sem input, pega última tag
+            if [[ "${GITHUB_REF}" == refs/tags/* ]]; then
+              TAG="${GITHUB_REF##*/}"
+            else
+              TAG=$(git describe --tags --abbrev=0 || echo "")
+            fi
+          fi
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+
+      - name: Preparar changelog simplificado
+        if: steps.detag.outputs.tag != ''
+        run: |
+          TAG="${{ steps.detag.outputs.tag }}"
+          PREV_TAG=$(git describe --tags --abbrev=0 ${TAG}^ 2>/dev/null || echo "")
+          if [ -n "$PREV_TAG" ]; then
+            echo "## Changes since $PREV_TAG" > RELEASE_BODY.md
+            git log --pretty=format:'- %s (%h)' $PREV_TAG..$TAG >> RELEASE_BODY.md
+          else
+            echo "Initial release notes for $TAG" > RELEASE_BODY.md
+          fi
+
+      - name: Criar Release no GitHub
+        if: steps.detag.outputs.tag != ''
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ steps.detag.outputs.tag }}
+          name: ${{ steps.detag.outputs.tag }}
+          body_path: RELEASE_BODY.md
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
