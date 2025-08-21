@@ -82,7 +82,7 @@ const CustomDrawerCart = () => {
                         <OrderSummaryGrid sx={{ width: 370 }} container item>
                             <Box sx={{ overflow: 'auto', width: '100%' }}>
                                 <CustomTypographyBold align="center">
-                                    {t('Cart is Empty')}
+                                    {t('Cart is Empty') === 'Cart is Empty' ? 'Bora encher esse carrinho?' : t('Cart is Empty')}
                                 </CustomTypographyBold>
                             </Box>
                         </OrderSummaryGrid>

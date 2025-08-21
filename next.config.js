@@ -23,6 +23,15 @@ const nextConfig = {
     compress: true,
     poweredByHeader: false,
     generateEtags: false,
+
+    // Evitar escrita em disco quando sem espaço
+    webpack: (config, { dev }) => {
+        if (dev) {
+            // Desativa cache persistente do Webpack que grava em .next/cache
+            config.cache = false
+        }
+        return config
+    },
     
     // Headers de segurança
     async headers() {

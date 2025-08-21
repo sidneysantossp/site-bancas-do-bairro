@@ -19,9 +19,5 @@ export const mockData = [
         name: 'Retirada',
         value: 'take_away',
     },
-    {
-        id: 4,
-        name: 'No local',
-        value: 'dine_in',
-    },
+    // { id: 4, name: 'No local', value: 'dine_in' }, // ocultado
 ]

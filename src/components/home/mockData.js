@@ -6,7 +6,7 @@ export const mockData = [
     },
     {
         id: 1,
-        category_name: 'Novas',
+        category_name: 'Novas Bancas',
         value: 'latest',
     },
     {
@@ -19,11 +19,7 @@ export const mockData = [
         category_name: 'Retirada',
         value: 'take_away',
     },
-    {
-        id: 4,
-        category_name: 'No local',
-        value: 'dine_in',
-    },
+    // { id: 4, category_name: 'No local', value: 'dine_in' }, // ocultado
     {
         id: 5,
         category_name: 'Populares',

@@ -102,7 +102,7 @@ const SearchFilterWithResults = ({
                                     )}
                                     {data?.data?.restaurants?.length === 0 && (
                                         <CustomEmptyResult
-                                            label="No restaurant found"
+                                            label={t('No restaurant found') === 'No restaurant found' ? 'Nenhuma Banca encontrada' : t('No restaurant found')}
                                             image={noRestaurantsImage}
                                         />
                                     )}

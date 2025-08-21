@@ -11,10 +11,14 @@ import dynamic from 'next/dynamic'
 import Head from 'next/head'
 import Router, { useRouter } from 'next/router'
 import nProgress from 'nprogress'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Toaster } from 'react-hot-toast'
 import { QueryClient, QueryClientProvider } from 'react-query'
-import { ReactQueryDevtools } from 'react-query/devtools'
+// Carregar Devtools apenas no cliente para evitar falhas no SSR
+const ReactQueryDevtoolsLazy = dynamic(
+    () => import('react-query/devtools').then((m) => m.ReactQueryDevtools),
+    { ssr: false }
+)
 import { Provider } from 'react-redux'
 import { persistStore } from 'redux-persist'
 import DynamicFavicon from '../components/favicon/DynamicFavicon'
@@ -36,13 +40,26 @@ const clientSideEmotionCache = createEmotionCache()
 function App({ Component, pageProps, emotionCache = clientSideEmotionCache }) {
     const { t } = useTranslation()
     const getLayout = Component.getLayout ?? ((page) => page)
-    const queryClient = new QueryClient()
+    // cria uma única instância do QueryClient por ciclo de vida da app
+    const queryClient = useMemo(
+        () =>
+            new QueryClient({
+                defaultOptions: {
+                    queries: {
+                        staleTime: 60 * 1000,
+                        cacheTime: 5 * 60 * 1000,
+                        refetchOnWindowFocus: false,
+                        retry: 1,
+                    },
+                },
+            }),
+        []
+    )
     const router = useRouter()
     const [viewFooter, setViewFooter] = useState(false)
     const Footer = dynamic(() => import('../components/footer/Footer'), {
         ssr: false,
     })
-    // Removido: código temporário de forçar pt-br e limpar chaves de linguagem
     useEffect(() => {
         const userLanguage = localStorage.getItem('language')
         if (!userLanguage) {
@@ -52,20 +69,22 @@ function App({ Component, pageProps, emotionCache = clientSideEmotionCache }) {
 
     useEffect(() => {
         const userLanguage = localStorage.getItem('language')
-        if (userLanguage) {
-            const normalized = userLanguage?.toLowerCase()
-            const lang =
-                normalized === 'pt' || normalized?.startsWith('pt-')
-                    ? 'pt-br'
-                    : normalized
-            i18n.changeLanguage(lang)
-            if (lang !== normalized) {
-                localStorage.setItem('language', lang)
-            }
+        // Normaliza e força pt-br quando apropriado
+        const normalizedRaw = userLanguage?.toLowerCase().replace('_', '-')
+        let lang
+        if (!normalizedRaw) {
+            lang = 'pt-br'
+        } else if (normalizedRaw === 'en') {
+            // Se estiver salvo como inglês, forçamos para pt-br nesta instalação
+            lang = 'pt-br'
+        } else if (normalizedRaw === 'pt' || normalizedRaw.startsWith('pt-')) {
+            lang = 'pt-br'
+        } else {
+            lang = normalizedRaw
         }
-        if (!userLanguage) {
-            i18n.changeLanguage(i18n.language)
-            localStorage.setItem('language', i18n.language)
+        i18n.changeLanguage(lang)
+        if (lang !== userLanguage) {
+            localStorage.setItem('language', lang)
         }
         setViewFooter(true)
     }, [])
@@ -78,6 +97,7 @@ function App({ Component, pageProps, emotionCache = clientSideEmotionCache }) {
     }
 
     useEffect(() => {
+        if (!currentVersion) return
         const storedVersion = localStorage.getItem('appVersion')
         if (storedVersion !== currentVersion) {
             localStorage.clear()
@@ -160,10 +180,12 @@ function App({ Component, pageProps, emotionCache = clientSideEmotionCache }) {
                         </SettingsConsumer>
                     </SettingsProvider>
                 </Provider>
-                <ReactQueryDevtools
-                    initialIsOpen={false}
-                    position="bottom-right"
-                />
+                {process.env.NODE_ENV !== 'production' && (
+                    <ReactQueryDevtoolsLazy
+                        initialIsOpen={false}
+                        position="bottom-right"
+                    />
+                )}
             </QueryClientProvider>
         </CacheProvider>
     )

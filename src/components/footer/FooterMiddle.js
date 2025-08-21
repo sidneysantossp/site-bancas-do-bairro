@@ -151,7 +151,7 @@ const FooterMiddle = ({ landingPageData, isLoading }) => {
                             <RouteLinks
                                 token={token}
                                 global={global}
-                                title="Outros"
+                                title="Institucional"
                                 RouteLinksData={OtherData}
                                 isCenter={isSmall && true}
                             />

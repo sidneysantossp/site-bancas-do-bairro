@@ -291,7 +291,7 @@ const NavResturant = ({ zoneid }) => {
                                     <CustomEmptyResult
                                         height="100px"
                                         image={noRestaurantsImage}
-                                        label="No restaurant found"
+                                        label={t('No restaurant found') === 'No restaurant found' ? 'Nenhuma Banca encontrada' : t('No restaurant found')}
                                     />
                                 )}
                             </Grid>
@@ -319,7 +319,7 @@ const NavResturant = ({ zoneid }) => {
                                     size="medium"
                                     onClick={viewAll}
                                 >
-                                    {'Ver todos'}
+                                    {'Ver todas'}
                                 </Button>
                             )}
 

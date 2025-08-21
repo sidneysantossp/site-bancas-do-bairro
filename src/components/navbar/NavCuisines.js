@@ -67,7 +67,7 @@ const NavCuisines = ({ setRestaurantModal, languageDirection }) => {
                 fontSize="14px"
                 alignItems="center"
             >
-                Produtos por Banca{' '}
+                Categorias{' '}
                 <KeyboardArrowDownIcon
                     style={{ width: '16px', marginLeft: '5px' }}
                 />
@@ -198,7 +198,7 @@ const NavCuisines = ({ setRestaurantModal, languageDirection }) => {
                                 size="medium"
                                 onClick={handleClick}
                             >
-                                {'Ver todos'}
+                                {'Ver todas'}
                             </Button>
                         </Grid>
                     )}

@@ -6,8 +6,21 @@ import SearchSuggestionsBottom from '../search/SearchSuggestionsBottom'
 const HomeSearch = () => {
     const [openSearchSuggestions, setOpenSearchSuggestions] = useState(false)
     const [selectedValue, setSelectedValue] = useState('')
+    const [zoneid, setZoneid] = useState(null)
     const router = useRouter()
     const searchRef = useRef(null)
+
+    useEffect(() => {
+        // Carrega zoneid apenas no cliente
+        if (typeof window !== 'undefined') {
+            try {
+                const z = window.localStorage.getItem('zoneid')
+                setZoneid(z)
+            } catch (e) {
+                setZoneid(null)
+            }
+        }
+    }, [])
 
     useEffect(() => {
         function handleClickOutside(event) {
@@ -25,28 +38,36 @@ const HomeSearch = () => {
     }, [searchRef])
     const handleOnFocus = () => {
         setOpenSearchSuggestions(true)
-        localStorage.setItem('bg', true)
+        if (typeof window !== 'undefined') {
+            try {
+                window.localStorage.setItem('bg', true)
+            } catch (e) {}
+        }
     }
     const handleKeyPress = (value) => {
         setOpenSearchSuggestions(false)
 
-        let getItem = JSON.parse(localStorage.getItem('searchedValues'))
-        if (getItem && getItem.length > 0) {
-            if (value !== '') {
-                getItem.push(value)
-            }
-            localStorage.setItem('searchedValues', JSON.stringify(getItem))
-        } else {
-            if (value !== '') {
-                let newData = []
-                newData.push(value)
-                localStorage.setItem('searchedValues', JSON.stringify(newData))
-            }
+        if (typeof window !== 'undefined') {
+            try {
+                let getItem = JSON.parse(window.localStorage.getItem('searchedValues'))
+                if (getItem && getItem.length > 0) {
+                    if (value !== '') {
+                        getItem.push(value)
+                    }
+                    window.localStorage.setItem('searchedValues', JSON.stringify(getItem))
+                } else {
+                    if (value !== '') {
+                        let newData = []
+                        newData.push(value)
+                        window.localStorage.setItem('searchedValues', JSON.stringify(newData))
+                    }
+                }
+            } catch (e) {}
         }
         if (value !== '') {
             router.push(
                 {
-                    pathname: window.location.pathname,
+                    pathname: router.pathname,
                     query: {
                         query: value,
                     },

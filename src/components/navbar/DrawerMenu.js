@@ -27,13 +27,13 @@ import {
     CustomStackFullWidth,
 } from '@/styled-components/CustomStyles.style'
 import { logoutSuccessFull } from '@/utils/ToasterMessages'
-import CustomLanguage from '../CustomLanguage'
 import { onErrorResponse } from '../ErrorResponse'
 import { RTL } from '../RTL/RTL'
 import { getToken } from '../checkout-page/functions/getGuestUserId'
 import { CustomTypography } from '../custom-tables/Tables.style'
 import { CustomToaster } from '../custom-toaster/CustomToaster'
 import ThemeSwitches from './top-navbar/ThemeSwitches'
+import i18n from '@/language/i18n'
 
 const DrawerMenu = ({ zoneid, cartListRefetch }) => {
     const [forSignup, setForSignup] = useState('')
@@ -41,20 +41,30 @@ const DrawerMenu = ({ zoneid, cartListRefetch }) => {
     const { featuredCategories, cuisines } = useSelector(
         (state) => state.storedData
     )
-    const { countryCode, language } = useSelector(
-        (state) => state.languageChange
-    )
+    // Removido: const { countryCode, language } = useSelector((state) => state.languageChange)
     const { t } = useTranslation()
+    const translateOrFallback = (key, fallback) => {
+        const translated = t(key)
+        return translated === key ? fallback : translated
+    }
     const router = useRouter()
     const dispatch = useDispatch()
     const [openDrawer, setOpenDrawer] = useState(false)
     const token = getToken()
     const [authModalOpen, setOpen] = useState(false)
+    const [langTick, setLangTick] = useState(0)
     const handleOpenAuthModal = (page) => {
         setModalFor(page)
         setOpen(true)
         setForSignup(page)
     }
+
+    // force re-render when language changes to ensure Drawer texts update
+    useEffect(() => {
+        const handler = () => setLangTick((v) => v + 1)
+        i18n.on('languageChanged', handler)
+        return () => i18n.off('languageChanged', handler)
+    }, [])
 
     const handleCloseAuthModal = () => {
         setOpen(false)
@@ -87,6 +97,22 @@ const DrawerMenu = ({ zoneid, cartListRefetch }) => {
         ) {
             return
         }
+        // Sincroniza o idioma do i18n no momento de abrir o Drawer
+        if (openDrawer && typeof window !== 'undefined') {
+            try {
+                const userLanguage = localStorage.getItem('language')
+                if (userLanguage) {
+                    let normalized = userLanguage.toLowerCase().replace('_', '-')
+                    const lang =
+                        normalized === 'pt' || normalized.startsWith('pt-')
+                            ? 'pt-br'
+                            : normalized
+                    if (i18n.language !== lang) {
+                        i18n.changeLanguage(lang)
+                    }
+                }
+            } catch (e) {}
+        }
         setOpenDrawer(openDrawer)
     }
     const searchKey = ''
@@ -118,6 +144,21 @@ const DrawerMenu = ({ zoneid, cartListRefetch }) => {
 
     const { data, refetch } = useGetCuisines()
     useEffect(() => {
+        if (typeof window === 'undefined') return
+        const userLanguage = localStorage.getItem('language')
+        if (userLanguage) {
+            let normalized = userLanguage.toLowerCase().replace('_', '-')
+            const lang =
+                normalized === 'pt' || normalized.startsWith('pt-')
+                    ? 'pt-br'
+                    : normalized
+            if (i18n.language !== lang) {
+                i18n.changeLanguage(lang)
+            }
+        }
+    }, [])
+
+    useEffect(() => {
         if (cuisines?.length === 0) {
             refetch()
         }
@@ -133,22 +174,26 @@ const DrawerMenu = ({ zoneid, cartListRefetch }) => {
     }, [categoryData, data])
     const collapsableMenu = {
         cat: {
-            text: t('Categories'),
+            text: 'Categories',
+            displayText: translateOrFallback('Categories', 'Categorias'),
             items: featuredCategories?.map((item) => item),
             path: '/category',
         },
         res: {
-            text: t('Restaurants'),
+            text: 'Restaurants',
+            displayText: translateOrFallback('Restaurants', 'Bancas perto de mim'),
             items: popularRestuarants?.data?.map((i) => i),
             path: '/banca',
         },
         cuisine: {
-            text: t('Cuisines'),
+            text: 'Cuisines',
+            displayText: translateOrFallback('Cuisines', 'Os mais buscados'),
             items: cuisines?.map((i) => i),
             path: '/cuisines',
         },
         profile: {
-            text: t('Profile'),
+            text: 'Profile',
+            displayText: translateOrFallback('Profile', 'Perfil'),
         },
     }
     let location = undefined
@@ -199,7 +244,7 @@ const DrawerMenu = ({ zoneid, cartListRefetch }) => {
                                 <ListItemText
                                     primary={
                                         <Typography sx={{ fontSize: '12px' }}>
-                                            {t('Home')}
+                                            {translateOrFallback('Home', 'Início')}
                                         </Typography>
                                     }
                                     onClick={() => handleRoute('home')}
@@ -245,7 +290,7 @@ const DrawerMenu = ({ zoneid, cartListRefetch }) => {
                                             <Typography
                                                 sx={{ fontSize: '12px' }}
                                             >
-                                                {t('Profile')}
+                                                {translateOrFallback('Profile', 'Perfil')}
                                             </Typography>
                                         }
                                         onClick={handleRouteToUserInfo}
@@ -267,7 +312,7 @@ const DrawerMenu = ({ zoneid, cartListRefetch }) => {
                             <ListItemText
                                 primary={
                                     <Typography sx={{ fontSize: '12px' }}>
-                                        {t('Terms & Conditions')}
+                                        {translateOrFallback('Terms & Conditions', 'Termos e Condições')}
                                     </Typography>
                                 }
                                 onClick={() =>
@@ -289,7 +334,7 @@ const DrawerMenu = ({ zoneid, cartListRefetch }) => {
                             <ListItemText
                                 primary={
                                     <Typography sx={{ fontSize: '12px' }}>
-                                        {t('Privacy Policy')}
+                                        {translateOrFallback('Privacy Policy', 'Política de Privacidade')}
                                     </Typography>
                                 }
                                 onClick={() => handleRoute('privacy-policy')}
@@ -299,28 +344,14 @@ const DrawerMenu = ({ zoneid, cartListRefetch }) => {
                             <ListItemText
                                 primary={
                                     <Typography sx={{ fontSize: '12px' }}>
-                                        {t('Theme Mode')}
+                                        {translateOrFallback('Theme Mode', 'Modo do Tema')}
                                     </Typography>
                                 }
                             />
                             <ThemeSwitches noText />
                         </ListItemButton>
-                        <ListItemButton>
-                            <ListItemText
-                                primary={
-                                    <Typography sx={{ fontSize: '12px' }}>
-                                        {t('Language')}
-                                    </Typography>
-                                }
-                            />
-                            <CustomLanguage
-                                countryCode={countryCode}
-                                language={language}
-                                isMobile={true}
-                            />
-                        </ListItemButton>
-                    </List>
-
+                        {/* Removido o seletor de idioma no mobile */}
+                     </List>
                     <ButtonContainer>
                         <Button
                             variant="contained"
@@ -363,7 +394,7 @@ const DrawerMenu = ({ zoneid, cartListRefetch }) => {
                                             <Typography
                                                 sx={{ fontSize: '12px' }}
                                             >
-                                                {t('Home')}
+                                                {translateOrFallback('Home', 'Início')}
                                             </Typography>
                                         }
                                         onClick={() => handleRoute('home')}
@@ -406,7 +437,7 @@ const DrawerMenu = ({ zoneid, cartListRefetch }) => {
                                 <ListItemText
                                     primary={
                                         <Typography sx={{ fontSize: '12px' }}>
-                                            {t('Terms & Conditions')}
+                                            {translateOrFallback('Terms & Conditions', 'Termos e Condições')}
                                         </Typography>
                                     }
                                     onClick={() =>
@@ -427,7 +458,7 @@ const DrawerMenu = ({ zoneid, cartListRefetch }) => {
                                 <ListItemText
                                     primary={
                                         <Typography sx={{ fontSize: '12px' }}>
-                                            {t('Privacy Policy')}
+                                            {translateOrFallback('Privacy Policy', 'Política de Privacidade')}
                                         </Typography>
                                     }
                                     onClick={() =>
@@ -439,26 +470,13 @@ const DrawerMenu = ({ zoneid, cartListRefetch }) => {
                                 <ListItemText
                                     primary={
                                         <Typography sx={{ fontSize: '12px' }}>
-                                            {t('Theme Mode')}
+                                            {translateOrFallback('Theme Mode', 'Modo do Tema')}
                                         </Typography>
                                     }
                                 />
                                 <ThemeSwitches noText />
                             </ListItemButton>
-                            <ListItemButton>
-                                <ListItemText
-                                    primary={
-                                        <Typography sx={{ fontSize: '12px' }}>
-                                            {t('Language')}
-                                        </Typography>
-                                    }
-                                />
-                                <CustomLanguage
-                                    countryCode={countryCode}
-                                    language={language}
-                                    isMobile={true}
-                                />
-                            </ListItemButton>
+                            {/* Removido o seletor de idioma no mobile */}
                         </>
                     </List>
                     <ButtonContainer marginBottom="50px">
@@ -469,7 +487,7 @@ const DrawerMenu = ({ zoneid, cartListRefetch }) => {
                             startIcon={<LockIcon />}
                             onClick={() => handleOpenAuthModal('sign-in')}
                         >
-                            Minha Conta
+                            {translateOrFallback('My Account', 'Minha Conta')}
                         </Button>
                         <CustomStackFullWidth
                             direction="row"
@@ -479,7 +497,7 @@ const DrawerMenu = ({ zoneid, cartListRefetch }) => {
                             marginTop="1rem"
                         >
                             <CustomTypography fontSize="14px">
-                                {t("Don't have an account?")}
+                                {translateOrFallback("Don't have an account?", 'Ainda não tem conta?')}
                             </CustomTypography>
                             <CustomLink
                                 onClick={() => {
@@ -487,7 +505,7 @@ const DrawerMenu = ({ zoneid, cartListRefetch }) => {
                                 }}
                                 variant="body2"
                             >
-                                {t('Sign Up')}
+                                {translateOrFallback('Sign In', 'Entrar')}
                             </CustomLink>
                         </CustomStackFullWidth>
                     </ButtonContainer>

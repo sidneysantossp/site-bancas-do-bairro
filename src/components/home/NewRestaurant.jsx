@@ -41,7 +41,11 @@ const NewRestaurant = () => {
     })
 
     const { global } = useSelector((state) => state.globalSettings)
-    const languageDirection = localStorage.getItem('direction')
+    // SSR-safe access to localStorage
+    const languageDirection =
+        typeof window !== 'undefined'
+            ? localStorage.getItem('direction')
+            : 'ltr'
     const {
         isLoading,
         data: newRestuarants,

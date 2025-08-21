@@ -22,6 +22,7 @@ import {
     setBestReviewedFood,
     setCampaignFoods,
     setPopularFood,
+    setFeaturedCategories,
 } from '@/redux/slices/storedData'
 import { setTrackOrderStoreData, setWelcomeModal } from '@/redux/slices/utils'
 import { setWishList } from '@/redux/slices/wishList'

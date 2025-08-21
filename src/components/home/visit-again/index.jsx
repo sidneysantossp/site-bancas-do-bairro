@@ -119,16 +119,22 @@ const VisitAgain = () => {
     useEffect(() => {
         setImageIndex(0)
     }, [])
+    const tt = (key, fallback) => {
+        const tr = t(key)
+        return tr === key ? fallback : tr
+    }
+
     const handleSuccess1 = (response) => {
         setUserData(response)
         if (response?.length === 0) {
             recentlyRefetch()
         }
         setText({
-            title: `${t('Wanna Try  Again!')}`,
-            subTitle: `${t(
-                'Get your recent food from the restaurant you recently visited'
-            )}`,
+            title: tt('Wanna Try Again!', 'Bancas Perto de Você!'),
+            subTitle: tt(
+                'Get your recent food from the restaurant you recently visited',
+                'Faça suas compras em uma Banca perto de você.'
+            ),
         })
     }
     const handleSuccess2 = (response) => {

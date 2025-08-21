@@ -285,7 +285,7 @@ const FloatingCart = (props) => {
                                 height="250px"
                             />
                             <CustomTypographyBold align="center">
-                                {t('Cart is Empty')}
+                                {t('Cart is Empty') === 'Cart is Empty' ? 'Bora encher esse carrinho?' : t('Cart is Empty')}
                             </CustomTypographyBold>
                         </Stack>
                     ) : (

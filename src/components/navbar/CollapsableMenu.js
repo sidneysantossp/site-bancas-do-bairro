@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { alpha, Collapse, Typography } from '@mui/material'
 import List from '@mui/material/List'
 import ListItemButton from '@mui/material/ListItemButton'
@@ -9,12 +9,33 @@ import { useRouter } from 'next/router'
 import { getDataLimit } from '@/utils/customFunctions'
 import { useTranslation } from 'react-i18next'
 import { useTheme } from '@emotion/react'
+import i18n from '@/language/i18n'
 
 const CollapsableMenu = ({ value, setOpenDrawer, pathName }) => {
     const router = useRouter()
     const theme = useTheme()
     const [open, setOpen] = useState(false)
     const { t } = useTranslation()
+    useEffect(() => {
+        if (typeof window === 'undefined') return
+        const userLanguage = localStorage.getItem('language')
+        if (userLanguage) {
+            let normalized = userLanguage.toLowerCase().replace('_', '-')
+            const lang =
+                normalized === 'pt' || normalized.startsWith('pt-')
+                    ? 'pt-br'
+                    : normalized
+            if (i18n.language !== lang) {
+                i18n.changeLanguage(lang)
+            }
+        }
+        // Re-render quando o idioma mudar
+        const handler = () => setOpen((prev) => prev)
+        i18n.on('languageChanged', handler)
+        return () => {
+            i18n.off('languageChanged', handler)
+        }
+    }, [])
     const handleClick = () => setOpen(!open)
     const handleRoute = (id, name) => {
         router.push(`${value.path}/${id}?name=${name}`)
@@ -45,7 +66,7 @@ const CollapsableMenu = ({ value, setOpenDrawer, pathName }) => {
                 <ListItemText
                     primary={
                         <Typography sx={{ fontSize: '12px' }}>
-                            {t(value?.text)}
+                            {value?.displayText || t(value?.text)}
                         </Typography>
                     }
                 />
@@ -101,7 +122,7 @@ const CollapsableMenu = ({ value, setOpenDrawer, pathName }) => {
                                         textDecoration: 'underLine',
                                     }}
                                 >
-                                    {t('View all')}
+                                    {t('View all') === 'View all' ? 'Ver mais' : t('View all')}
                                 </Typography>
                             }
                         ></ListItemText>

@@ -187,7 +187,7 @@ const SearchSuggestionsBottom = (props) => {
                                                 sx={{ paddingTop: '1rem' }}
                                             >
                                                 <CustomTypography>
-                                                    {t('Suggested Searches')}
+                                                    {t('Suggested Searches') === 'Suggested Searches' ? 'Buscas sugeridas' : t('Suggested Searches')}
                                                 </CustomTypography>
                                                 <Stack
                                                     // spacing={1}
@@ -256,7 +256,7 @@ const SearchSuggestionsBottom = (props) => {
                                         sx={{ paddingTop: '10px' }}
                                     >
                                         <CustomTypography>
-                                            {t('Suggested Searches')}
+                                            {t('Suggested Searches') === 'Suggested Searches' ? 'Buscas sugeridas' : t('Suggested Searches')}
                                         </CustomTypography>
                                         <Stack
                                             flexWrap="wrap"
