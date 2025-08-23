@@ -47,7 +47,7 @@ const Navigation = () => {
     }, [userLocationUpdate])
 
     useEffect(() => {
-        if (router.pathname !== '/home') dispatch(setSticky(false))
+        if (router.pathname !== '/' && router.pathname !== '/home') dispatch(setSticky(false))
         dispatch(setCategoryIsSticky(false))
     }, [router.pathname])
     const cartListSuccessHandler = (res) => {
@@ -121,7 +121,7 @@ const Navigation = () => {
         <AppBarStyle
             disableGutters={true}
             scrolling={
-                userLocation && router.pathname !== '/home' ? scrolling : false
+                userLocation && router.pathname !== '/' && router.pathname !== '/home' ? scrolling : false
             }
             isSmall={isSmall}
         >

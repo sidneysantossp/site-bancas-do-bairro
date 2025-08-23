@@ -118,11 +118,7 @@ export const AccountPopover = (props) => {
                 dispatch(clearWishList(a))
                 cartListRefetch()
                 onClose?.()
-                if (router.pathname === '/') {
-                    router.push('/')
-                } else {
-                    router.push('/home')
-                }
+                router.push('/')
             }, 500)
         } catch (err) {
             //   toast.error('Unable to logout.');

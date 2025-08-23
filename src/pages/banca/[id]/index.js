@@ -6,6 +6,7 @@ import MainApi from '../../../api/MainApi'
 import { useDispatch } from 'react-redux'
 import { useRouter } from 'next/router'
 import { setGlobalSettings } from '@/redux/slices/global'
+import { checkMaintenanceMode } from '@/utils/customFunctions'
 
 const index = ({ restaurantData, configData, error }) => {
     if (!restaurantData || error) {
@@ -39,7 +40,7 @@ const index = ({ restaurantData, configData, error }) => {
 
     useEffect(() => {
         if (configData) {
-            if (configData.maintenance_mode) {
+            if (checkMaintenanceMode(configData)) {
                 router.push('/maintenance')
             }
         }

@@ -36,7 +36,7 @@ const RestaurantJoin = () => {
         const onSuccessHandler = (resData) => {
             toast.success(resData.message)
             if (zoneid) {
-                router.push('/home')
+                router.push('/')
             } else {
                 router.push('/')
             }

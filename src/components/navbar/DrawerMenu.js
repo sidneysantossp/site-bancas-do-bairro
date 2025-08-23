@@ -82,11 +82,7 @@ const DrawerMenu = ({ zoneid, cartListRefetch }) => {
             dispatch(setWelcomeModal(false))
             await cartListRefetch()
             CustomToaster('success', logoutSuccessFull)
-            if (router.pathname === '/') {
-                router.push('/')
-            } else {
-                router.push('/home')
-            }
+            router.push('/')
         } catch (err) {}
     }
 

@@ -254,7 +254,7 @@ const Homes = ({ configData }) => {
             (item) => item.isActive === true
         )
         if (activeFilters?.length > 0) {
-            if (router.asPath === '/home') {
+            if (router.asPath === '/' || router.asPath === '/home') {
                 const newArr = searchTagData.map((item) => ({
                     ...item,
                     isActive: false,

@@ -149,7 +149,7 @@ const HeroLocationForm = ({ mobileview, handleModalClose }) => {
             handleModalClose?.()
             CustomToaster('success', 'New location has been set.')
             dispatch(setUserLocationUpdate(!userLocationUpdate))
-            router.push('/home')
+            router.push('/')
         }
     }
     const { isLoading: locationLoading, data: zoneData } = useQuery(

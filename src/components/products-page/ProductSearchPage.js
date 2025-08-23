@@ -200,7 +200,7 @@ const ProductSearchPage = ({
             if (tags) {
                 setSearchValue(null)
             } else {
-                router.push('/home')
+                router.push('/')
             }
         }
     }, [query, tags, restaurantType, page])
@@ -213,7 +213,7 @@ const ProductSearchPage = ({
             !restaurantType &&
             !searchValue
         ) {
-            router.push('/home')
+            router.push('/')
         }
     }, [searchTagData])
 

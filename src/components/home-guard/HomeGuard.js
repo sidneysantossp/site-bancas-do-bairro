@@ -14,7 +14,7 @@ const HomeGuard = (props) => {
                 return
             }
             if(from==="checkout" && cartList?.length===0 && page !== 'campaign'){
-                router.push('/home')
+                router.push('/')
             }
             const zoneId = localStorage.getItem('zoneid')
             const location = localStorage.getItem('location')

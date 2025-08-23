@@ -36,7 +36,7 @@ const CheckoutFailed = ({id}) => {
             </CardContent>
             <CardActions sx={{ alignItems: 'center' }}>
                 <Button
-                    onClick={() => router.push('/home')}
+                    onClick={() => router.push('/')}
                     variant="contained"
                     fullWidth
                 >

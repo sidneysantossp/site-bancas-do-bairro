@@ -86,7 +86,7 @@ const AddressReselect = ({ location }) => {
                 handleClosePopover()
                 dispatch(setClearCart())
                 dispatch(setUserLocationUpdate(!userLocationUpdate))
-                router.push('/home')
+                router.push('/')
             }
         }
     }, [address])

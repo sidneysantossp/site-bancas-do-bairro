@@ -49,13 +49,13 @@ const SearchBox = ({ query }) => {
         if (value !== '') {
             router.push(
                 {
-                    pathname: '/home',
+                    pathname: '/',
                     query: {
                         query: value,
                     },
                 },
                 undefined,
-                { shallow: router.pathname === '/home' }
+                { shallow: router.pathname === '/' || router.pathname === '/home' }
             )
             onBlur()
         }

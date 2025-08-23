@@ -251,7 +251,7 @@ export default function SuccessCard({ id }) {
                     </Button>
                     <Typography
                         onClick={() =>
-                            router.push('/home', undefined, { shallow: true })
+                            router.push('/', undefined, { shallow: true })
                         }
                         variant="contained"
                         sx={{

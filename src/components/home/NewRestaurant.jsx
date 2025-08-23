@@ -172,7 +172,7 @@ const NewRestaurant = () => {
     }
     const handleClick = () => {
         Router.push({
-            pathname: '/home',
+            pathname: '/',
 
             query: {
                 restaurantType: 'latest',

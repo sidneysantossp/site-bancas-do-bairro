@@ -11,7 +11,7 @@ const LoyaltyPointProtect = (props) => {
             if (global?.loyalty_point_status === 1) {
                 return children
             } else {
-                router.push('/home')
+                router.push('/')
             }
         } else {
             router.push('/')

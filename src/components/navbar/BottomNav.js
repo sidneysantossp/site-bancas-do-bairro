@@ -81,7 +81,7 @@ const BottomNav = (props) => {
                         setValue(newValue)
                     }}
                 >
-                    <Link href="/home">
+                    <Link href="/">
                         <MuiBottomNavigationAction
                             label="Home"
                             icon={<HomeIcon />}

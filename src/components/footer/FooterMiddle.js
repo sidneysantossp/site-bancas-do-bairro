@@ -54,7 +54,7 @@ const FooterMiddle = ({ landingPageData, isLoading }) => {
                             justifyContent="flex-start"
                         >
                             {global ? (
-                                <Link href={zoneid ? '/home' : '/'}>
+                                <Link href="/">
                                     <LogoSide
                                         global={global}
                                         businessLogo={businessLogo}

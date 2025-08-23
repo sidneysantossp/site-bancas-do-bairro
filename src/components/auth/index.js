@@ -114,7 +114,7 @@ const AuthModal = ({
             router.pathname === `/order-history/[id]` ||
             router.pathname === '/forgot-password'
         ) {
-            router.push('/home')
+            router.push('/')
         }
         handleClose?.()
     }

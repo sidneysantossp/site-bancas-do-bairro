@@ -57,15 +57,15 @@ const NearbyPopularFood = ({ isLoading }) => {
         router.push(
             {
                 pathname:
-                    router.pathname === '/home'
+                    router.pathname === '/' || router.pathname === '/home'
                         ? window.location.pathname
-                        : 'search',
+                        : '/search',
                 query: {
                     page: 'popular',
                 },
             },
             undefined,
-            { shallow: router.pathname === '/home' }
+            { shallow: router.pathname === '/' || router.pathname === '/home' }
         )
     }
     const settings = {

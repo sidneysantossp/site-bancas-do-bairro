@@ -11,7 +11,7 @@ const ReferCodeProtect = (props) => {
             if (global?.ref_earning_status === 1) {
                 return children
             } else {
-                router.push('/home')
+                router.push('/')
             }
         } else {
             router.push('/')

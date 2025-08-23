@@ -160,7 +160,7 @@ const BestReviewedFood = ({ isLoading }) => {
         router.push(
             {
                 pathname:
-                    router.pathname === '/home'
+                    router.pathname === '/' || router.pathname === '/home'
                         ? window.location.pathname
                         : 'search',
                 query: {
@@ -168,7 +168,7 @@ const BestReviewedFood = ({ isLoading }) => {
                 },
             },
             undefined,
-            { shallow: router.pathname === '/home' }
+            { shallow: router.pathname === '/' || router.pathname === '/home' }
         )
     }
     const handleClickRefer = () => {

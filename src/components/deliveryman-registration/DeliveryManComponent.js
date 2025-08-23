@@ -326,7 +326,7 @@ const DeliveryManComponent = ({ configData }) => {
                         setKey((prv) => prv + 1)
                         setIdentityImage('')
                         setAdditionalImage('')
-                        router.push('/home') // Uncomment if redirection is needed
+                        router.push('/') // Uncomment if redirection is needed
                     },
                     onError: onErrorResponse,
                 })

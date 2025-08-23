@@ -96,13 +96,13 @@ const SearchFilterTag = ({
             router.push(
                 {
                     pathname:
-                        router.pathname === '/home'
+                        router.pathname === '/' || router.pathname === '/home'
                             ? window.location.pathname
                             : '/search',
                     query: queryParams,
                 },
                 undefined,
-                { shallow: router.pathname === '/home' }
+                { shallow: router.pathname === '/' || router.pathname === '/home' }
             )
         }
     }
@@ -131,7 +131,7 @@ const SearchFilterTag = ({
                 position: 'sticky',
                 top: {
                     xs: '45px',
-                    md: router.pathname !== '/home' ? '0px' : '50px',
+                    md: router.pathname !== '/' && router.pathname !== '/home' ? '0px' : '50px',
                 },
                 zIndex: { xs: 1100, md: isSticky ? 1200 : 99 },
             }}

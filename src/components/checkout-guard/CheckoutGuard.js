@@ -18,11 +18,11 @@ const CheckoutGuard = (props) => {
             if (cartList.length > 0) {
                 return <>{children}</>
             } else {
-                router.push('/home')
+                router.push('/')
             }
         }
     } else {
-        router.push('/home')
+        router.push('/')
     }
 
     if (!checked) {

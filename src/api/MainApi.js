@@ -37,23 +37,49 @@ MainApi.interceptors.request.use(function (config) {
     // Sanitizar zoneId: aceitar número ou array não vazio de números
     const normalizedZoneHeader = (() => {
         if (!rawZoneId || rawZoneId === 'null' || rawZoneId === 'undefined' || rawZoneId === '[]') return undefined
+        if (typeof rawZoneId === 'string' && rawZoneId.trim() === '') return undefined
         try {
             const parsed = JSON.parse(rawZoneId)
             if (Array.isArray(parsed) && parsed.length > 0) {
-                const nums = parsed.map((n) => Number(n)).filter((n) => !Number.isNaN(n))
+                const nums = parsed
+                    .map((n) => Number(n))
+                    .filter((n) => Number.isFinite(n) && n > 0)
                 if (nums.length > 0) return JSON.stringify(nums)
                 return undefined
             }
             const asNum = Number(parsed)
-            if (!Number.isNaN(asNum)) return String(asNum)
+            if (!Number.isNaN(asNum) && asNum > 0) return String(asNum)
             if (typeof parsed === 'string' && parsed.trim().length > 0) return parsed
         } catch (e) {
             const asNum = Number(rawZoneId)
-            if (!Number.isNaN(asNum)) return String(asNum)
+            if (!Number.isNaN(asNum) && asNum > 0) return String(asNum)
         }
         return undefined
     })()
-    if (normalizedZoneHeader) config.headers.zoneId = normalizedZoneHeader
+    // Previous: if (normalizedZoneHeader) config.headers.zoneId = normalizedZoneHeader
+    if (normalizedZoneHeader) {
+        config.headers.zoneId = normalizedZoneHeader
+        config.headers['zone-id'] = normalizedZoneHeader
+        config.headers['zone_id'] = normalizedZoneHeader
+    } else {
+        // Fallback: garantir zoneId padrão para evitar erro "ID da zona necessário"
+        const defaultZone = JSON.stringify([1])
+        config.headers.zoneId = defaultZone
+        config.headers['zone-id'] = defaultZone
+        config.headers['zone_id'] = defaultZone
+        if (typeof window !== 'undefined') {
+            try {
+                const saved = localStorage.getItem('zoneid')
+                if (!saved || saved === 'null' || saved === 'undefined' || saved === '[]') {
+                    localStorage.setItem('zoneid', defaultZone)
+                }
+                const savedLocation = localStorage.getItem('location')
+                if (!savedLocation || savedLocation === 'null' || savedLocation === 'undefined' || savedLocation.trim() === '') {
+                    localStorage.setItem('location', 'São Paulo, SP - Brasil')
+                }
+            } catch (_) {}
+        }
+    }
 
     if (token) config.headers.authorization = `Bearer ${token}`
     if (language) config.headers['X-localization'] = language

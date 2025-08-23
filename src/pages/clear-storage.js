@@ -73,7 +73,7 @@ const ClearStoragePage = () => {
                 setStatus(`Erro durante a limpeza: ${e?.message || e}`)
             } finally {
                 setTimeout(() => {
-                    window.location.href = '/home'
+                    window.location.href = '/'
                 }, 1200)
             }
         }

@@ -17,7 +17,7 @@ const handleTokenExpire = (status) => {
             window?.localStorage.removeItem('token')
             store.dispatch(removeToken())
             store.dispatch(setWelcomeModal(false))
-            Router.push('/home')
+            Router.push('/')
         }
     }
 }

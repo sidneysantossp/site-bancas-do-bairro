@@ -30,6 +30,7 @@ import '../styles/global.css'
 import '../styles/nprogress.css'
 import { createTheme } from '../theme/index'
 import createEmotionCache from '../utils/create-emotion-cache'
+import ForceGeolocation from '../components/geolocation/ForceGeolocation'
 
 Router.events.on('routeChangeStart', nProgress.start)
 Router.events.on('routeChangeError', nProgress.done)
@@ -133,12 +134,14 @@ function App({ Component, pageProps, emotionCache = clientSideEmotionCache }) {
                                             <Navigation />
                                         )}
                                         <DynamicFavicon />
+                                        <ForceGeolocation />
 
                                         <Box
                                             sx={{
                                                 minHeight: '100vh',
                                                 mt: {
                                                     xs:
+                                                        router.pathname === '/' ||
                                                         router.pathname ===
                                                         '/home'
                                                             ? '2.5rem'

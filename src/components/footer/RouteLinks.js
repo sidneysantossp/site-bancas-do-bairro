@@ -42,7 +42,7 @@ const RouteLinks = (props) => {
         } else if (value === 'popular' || value === 'latest') {
             if (zoneId) {
                 Router.push({
-                    pathname: '/home',
+                    pathname: '/',
 
                     query: {
                         restaurantType: value,
@@ -54,7 +54,7 @@ const RouteLinks = (props) => {
                     'You must pick a zone to access this page.'
                 )
                 setUrl({
-                    pathname: '/home',
+                    pathname: '/',
                     query: value,
                 })
                 setOpen(true)
@@ -62,7 +62,7 @@ const RouteLinks = (props) => {
         } else if (value === 'most-reviewed') {
             if (zoneId) {
                 Router.push({
-                    pathname: '/home',
+                    pathname: '/',
 
                     query: {
                         page: value,
@@ -74,7 +74,7 @@ const RouteLinks = (props) => {
                     'You must pick a zone to access this page.'
                 )
                 setUrl({
-                    pathname: '/home',
+                    pathname: '/',
                     query: value,
                 })
                 setOpen(true)
@@ -104,7 +104,7 @@ const RouteLinks = (props) => {
                 )
                 //toast.error(t('You must pick a zone to access this page.'))
                 setUrl({
-                    pathname: '/home',
+                    pathname: '/',
                     query: value,
                 })
                 setOpen(true)

@@ -15,7 +15,7 @@ const CheckoutFailedCard = ({ id }) => {
     const dispatch = useDispatch()
     const handleOrderFail = () => {
         dispatch(setClearCart())
-        Router.push('/home')
+        Router.push('/')
     }
     const { mutate: paymentMethodUpdateMutation, isLoading: orderLoading } =
         useMutation(
@@ -27,7 +27,7 @@ const CheckoutFailedCard = ({ id }) => {
         const handleSuccess = (response) => {
             toast.success(response.data.message)
             dispatch(setClearCart())
-            Router.push('/home')
+            Router.push('/')
         }
         const formData = {
             order_id: id,

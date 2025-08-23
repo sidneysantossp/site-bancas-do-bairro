@@ -11,7 +11,7 @@ const WalletProtect = (props) => {
             if (global?.customer_wallet_status === 1) {
                 return children
             } else {
-                router.push('/home')
+                router.push('/')
             }
         } else {
             router.push('/')

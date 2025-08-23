@@ -1166,6 +1166,13 @@ export const removeSpecialCharacters = (inputString) => {
     return inputString?.replace(pattern, '')
 }
 export const checkMaintenanceMode = (configData) => {
+    // Frontend override: if this env is set, bypass maintenance redirects entirely
+    if (
+        process.env.NEXT_PUBLIC_DISABLE_MAINTENANCE === '1' ||
+        process.env.NEXT_PUBLIC_DISABLE_MAINTENANCE === 'true'
+    ) {
+        return false
+    }
     const isMaintenanceMode =
         configData?.maintenance_mode_data?.maintenance_system_setup?.includes(
             'react_website'

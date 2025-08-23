@@ -14,7 +14,7 @@ const NavLinks = ({ zoneid, t, languageDirection }) => {
     const [openCategoryModal, setCategoryModal] = useState(false)
     const [openRestaurantModal, setRestaurantModal] = useState(false)
     const handleClick = () => {
-        router.push('/home')
+        router.push('/')
         dispatch(setHandleHomePage(false))
     }
 
