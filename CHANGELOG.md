@@ -55,3 +55,5 @@ All notable changes to this project will be documented in this file. See [standa
 * trigger vercel redeploy (production) ([04271d7](https://github.com/sidneysantossp/guiadasbancas/commit/04271d7e491ac94596dec9c213f113d5b4fe4b04))
 * vercel redeploy after envs update ([9233a62](https://github.com/sidneysantossp/guiadasbancas/commit/9233a623d9a327d209142abc7ac15d7f18e247de))
 * vercel redeploy after envs update ([48f3980](https://github.com/sidneysantossp/guiadasbancas/commit/48f3980a1dafe7630b74d2eb3d2b6469ed46b7b0))
+
+chore(deploy): trigger Vercel redeploy at 2025-08-23 09:17:27 -03:00
