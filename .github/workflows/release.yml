@@ -16,14 +16,22 @@ jobs:
       HUSKY: 0
       GIT_COMMITTER_NAME: github-actions[bot]
       GIT_COMMITTER_EMAIL: 41898282+github-actions[bot]@users.noreply.github.com
+    defaults:
+      run:
+        shell: bash
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          fetch-tags: true
+
+      - name: Ensure tags are present
+        run: |
+          git fetch --tags --force --prune
+          echo "Available tags:" && git tag --list | tail -n 20 || true
 
       - name: Debug context
-        shell: bash
         run: |
           set -euxo pipefail
           node -v || true
@@ -53,7 +61,6 @@ jobs:
 
       - name: Determine last tag
         id: lasttag
-        shell: bash
         run: |
           if git describe --tags --abbrev=0 >/dev/null 2>&1; then
             echo "tag=$(git describe --tags --abbrev=0)" >> $GITHUB_OUTPUT
@@ -63,7 +70,6 @@ jobs:
 
       - name: Check commits for feat/fix/BREAKING
         id: check
-        shell: bash
         run: |
           if [ -z "${{ steps.lasttag.outputs.tag }}" ]; then
             echo "should=true" >> $GITHUB_OUTPUT
@@ -79,7 +85,6 @@ jobs:
           fi
 
       - name: Debug: release decision
-        shell: bash
         run: |
           set -euxo pipefail
           echo "Last tag: '${{ steps.lasttag.outputs.tag }}'"
@@ -94,12 +99,10 @@ jobs:
 
       - name: Bump version, update changelog and tag (auto by commit type)
         if: steps.check.outputs.should == 'true'
-        shell: bash
         run: npx --yes standard-version@9 -a || echo "standard-version completed with non-zero exit (no changes?)"
 
       - name: Push changes and tags
         if: steps.check.outputs.should == 'true'
-        shell: bash
         run: |
           if [[ -n "$(git status --porcelain)" ]]; then
             git push --follow-tags origin "${{ github.ref_name }}"
