@@ -22,11 +22,26 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Debug context
+        shell: bash
+        run: |
+          set -euxo pipefail
+          node -v || true
+          npm -v || true
+          npx -v || true
+          git --version
+          echo "Ref: $GITHUB_REF, Actor: $GITHUB_ACTOR, SHA: $GITHUB_SHA"
+          echo "Branch name: ${{ github.ref_name }}"
+          echo "Recent commits:"
+          git --no-pager log -5 --oneline
+          echo "Status:"
+          git status -sb
+
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'
+          check-latest: true
 
       # Removed full npm install to avoid CI failures due to peer deps on app deps
       # standard-version is executed via npx without installing project deps
@@ -38,6 +53,7 @@ jobs:
 
       - name: Determine last tag
         id: lasttag
+        shell: bash
         run: |
           if git describe --tags --abbrev=0 >/dev/null 2>&1; then
             echo "tag=$(git describe --tags --abbrev=0)" >> $GITHUB_OUTPUT
@@ -47,6 +63,7 @@ jobs:
 
       - name: Check commits for feat/fix/BREAKING
         id: check
+        shell: bash
         run: |
           if [ -z "${{ steps.lasttag.outputs.tag }}" ]; then
             echo "should=true" >> $GITHUB_OUTPUT
@@ -61,12 +78,28 @@ jobs:
             echo "should=false" >> $GITHUB_OUTPUT
           fi
 
+      - name: Debug: release decision
+        shell: bash
+        run: |
+          set -euxo pipefail
+          echo "Last tag: '${{ steps.lasttag.outputs.tag }}'"
+          echo "Should release: '${{ steps.check.outputs.should }}'"
+          if [ -n "${{ steps.lasttag.outputs.tag }}" ]; then
+            range="${{ steps.lasttag.outputs.tag }}..HEAD"
+            echo "Subjects in range $range:"
+            git --no-pager log --format=%s $range | head -n 20
+            echo "Bodies sample:"
+            git --no-pager log --format=%b $range | head -n 40
+          fi
+
       - name: Bump version, update changelog and tag (auto by commit type)
         if: steps.check.outputs.should == 'true'
+        shell: bash
         run: npx --yes standard-version@9 -a || echo "standard-version completed with non-zero exit (no changes?)"
 
       - name: Push changes and tags
         if: steps.check.outputs.should == 'true'
+        shell: bash
         run: |
           if [[ -n "$(git status --porcelain)" ]]; then
             git push --follow-tags origin "${{ github.ref_name }}"
