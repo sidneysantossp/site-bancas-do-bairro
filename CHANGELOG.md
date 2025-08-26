@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.0.7](https://github.com/sidneysantossp/site-bancas-do-bairro/compare/v3.0.6...v3.0.7) (2025-08-26)
+
+
+### Maintenance
+
+* **deploy:** trigger Vercel redeploy ([a1ea773](https://github.com/sidneysantossp/site-bancas-do-bairro/commit/a1ea7735de94a48a91b6505422014d89cf7ba193))
+* **deploy:** trigger Vercel redeploy at 2025-08-23 09:17:27 -03:00 ([f6fcc81](https://github.com/sidneysantossp/site-bancas-do-bairro/commit/f6fcc8162a587a73274b75ec5125d0b303811c48))
+* **release:** alinhar package.json para 3.0.6 e habilitar release automático por tag ([726f5d2](https://github.com/sidneysantossp/site-bancas-do-bairro/commit/726f5d2d1fc944414e3bb55f30001a3d95bf4b83))
+* sync local changes before Vercel redeploy ([6911630](https://github.com/sidneysantossp/site-bancas-do-bairro/commit/6911630130e13c5f0c60f10351541ee272c36f6b))
+
 ### [3.0.5](https://github.com/sidneysantossp/guiadasbancas/compare/v3.0.2...v3.0.5) (2025-08-21)
 
 
