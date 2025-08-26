@@ -12,6 +12,10 @@ jobs:
   release:
     if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
+    env:
+      HUSKY: 0
+      GIT_COMMITTER_NAME: github-actions[bot]
+      GIT_COMMITTER_EMAIL: 41898282+github-actions[bot]@users.noreply.github.com
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -24,8 +28,8 @@ jobs:
           node-version: '20'
           cache: 'npm'
 
-      - name: Install dependencies
-        run: npm install --no-audit --no-fund
+      # Removed full npm install to avoid CI failures due to peer deps on app deps
+      # standard-version is executed via npx without installing project deps
 
       - name: Configure Git
         run: |
@@ -59,7 +63,7 @@ jobs:
 
       - name: Bump version, update changelog and tag (auto by commit type)
         if: steps.check.outputs.should == 'true'
-        run: npx standard-version -a || echo "standard-version completed with non-zero exit (no changes?)"
+        run: npx --yes standard-version@9 -a || echo "standard-version completed with non-zero exit (no changes?)"
 
       - name: Push changes and tags
         if: steps.check.outputs.should == 'true'
