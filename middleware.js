@@ -12,7 +12,7 @@ export function middleware(req) {
   return NextResponse.next()
 }
 
-// Garante que só a raiz seja interceptada
+// Garante que o middleware seja executado em todas as rotas, mas só redirecionamos na raiz
 export const config = {
-  matcher: ['/'],
+  matcher: ['/:path*'],
 }
