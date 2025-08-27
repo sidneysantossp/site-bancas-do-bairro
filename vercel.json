@@ -1,12 +1,5 @@
 {
   "version": 2,
-  "redirects": [
-    {
-      "source": "/",
-      "destination": "/home",
-      "permanent": false
-    }
-  ],
   "functions": {
     "pages/api/**/*.js": {
       "maxDuration": 30

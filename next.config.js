@@ -56,16 +56,9 @@ const nextConfig = {
         ]
     },
 
-    // Redirects: redirecionar '/' -> '/home'; remover canonicalização de /home -> /
+    // Redirects: raiz agora serve a Home (sem redirect '/'); mantendo apenas redirects legados
     async redirects() {
         return [
-            // Redirecionar raiz para /home
-            {
-                source: '/',
-                destination: '/home',
-                permanent: false, // 307 temporário durante validação
-            },
-            // Removido: canonicalização de /home para /
             // Redirecionar antigas rotas de restaurant para banca
             {
                 source: '/restaurant',
