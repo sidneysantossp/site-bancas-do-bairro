@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.1.2](https://github.com/sidneysantossp/site-bancas-do-bairro/compare/v3.1.1...v3.1.2) (2025-08-27)
+
+
+### Bug Fixes
+
+* **routing:** add Edge middleware to redirect '/' -> '/home' (307) and SSR fallback ([82da14a](https://github.com/sidneysantossp/site-bancas-do-bairro/commit/82da14a65116088981f219136e06c1013e556e95))
+
 ### [3.1.1](https://github.com/sidneysantossp/site-bancas-do-bairro/compare/v3.1.0...v3.1.1) (2025-08-27)
 
 
