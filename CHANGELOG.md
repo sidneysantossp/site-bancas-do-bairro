@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.1.1](https://github.com/sidneysantossp/site-bancas-do-bairro/compare/v3.1.0...v3.1.1) (2025-08-27)
+
+
+### Bug Fixes
+
+* **routing:** redirect '/' -> '/home' via SSR (temporary 307) ([f84d925](https://github.com/sidneysantossp/site-bancas-do-bairro/commit/f84d9250d140152a75b5403946449ffd4fbd6a13))
+
+
+### Maintenance
+
+* **ci:** auto-publish GitHub Release via workflow_run; redirect / -> /home in Next.js ([65e0bc6](https://github.com/sidneysantossp/site-bancas-do-bairro/commit/65e0bc6302e990c04054729c6e8d7e94bcc43061))
+* **vercel:** trigger Vercel redeploy ([44d2deb](https://github.com/sidneysantossp/site-bancas-do-bairro/commit/44d2deb392c721282c3edd6ccd54e6fdbd489e4c))
+* **vercel:** trigger Vercel redeploy ([b7bc339](https://github.com/sidneysantossp/site-bancas-do-bairro/commit/b7bc339736651b52979276d3d7ac368f5dce1b67))
+
 ## [3.1.0](https://github.com/sidneysantossp/site-bancas-do-bairro/compare/v3.0.7...v3.1.0) (2025-08-27)
 
 
