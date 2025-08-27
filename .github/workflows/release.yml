@@ -103,8 +103,4 @@ jobs:
       - name: Push changes and tags
         if: steps.check.outputs.should == 'true'
         run: |
-          if [[ -n "$(git status --porcelain)" ]]; then
-            git push --follow-tags origin "${{ github.ref_name }}"
-          else
-            echo "No release changes to push."
-          fi
+          git push --follow-tags origin "${{ github.ref_name }}"
