@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.2.1](https://github.com/sidneysantossp/site-bancas-do-bairro/compare/v3.2.0...v3.2.1) (2025-08-27)
+
+
+### Bug Fixes
+
+* **routing:** remove / page so Next.js redirect '/' -> '/home' takes effect ([f48e832](https://github.com/sidneysantossp/site-bancas-do-bairro/commit/f48e8323441ea8abfeeffaa3b1791b3b7acdefc8))
+
 ## [3.2.0](https://github.com/sidneysantossp/site-bancas-do-bairro/compare/v3.1.8...v3.2.0) (2025-08-27)
 
 
