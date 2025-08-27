@@ -1,10 +1,10 @@
 {
   "version": 2,
-  "routes": [
+  "redirects": [
     {
-      "src": "^/$",
-      "status": 307,
-      "headers": { "Location": "/home" }
+      "source": "/",
+      "destination": "/home",
+      "permanent": false
     }
   ],
   "functions": {
