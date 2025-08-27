@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.1.4](https://github.com/sidneysantossp/site-bancas-do-bairro/compare/v3.1.3...v3.1.4) (2025-08-27)
+
+
+### Bug Fixes
+
+* **middleware:** broaden matcher to '/:path*' to ensure root redirect runs (307) ([0211e6b](https://github.com/sidneysantossp/site-bancas-do-bairro/commit/0211e6b1c6f098109daac40268de8b2b12485e2e))
+
 ### [3.1.3](https://github.com/sidneysantossp/site-bancas-do-bairro/compare/v3.1.2...v3.1.3) (2025-08-27)
 
 
