@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.1.6](https://github.com/sidneysantossp/site-bancas-do-bairro/compare/v3.1.5...v3.1.6) (2025-08-27)
+
+
+### Bug Fixes
+
+* **about-us:** decouple from root getServerSideProps to avoid redirect; fetch config locally ([1425346](https://github.com/sidneysantossp/site-bancas-do-bairro/commit/142534662341893eeeacb0ae617303c3ed10b256))
+
 ### [3.1.5](https://github.com/sidneysantossp/site-bancas-do-bairro/compare/v3.1.4...v3.1.5) (2025-08-27)
 
 
