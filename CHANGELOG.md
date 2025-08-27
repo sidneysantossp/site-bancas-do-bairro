@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.1.7](https://github.com/sidneysantossp/site-bancas-do-bairro/compare/v3.1.6...v3.1.7) (2025-08-27)
+
+
+### Bug Fixes
+
+* **routing:** disable Edge middleware; temporary 307 '/'->'/home'; simplify vercel routes ([7635fef](https://github.com/sidneysantossp/site-bancas-do-bairro/commit/7635fef2ee1be81765764f15e5e803f27673aa23))
+
 ### [3.1.6](https://github.com/sidneysantossp/site-bancas-do-bairro/compare/v3.1.5...v3.1.6) (2025-08-27)
 
 
