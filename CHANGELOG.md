@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.1.0](https://github.com/sidneysantossp/site-bancas-do-bairro/compare/v3.0.7...v3.1.0) (2025-08-27)
+
+
+### Features
+
+* **release:** validate automated release pipeline (no-op) ([5963347](https://github.com/sidneysantossp/site-bancas-do-bairro/commit/59633473e2ff972a3c37d1462b0bf0a0e2aa5ff2))
+
+
+### Continuous Integration
+
+* **release:** add diagnostics, force bash shell, remove npm cache ([9f730b3](https://github.com/sidneysantossp/site-bancas-do-bairro/commit/9f730b335957fe15cd527e3ce0f2c796d1eb52be))
+* **release:** always push after standard-version to ensure tag and changelog reach remote ([9df6b0c](https://github.com/sidneysantossp/site-bancas-do-bairro/commit/9df6b0ca0153c91e27064f8f86e7b0f2e1ed873b))
+* **release:** avoid npm install, disable husky, run standard-version via npx ([936ac7b](https://github.com/sidneysantossp/site-bancas-do-bairro/commit/936ac7b1f5a674a0861f9afad8a2997a5f36d638))
+* **release:** fetch tags and set default bash shell; print tags list for debug ([77c211e](https://github.com/sidneysantossp/site-bancas-do-bairro/commit/77c211ec278294c577e5038642af0ef1f52c539c))
+* **release:** fix YAML syntax by quoting step name with colon ([eb508be](https://github.com/sidneysantossp/site-bancas-do-bairro/commit/eb508be7f053732dff6b06d597c059ca443b334f))
+* **release:** remove unsupported fetch-tags input; rely on git fetch --tags ([775abc1](https://github.com/sidneysantossp/site-bancas-do-bairro/commit/775abc1c5e8f4ac09346d645a6276c56c66bfd31))
+
 ### [3.0.7](https://github.com/sidneysantossp/site-bancas-do-bairro/compare/v3.0.6...v3.0.7) (2025-08-26)
 
 
