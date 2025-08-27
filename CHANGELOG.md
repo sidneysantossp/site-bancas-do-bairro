@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.1.5](https://github.com/sidneysantossp/site-bancas-do-bairro/compare/v3.1.4...v3.1.5) (2025-08-27)
+
+
+### Bug Fixes
+
+* **routing:** add client-side fallback redirect from '/' to '/home' via useEffect ([b359111](https://github.com/sidneysantossp/site-bancas-do-bairro/commit/b3591112b1e95f50b4a497c59f71d111f39b4144))
+
 ### [3.1.4](https://github.com/sidneysantossp/site-bancas-do-bairro/compare/v3.1.3...v3.1.4) (2025-08-27)
 
 
