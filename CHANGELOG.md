@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.1.8](https://github.com/sidneysantossp/site-bancas-do-bairro/compare/v3.1.7...v3.1.8) (2025-08-27)
+
+
+### Bug Fixes
+
+* **vercel:** use redirects block for '/' -> '/home' (307) at the platform level ([3a75334](https://github.com/sidneysantossp/site-bancas-do-bairro/commit/3a753347bedfe6535419c175acd181549de9a240))
+
 ### [3.1.7](https://github.com/sidneysantossp/site-bancas-do-bairro/compare/v3.1.6...v3.1.7) (2025-08-27)
 
 
