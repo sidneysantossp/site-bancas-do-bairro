@@ -2,7 +2,7 @@ import React from 'react'
 import Meta from '../../components/Meta'
 import { Container, CssBaseline } from '@mui/material'
 import AboutUsPage from '../../components/about-us/AboutUsPage'
-import { getServerSideProps } from '../index'
+import { CustomHeader } from '@/api/Headers'
 
 const index = ({ configData }) => {
     return (
@@ -16,4 +16,20 @@ const index = ({ configData }) => {
     )
 }
 export default index
-export { getServerSideProps }
+
+export const getServerSideProps = async () => {
+    const configRes = await fetch(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/config`,
+        {
+            method: 'GET',
+            headers: CustomHeader,
+        }
+    )
+    const configData = await configRes.json()
+
+    return {
+        props: {
+            configData,
+        },
+    }
+}
