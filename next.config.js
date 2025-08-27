@@ -59,11 +59,6 @@ const nextConfig = {
     // Redirects: raiz agora serve a Home (sem redirect '/'); mantendo apenas redirects legados
     async redirects() {
         return [
-            {
-                source: '/',
-                destination: '/home',
-                permanent: true,
-            },
             // Redirecionar antigas rotas de restaurant para banca
             {
                 source: '/restaurant',
