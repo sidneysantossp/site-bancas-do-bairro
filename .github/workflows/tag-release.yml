@@ -10,12 +10,17 @@ on:
         description: 'Tag a publicar (ex: v3.0.6). Se vazio, usa a última tag.'
         required: false
         type: string
+  workflow_run:
+    workflows: ["Auto Release and Tag"]
+    types: [completed]
 
 permissions:
   contents: write
 
 jobs:
   release:
+    # Se foi disparado por workflow_run, só continua se o pipeline de versão concluiu com sucesso
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -30,17 +35,31 @@ jobs:
           if [ -n "${{ github.event.inputs.tag }}" ]; then
             TAG="${{ github.event.inputs.tag }}"
           else
-            # Para push de tag, o ref já é a tag; para dispatch sem input, pega última tag
+            # Para push de tag, o ref já é a tag; para dispatch/workflow_run sem input, pega última tag
             if [[ "${GITHUB_REF}" == refs/tags/* ]]; then
               TAG="${GITHUB_REF##*/}"
             else
+              git fetch --tags --force --prune
               TAG=$(git describe --tags --abbrev=0 || echo "")
             fi
           fi
           echo "tag=$TAG" >> $GITHUB_OUTPUT
 
-      - name: Preparar changelog simplificado
+      - name: Verificar se a Release já existe
         if: steps.detag.outputs.tag != ''
+        id: checkrel
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -e
+          if gh release view "${{ steps.detag.outputs.tag }}" >/dev/null 2>&1; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Preparar changelog simplificado
+        if: steps.detag.outputs.tag != '' && steps.checkrel.outputs.exists == 'false'
         run: |
           TAG="${{ steps.detag.outputs.tag }}"
           PREV_TAG=$(git describe --tags --abbrev=0 ${TAG}^ 2>/dev/null || echo "")
@@ -52,7 +71,7 @@ jobs:
           fi
 
       - name: Criar Release no GitHub
-        if: steps.detag.outputs.tag != ''
+        if: steps.detag.outputs.tag != '' && steps.checkrel.outputs.exists == 'false'
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ steps.detag.outputs.tag }}
@@ -60,3 +79,7 @@ jobs:
           body_path: RELEASE_BODY.md
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Log de saída quando já existir
+        if: steps.detag.outputs.tag != '' && steps.checkrel.outputs.exists == 'true'
+        run: echo "Release para a tag ${{ steps.detag.outputs.tag }} já existe. Nada a fazer."
