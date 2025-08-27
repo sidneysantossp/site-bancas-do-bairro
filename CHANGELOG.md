@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.2.3](https://github.com/sidneysantossp/site-bancas-do-bairro/compare/v3.2.2...v3.2.3) (2025-08-27)
+
+
+### Bug Fixes
+
+* **routing:** servir Home em '/' via reexport de src/pages/home ([1ee3a0c](https://github.com/sidneysantossp/site-bancas-do-bairro/commit/1ee3a0cc703a7cff038fffda056b6f8be915c196))
+
 ### [3.2.2](https://github.com/sidneysantossp/site-bancas-do-bairro/compare/v3.2.1...v3.2.2) (2025-08-27)
 
 
