@@ -63,7 +63,7 @@ const nextConfig = {
             {
                 source: '/',
                 destination: '/home',
-                permanent: true,
+                permanent: false, // 307 temporário durante validação
             },
             // Removido: canonicalização de /home para /
             // Redirecionar antigas rotas de restaurant para banca
