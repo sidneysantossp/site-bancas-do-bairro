@@ -171,7 +171,7 @@ const HorizontalFoodCard = (props) => {
                                 </Stack>
                             )}
                         </Stack>
-                        <Stack gap="7px" sx={{ flex: 1, minWidth: 0 }}>
+                        <Stack gap="7px" sx={{ flex: 1, minWidth: 0, position: 'relative' }}>
                             <Stack>
                                 <Stack
                                     direction="row"
@@ -260,6 +260,78 @@ const HorizontalFoodCard = (props) => {
                                 handleBadge={handleBadge}
                                 available_date_ends={product?.available_date_ends}
                             />
+                            {/* Ações laterais: ver produto, wishlist e comprar (reintroduzidos) */}
+                            <Stack
+                                gap={1}
+                                alignItems="center"
+                                sx={{
+                                    position: 'absolute',
+                                    right: 0,
+                                    top: 0,
+                                    bottom: 0,
+                                    justifyContent: 'center',
+                                    pr: 1,
+                                }}
+                            >
+                                <Tooltip title={t('View')} placement="left" arrow>
+                                    <IconButton size="small" onClick={handleViewProduct}>
+                                        <VisibilityIcon fontSize="small" />
+                                    </IconButton>
+                                </Tooltip>
+
+                                {isInList(product?.id) ? (
+                                    <Tooltip title={t('Remove from wishlist')} placement="left" arrow>
+                                        <IconButton size="small" onClick={handleClick}>
+                                            <FavoriteIcon fontSize="small" />
+                                        </IconButton>
+                                    </Tooltip>
+                                ) : (
+                                    <Tooltip title={t('Add to wishlist')} placement="left" arrow>
+                                        <IconButton
+                                            size="small"
+                                            onClick={(e) => {
+                                                e.stopPropagation()
+                                                addToFavorite(e)
+                                            }}
+                                        >
+                                            <FavoriteBorderIcon fontSize="small" />
+                                        </IconButton>
+                                    </Tooltip>
+                                )}
+
+                                {!isInCart ? (
+                                    <Tooltip
+                                        title={
+                                            product?.item_stock === 0 &&
+                                            product?.stock_type !== 'unlimited'
+                                                ? t('Unavailable')
+                                                : t('Add to cart')
+                                        }
+                                        placement="left"
+                                        arrow
+                                    >
+                                        <IconButton
+                                            size="small"
+                                            onClick={(e) => {
+                                                e.stopPropagation()
+                                                addToCart(e)
+                                            }}
+                                        >
+                                            <AddShoppingCartIcon fontSize="small" />
+                                        </IconButton>
+                                    </Tooltip>
+                                ) : (
+                                    <AfterAddToCart
+                                        isInCart={isInCart}
+                                        product={product}
+                                        getQuantity={getQuantity}
+                                        handleClickQuantityButton={handleClickQuantityButton}
+                                        setIncrOpen={setIncrOpen}
+                                        incrOpen={incrOpen}
+                                        horizontal={horizontal}
+                                    />
+                                )}
+                            </Stack>
                         </Stack>
                     </Stack>
                 </CustomFoodCardNew>
