@@ -8,8 +8,7 @@ const Index = ({ configData, landingPageData, pathName }) => {
     return (
         <>
             <Meta
--                title={`${t('Categories')} on ${configData?.business_name}`}
-+                title={`${t('Bancas')} on ${configData?.business_name}`}
+                title={`${t('Bancas')} on ${configData?.business_name}`}
                 ogImage={`${configData?.base_urls?.react_landing_page_images}/${landingPageData?.banner_section_full?.banner_section_img_full}`}
                 pathName={pathName}
             />

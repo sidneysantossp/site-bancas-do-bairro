@@ -148,15 +148,13 @@ const Cuisines = () => {
                                                     }
                                                     component="h2"
                                                 >
--                                                    {t('Cuisines') === 'Cuisines' && i18n.language?.toLowerCase()?.startsWith('pt') ? 'Categorias em Destaque' : t('Cuisines')}
-+                                                    {t('Cuisines') === 'Cuisines' && i18n.language?.toLowerCase()?.startsWith('pt') ? 'Bancas em Destaque' : t('Cuisines')}
+                                                    {t('Cuisines') === 'Cuisines' && i18n.language?.toLowerCase()?.startsWith('pt') ? 'Bancas em Destaque' : t('Cuisines')}
                                                 </Typography>
                                             </Stack>
 
                                             <CustomViewAll
                                                 onClick={() =>
--                                                    router.push('/cuisines')
-+                                                    router.push('/bancas')
+                                                    router.push('/bancas')
                                                 }
                                                 sx={{ marginInlineEnd: '10px' }}
                                             >
