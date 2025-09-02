@@ -3,6 +3,7 @@ import { Box, Grid, Typography } from '@mui/material'
 import { StyleThemBox } from '../food-card/FoodCard.style'
 import { useTranslation } from 'react-i18next'
 import {useTheme} from "@mui/material/styles";
+import DOMPurify from 'isomorphic-dompurify'
 
 
 const RefundPolicyPage = ({configData}) => {
@@ -18,9 +19,9 @@ const RefundPolicyPage = ({configData}) => {
                     <StyleThemBox>
                         <div
                             dangerouslySetInnerHTML={{
-                                __html: configData?.refund_policy_data,
+                                __html: DOMPurify.sanitize(configData?.refund_policy_data || ''),
                             }}
-                        ></div>
+                        />
                     </StyleThemBox>
                 </Grid>
             </Grid>

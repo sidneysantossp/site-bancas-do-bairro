@@ -258,7 +258,7 @@ const MapModal = ({
         setIsLoadingCurrentLocation(true)
         if (navigator?.geolocation) {
             navigator.geolocation.getCurrentPosition(
-                (position) => {
+                async (position) => {
                     try {
                         // Verificar se position e position.coords existem
                         if (position && position.coords) {
@@ -273,46 +273,106 @@ const MapModal = ({
                             localStorage.setItem('currentLatLng', JSON.stringify(newCurrentLocation))
                             
                             // Fazer geocodificação reversa para obter o endereço
-                            if (window.google && window.google.maps && window.google.maps.Geocoder) {
-                                const geocoder = new window.google.maps.Geocoder()
-                                geocoder.geocode(
-                                    { location: newCurrentLocation },
-                                    (results, status) => {
-                                        if (status === 'OK' && results[0]) {
-                                            const address = results[0].formatted_address
-                                            
-                                            // Atualizar com o endereço real
-                                            localStorage.setItem('location', address)
-                                            setCurrentLocationValue({
-                                                description: address
-                                            })
-                                            
-                                            // Forçar atualização do campo de busca
-                                            setSearchKey(address)
-                                            
-                                            console.log('Endereço definido:', address)
-                                            console.log('currentLocationValue atualizado:', { description: address })
-                                            
+                            if (window.google && window.google.maps) {
+                                try {
+                                    if (typeof window.google.maps.importLibrary === 'function') {
+                                        const geocodingLib = await window.google.maps.importLibrary('geocoding')
+                                        const GeocoderClass = geocodingLib?.Geocoder || window.google.maps.Geocoder
+                                        if (typeof GeocoderClass === 'function') {
+                                            const geocoder = new GeocoderClass()
+                                            geocoder.geocode(
+                                                { location: newCurrentLocation },
+                                                (results, status) => {
+                                                    if (status === 'OK' && results && results[0]) {
+                                                        const address = results[0].formatted_address
 
+                                                        // Atualizar com o endereço real
+                                                        localStorage.setItem('location', address)
+                                                        setCurrentLocationValue({
+                                                            description: address,
+                                                        })
+
+                                                        // Forçar atualização do campo de busca
+                                                        setSearchKey(address)
+
+                                                        console.log('Endereço definido:', address)
+                                                        console.log('currentLocationValue atualizado:', { description: address })
+                                                    } else {
+                                                        // Fallback se a geocodificação falhar
+                                                        const locationDescription = 'Minha localização atual'
+                                                        localStorage.setItem('location', locationDescription)
+                                                        setCurrentLocationValue({
+                                                            description: locationDescription,
+                                                        })
+                                                        setSearchKey(locationDescription)
+                                                    }
+                                                }
+                                            )
+                                        } else if (typeof window.google.maps.Geocoder === 'function') {
+                                            // Fallback para API global antiga
+                                            const geocoder = new window.google.maps.Geocoder()
+                                            geocoder.geocode(
+                                                { location: newCurrentLocation },
+                                                (results, status) => {
+                                                    if (status === 'OK' && results && results[0]) {
+                                                        const address = results[0].formatted_address
+                                                        localStorage.setItem('location', address)
+                                                        setCurrentLocationValue({ description: address })
+                                                        setSearchKey(address)
+                                                    } else {
+                                                        const locationDescription = 'Minha localização atual'
+                                                        localStorage.setItem('location', locationDescription)
+                                                        setCurrentLocationValue({ description: locationDescription })
+                                                        setSearchKey(locationDescription)
+                                                    }
+                                                }
+                                            )
                                         } else {
-
-                                            // Fallback se a geocodificação falhar
+                                            // Fallback se o Google Maps não oferecer Geocoder
                                             const locationDescription = 'Minha localização atual'
                                             localStorage.setItem('location', locationDescription)
-                                            setCurrentLocationValue({
-                                                description: locationDescription
-                                            })
+                                            setCurrentLocationValue({ description: locationDescription })
                                             setSearchKey(locationDescription)
                                         }
+                                    } else if (typeof window.google.maps.Geocoder === 'function') {
+                                        // Fallback para API global antiga
+                                        const geocoder = new window.google.maps.Geocoder()
+                                        geocoder.geocode(
+                                            { location: newCurrentLocation },
+                                            (results, status) => {
+                                                if (status === 'OK' && results && results[0]) {
+                                                    const address = results[0].formatted_address
+                                                    localStorage.setItem('location', address)
+                                                    setCurrentLocationValue({ description: address })
+                                                    setSearchKey(address)
+                                                } else {
+                                                    const locationDescription = 'Minha localização atual'
+                                                    localStorage.setItem('location', locationDescription)
+                                                    setCurrentLocationValue({ description: locationDescription })
+                                                    setSearchKey(locationDescription)
+                                                }
+                                            }
+                                        )
+                                    } else {
+                                        // Fallback se o Google Maps não estiver carregado corretamente
+                                        const locationDescription = 'Minha localização atual'
+                                        localStorage.setItem('location', locationDescription)
+                                        setCurrentLocationValue({ description: locationDescription })
+                                        setSearchKey(locationDescription)
                                     }
-                                )
+                                } catch (e) {
+                                    console.error('Erro ao usar Geocoder do Google:', e)
+                                    const locationDescription = 'Minha localização atual'
+                                    localStorage.setItem('location', locationDescription)
+                                    setCurrentLocationValue({ description: locationDescription })
+                                    setSearchKey(locationDescription)
+                                }
                             } else {
-
                                 // Fallback se o Google Maps não estiver carregado
                                 const locationDescription = 'Minha localização atual'
                                 localStorage.setItem('location', locationDescription)
                                 setCurrentLocationValue({
-                                    description: locationDescription
+                                    description: locationDescription,
                                 })
                                 setSearchKey(locationDescription)
                             }

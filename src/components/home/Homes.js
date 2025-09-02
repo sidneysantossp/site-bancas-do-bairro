@@ -221,12 +221,27 @@ const Homes = ({ configData }) => {
             dispatch(setCampaignFoods(campaignData?.data))
         }
         if (data) {
-            // Normalize local/demo backend differences:
-            // - Demo often returns { data: { banners: [], campaigns: [] } }
-            // - Local may return { data: [ ... ] } (raw array of banners)
-            const normalized = Array.isArray(data?.data)
-                ? { banners: data.data, campaigns: [] }
-                : data?.data
+            // Normalize diferentes formatos de resposta (local/demo/prod):
+            // Suporta: { data: [...] }, [...], { banners: [], campaigns: [] }, { data: { banners: [], campaigns: [] } }
+            const body = data?.data ?? data
+            let normalized
+            if (Array.isArray(body)) {
+                normalized = { banners: body, campaigns: [] }
+            } else if (Array.isArray(body?.data)) {
+                normalized = { banners: body.data, campaigns: [] }
+            } else if (body?.banners || body?.campaigns) {
+                normalized = {
+                    banners: Array.isArray(body?.banners) ? body.banners : [],
+                    campaigns: Array.isArray(body?.campaigns) ? body.campaigns : [],
+                }
+            } else if (body?.data && (body.data?.banners || body.data?.campaigns)) {
+                normalized = {
+                    banners: Array.isArray(body.data?.banners) ? body.data.banners : [],
+                    campaigns: Array.isArray(body.data?.campaigns) ? body.data.campaigns : [],
+                }
+            } else {
+                normalized = { banners: [], campaigns: [] }
+            }
             dispatch(setBanners(normalized))
         }
         if (mostReviewedData) {

@@ -15,8 +15,9 @@ try {
 }
 
 // Carrega SDK compat (v9) para uso no Service Worker
-importScripts('https://www.gstatic.com/firebasejs/9.6.11/firebase-app-compat.js')
-importScripts('https://www.gstatic.com/firebasejs/9.6.11/firebase-messaging-compat.js')
+// Alinha com a versão instalada no projeto (firebase@^11.2.0)
+importScripts('https://www.gstatic.com/firebasejs/11.2.0/firebase-app-compat.js')
+importScripts('https://www.gstatic.com/firebasejs/11.2.0/firebase-messaging-compat.js')
 
 const FALLBACK_CONFIG = {
   // Preencha pelo menos o messagingSenderId do seu projeto
@@ -64,15 +65,24 @@ self.addEventListener('notificationclick', (event) => {
   event.notification.close()
   const targetUrl = event.notification?.data?.click_action || '/'
   event.waitUntil(
-    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
-      for (const client of clientList) {
-        if (client.url.includes(self.origin || '') && 'focus' in client) {
-          return client.focus()
+    self.clients
+      .matchAll({ type: 'window', includeUncontrolled: true })
+      .then((clientList) => {
+        const origin = (self.location && self.location.origin) || ''
+        for (const client of clientList) {
+          try {
+            if (client.url && client.url.startsWith(origin) && 'focus' in client) {
+              return client.focus()
+            }
+          } catch (_) {}
         }
-      }
-      if (self.clients.openWindow) {
-        return self.clients.openWindow(targetUrl)
-      }
-    })
+        if (self.clients.openWindow) {
+          // Garantir que abrimos apenas URLs relativas ao app
+          const url = String(targetUrl || '/')
+          const finalUrl = url.startsWith('http') ? origin : url
+          return self.clients.openWindow(finalUrl)
+        }
+        return undefined
+      })
   )
 })

@@ -29,7 +29,7 @@ export const getServerSideProps = async ({ req, resolvedUrl }) => {
     const domain = req.headers.host
     const protocol = req.headers['x-forwarded-proto'] || (domain?.includes('localhost') ? 'http' : 'https')
     const origin = `${protocol}://${domain}`
-    const apiBase = process.env.NEXT_PUBLIC_BASE_URL || origin
+    const apiBase = origin
 
     // Utilitário de fetch com timeout para evitar travar a renderização no SSR
     const fetchWithTimeout = async (url, options = {}, timeoutMs = 10000) => {

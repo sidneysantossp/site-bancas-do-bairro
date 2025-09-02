@@ -40,18 +40,15 @@ const nextConfig = {
             {
                 source: '/(.*)',
                 headers: [
-                    {
-                        key: 'X-Frame-Options',
-                        value: 'DENY',
-                    },
-                    {
-                        key: 'X-Content-Type-Options',
-                        value: 'nosniff',
-                    },
-                    {
-                        key: 'Referrer-Policy',
-                        value: 'origin-when-cross-origin',
-                    },
+                    { key: 'X-Frame-Options', value: 'DENY' },
+                    { key: 'X-Content-Type-Options', value: 'nosniff' },
+                    { key: 'Referrer-Policy', value: 'origin-when-cross-origin' },
+                    { key: 'Permissions-Policy', value: 'geolocation=(self), microphone=(), camera=(), interest-cohort=()' },
+                    { key: 'Strict-Transport-Security', value: 'max-age=63072000; includeSubDomains; preload' },
+                    { key: 'Cross-Origin-Opener-Policy', value: 'same-origin' },
+                    { key: 'Cross-Origin-Resource-Policy', value: 'same-origin' },
+                    // Permite imagens de 'self', data:, blob:, https:, e fontes http específicas usadas no dev/backend
+                    { key: 'Content-Security-Policy', value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.gstatic.com https://www.google.com https://www.googletagmanager.com https://maps.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob: https: http://localhost:* http://127.0.0.1:* http://admin.guiadasbancas.com.br http://guiadasbancas.com.br http://www.guiadasbancas.com.br; font-src 'self' data: https: https://fonts.gstatic.com; connect-src 'self' https: http://localhost:* https://ipapi.co https://nominatim.openstreetmap.org; media-src 'self' https: http://localhost:*; frame-src https://www.google.com https://www.youtube.com; object-src 'none'; base-uri 'self'; form-action 'self'" },
                 ],
             },
         ]

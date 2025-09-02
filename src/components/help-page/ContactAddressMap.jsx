@@ -39,7 +39,7 @@ const ContactAddressMap = ({
         lat: parseFloat(global?.default_location?.lat),
         lng: parseFloat(global?.default_location?.lng),
     }
-    const { isLoaded } = useGoogleMaps()
+    const { isLoaded, isError, errorMessage } = useGoogleMaps()
     const options = useMemo(
         () => ({
             zoomControl: false,
@@ -99,7 +99,16 @@ const ContactAddressMap = ({
                 </IconButton>
             </CustomStackFullWidth>
             <CustomStackFullWidth padding="10px" position="relative">
-                {isLoaded ? (
+                {isError ? (
+                    <Stack alignItems="center" justifyContent="center" sx={{ minHeight: '200px' }}>
+                        <Typography color="error" fontSize="14px">
+                            Erro ao carregar o Google Maps: {errorMessage}
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary">
+                            Verifique a chave NEXT_PUBLIC_GOOGLE_MAP_KEY, o faturamento e as APIs do Google Cloud (Maps/Places) no projeto.
+                        </Typography>
+                    </Stack>
+                ) : isLoaded ? (
                     <MapComponent
                         latitude={lat ? lat : global?.default_location?.lat}
                         longitude={lng ? lng : global?.default_location?.lng}

@@ -12,6 +12,7 @@ import {
     Typography,
     useMediaQuery,
     useTheme,
+    Skeleton,
 } from '@mui/material'
 import { Stack } from '@mui/material'
 import { t } from 'i18next'
@@ -92,7 +93,7 @@ const MapComponentFindNear = ({
         }),
         []
     )
-    const { isLoaded } = useGoogleMaps()
+    const { isLoaded, isError, errorMessage } = useGoogleMaps()
 
     const onLoad = useCallback(function callback(map) {
         setZoom(10)
@@ -141,6 +142,32 @@ const MapComponentFindNear = ({
         setOpenUserMsg(!openUserMsg)
         setHoveredMarkerId(null)
     }
+    // Render de erro amigável caso o Google Maps falhe ao carregar
+    if (isError) {
+        return (
+            <CustomStackFullWidth
+                sx={{
+                    border: (theme) => `1px dashed ${theme.palette.error.light}`,
+                    borderRadius: '10px',
+                    p: 2,
+                    height: '250px',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    bgcolor: (theme) => (theme.palette.mode === 'dark' ? 'grey.900' : 'grey.50'),
+                }}
+            >
+                <Stack spacing={1} alignItems="center">
+                    <Skeleton variant="rectangular" width="100%" height={120} />
+                    <Skeleton variant="text" width="80%" />
+                    <Skeleton variant="text" width="60%" />
+                    <Box sx={{ color: (theme) => theme.palette.error.main, fontSize: 14, textAlign: 'center' }}>
+                        {t('Erro ao carregar o Google Maps')}: {errorMessage}
+                    </Box>
+                </Stack>
+            </CustomStackFullWidth>
+        )
+    }
+
     return isLoaded ? (
         <CustomStackFullWidth position="relative" className="map">
             <Stack

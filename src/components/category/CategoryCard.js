@@ -3,6 +3,7 @@ import { Box, Stack, Typography } from '@mui/material'
 //import catagori from '../../../public/static/featurecatagori/image 11.png'
 import { CatagoriCardPaper, CatagoriImg } from './Catagori.style'
 import { motion } from "framer-motion";
+import CustomImageContainer from '../CustomImageContainer'
 
 const CategoryCard = ({ categoryImage, name, id, reduxImage }) => {
     const image = `${reduxImage}/${categoryImage}`
@@ -12,7 +13,15 @@ const CategoryCard = ({ categoryImage, name, id, reduxImage }) => {
             <CatagoriCardPaper elevation={0}>
 
                 <CatagoriImg>
-                    <img src={image} alt=loyalty />
+                    {/* Use normalized image component for remote images */}
+                    <CustomImageContainer
+                        src={image}
+                        alt={name || 'category'}
+                        width="100%"
+                        height="100%"
+                        objectFit="cover"
+                        borderRadius="8px"
+                    />
                 </CatagoriImg>
                 <Stack sx={{ textAlign: 'center' }}>
                     <Typography variant="h4">{name}</Typography>

@@ -4,6 +4,7 @@ import { setUserLocationUpdate } from '@/redux/slices/global'
 import { GoogleApi } from '@/hooks/react-query/config/googleApi'
 import { useRouter } from 'next/router'
 import { useRef } from 'react'
+import { useGoogleMaps } from '@/hooks/useGoogleMaps'
 
 const DEFAULT_LOCATION_LABEL = 'São Paulo, SP - Brasil'
 const DEFAULT_ZONE_ARRAY_STRING = JSON.stringify([1])
@@ -14,6 +15,9 @@ const ForceGeolocation = () => {
 
     const router = useRouter()
     const didRedirectRef = useRef(false)
+
+    // Estado de carregamento do Google Maps JS API
+    const { isLoaded: isGoogleLoaded } = useGoogleMaps()
 
     const toggleLocationUpdate = () =>
         dispatch(setUserLocationUpdate(!userLocationUpdate))
@@ -130,33 +134,97 @@ const ForceGeolocation = () => {
                 e
             )
             // Fazer reverse geocoding usando Google Maps JS API como fallback
-            if (window.google && window.google.maps) {
-                const geocoder = new window.google.maps.Geocoder()
-                const latlng = { lat: latitude, lng: longitude }
-                
-                geocoder.geocode({ location: latlng }, async (results, status) => {
-                    if (status === 'OK' && results[0]) {
-                        const address = results[0].formatted_address
-                        localStorage.setItem('location', address)
-                        
-                        // Definir zona baseada na localização (por enquanto usar zona 1)
-                        localStorage.setItem('zoneid', JSON.stringify([1]))
-                        toggleLocationUpdate()
-                        
-                        console.log('Localização obtida:', address)
-                        redirectToHomeOnce()
+            if (
+                isGoogleLoaded &&
+                typeof window !== 'undefined' &&
+                window.google &&
+                window.google.maps
+            ) {
+                try {
+                    // Em versões recentes da API, é necessário importar a biblioteca de geocoding explicitamente
+                    if (typeof window.google.maps.importLibrary === 'function') {
+                        const geocodingLib = await window.google.maps.importLibrary('geocoding')
+                        // Preferir classe retornada pela lib (evita "is not a constructor")
+                        const GeocoderClass = geocodingLib?.Geocoder || window.google.maps.Geocoder
+                        if (typeof GeocoderClass === 'function') {
+                            const geocoder = new GeocoderClass()
+                            const latlng = { lat: latitude, lng: longitude }
+
+                            geocoder.geocode({ location: latlng }, async (results, status) => {
+                                if (status === 'OK' && results && results[0]) {
+                                    const address = results[0].formatted_address
+                                    localStorage.setItem('location', address)
+
+                                    // Definir zona baseada na localização (por enquanto usar zona 1)
+                                    localStorage.setItem('zoneid', JSON.stringify([1]))
+                                    toggleLocationUpdate()
+
+                                    console.log('Localização obtida:', address)
+                                    redirectToHomeOnce()
+                                } else {
+                                    console.log('Erro no geocoding do Google, tentando OSM...')
+                                    const ok = await reverseGeocodeOSM(latitude, longitude)
+                                    if (!ok) {
+                                        console.log('OSM também falhou, usando zona padrão')
+                                        // Como último recurso, defina rótulo com coordenadas para permitir o acesso ao /home
+                                        localStorage.setItem('location', `${latitude.toFixed(5)}, ${longitude.toFixed(5)}`)
+                                        setDefaultZone()
+                                        redirectToHomeOnce()
+                                    }
+                                }
+                            })
+                            return
+                        }
+                    }
+
+                    // Fallback para classe global caso importLibrary não defina módulo
+                    if (window.google.maps.Geocoder && typeof window.google.maps.Geocoder === 'function') {
+                        const geocoder = new window.google.maps.Geocoder()
+                        const latlng = { lat: latitude, lng: longitude }
+
+                        geocoder.geocode({ location: latlng }, async (results, status) => {
+                            if (status === 'OK' && results && results[0]) {
+                                const address = results[0].formatted_address
+                                localStorage.setItem('location', address)
+
+                                // Definir zona baseada na localização (por enquanto usar zona 1)
+                                localStorage.setItem('zoneid', JSON.stringify([1]))
+                                toggleLocationUpdate()
+
+                                console.log('Localização obtida:', address)
+                                redirectToHomeOnce()
+                            } else {
+                                console.log('Erro no geocoding do Google, tentando OSM...')
+                                const ok = await reverseGeocodeOSM(latitude, longitude)
+                                if (!ok) {
+                                    console.log('OSM também falhou, usando zona padrão')
+                                    // Como último recurso, defina rótulo com coordenadas para permitir o acesso ao /home
+                                    localStorage.setItem('location', `${latitude.toFixed(5)}, ${longitude.toFixed(5)}`)
+                                    setDefaultZone()
+                                    redirectToHomeOnce()
+                                }
+                            }
+                        })
                     } else {
-                        console.log('Erro no geocoding do Google, tentando OSM...')
+                        console.log('Geocoder indisponível após importLibrary; tentando OSM...')
                         const ok = await reverseGeocodeOSM(latitude, longitude)
                         if (!ok) {
-                            console.log('OSM também falhou, usando zona padrão')
-                            // Como último recurso, defina rótulo com coordenadas para permitir o acesso ao /home
+                            console.log('OSM falhou, usando zona padrão')
                             localStorage.setItem('location', `${latitude.toFixed(5)}, ${longitude.toFixed(5)}`)
                             setDefaultZone()
                             redirectToHomeOnce()
                         }
                     }
-                })
+                } catch (errGeocode) {
+                    console.log('Falha ao carregar/usar Geocoder do Google:', errGeocode)
+                    const ok = await reverseGeocodeOSM(latitude, longitude)
+                    if (!ok) {
+                        console.log('OSM falhou, usando zona padrão')
+                        localStorage.setItem('location', `${latitude.toFixed(5)}, ${longitude.toFixed(5)}`)
+                        setDefaultZone()
+                        redirectToHomeOnce()
+                    }
+                }
             } else {
                 // Se Google Maps não estiver disponível, tentar OSM antes do padrão
                 console.log('Google Maps não disponível, tentando OSM...')
@@ -254,5 +322,3 @@ const ForceGeolocation = () => {
 }
 
 export default ForceGeolocation
-
-// Removed dangling global redirect function

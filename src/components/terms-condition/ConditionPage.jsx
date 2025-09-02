@@ -3,6 +3,7 @@ import { Box, Grid, Typography } from '@mui/material'
 import { StyleThemBox } from '../food-card/FoodCard.style'
 import { useTranslation } from 'react-i18next'
 import { useTheme } from '@mui/material/styles'
+import DOMPurify from 'isomorphic-dompurify'
 
 const ConditionPage = ({ configData }) => {
     const { t } = useTranslation()
@@ -31,9 +32,9 @@ const ConditionPage = ({ configData }) => {
                     <StyleThemBox>
                         <div
                             dangerouslySetInnerHTML={{
-                                __html: configData?.terms_and_conditions,
+                                __html: DOMPurify.sanitize(configData?.terms_and_conditions || ''),
                             }}
-                        ></div>
+                        />
                     </StyleThemBox>
                 </Grid>
             </Grid>

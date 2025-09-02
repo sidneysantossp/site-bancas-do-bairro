@@ -335,7 +335,7 @@ const MapForAddress = ({
         >
             {!locationLoading && (
                 <img
-                    src="http://maps.google.com/mapfiles/kml/paddle/blu-blank.png"
+                    src="https://maps.google.com/mapfiles/kml/paddle/blu-blank.png"
                     alt=""
                     style={{
                         zIndex: 3,
@@ -351,7 +351,7 @@ const MapForAddress = ({
                 <Marker
                     position={center}
                     icon={
-                        'http://maps.google.com/mapfiles/kml/paddle/blu-blank.png'
+                        'https://maps.google.com/mapfiles/kml/paddle/blu-blank.png'
                     }
                     // icon={<LocationOnIcon fontSize="large" />}
                     onClick={() => setOpenInfoWindow(true)}

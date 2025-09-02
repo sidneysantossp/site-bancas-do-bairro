@@ -1,4 +1,5 @@
 import { Box, Grid, Typography } from '@mui/material'
+import DOMPurify from 'isomorphic-dompurify'
 import React from 'react'
 import { StyleThemBox } from '../food-card/FoodCard.style'
 import { t } from 'i18next'
@@ -29,9 +30,9 @@ const Privacypolicy = ({ configData }) => {
                     <StyleThemBox>
                         <div
                             dangerouslySetInnerHTML={{
-                                __html: configData?.privacy_policy,
+                                __html: DOMPurify.sanitize(configData?.privacy_policy || ''),
                             }}
-                        ></div>
+                        />
                     </StyleThemBox>
                 </Grid>
             </Grid>

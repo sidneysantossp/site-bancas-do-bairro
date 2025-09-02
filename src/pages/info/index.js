@@ -4,15 +4,12 @@ import CustomContainer from '../../components/container'
 import UserInfo from '../../components/user-info'
 import AuthGuard from '../../components/authentication/AuthGuard'
 import jwt from 'base-64'
-import { useSearchParams } from 'next/navigation'
-import { usePathname } from 'next/navigation';
+import { useRouter } from 'next/router'
 const Index = () => {
 
-    const pathname = usePathname()  
-    const searchParams = useSearchParams()
-    const page = searchParams.get('page')
-    const orderId = searchParams.get('orderId')
-    const token = searchParams.get('token')
+    const router = useRouter()
+    const pathname = router.pathname
+    const { page, orderId, token } = router.query
     const [attributeId, setAttributeId] = useState('')
 
     useEffect(() => {

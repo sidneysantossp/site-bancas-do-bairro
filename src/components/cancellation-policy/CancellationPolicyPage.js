@@ -3,6 +3,7 @@ import { Box, Grid, Typography } from '@mui/material'
 import { StyleThemBox } from '../food-card/FoodCard.style'
 import { useTranslation } from 'react-i18next'
 import { useTheme } from '@mui/material/styles'
+import DOMPurify from 'isomorphic-dompurify'
 
 const CancellationPolicyPage = ({ configData }) => {
     const { t } = useTranslation()
@@ -30,9 +31,9 @@ const CancellationPolicyPage = ({ configData }) => {
                     <StyleThemBox>
                         <div
                             dangerouslySetInnerHTML={{
-                                __html: configData?.cancellation_policy_data,
+                                __html: DOMPurify.sanitize(configData?.cancellation_policy_data || ''),
                             }}
-                        ></div>
+                        />
                     </StyleThemBox>
                 </Grid>
             </Grid>

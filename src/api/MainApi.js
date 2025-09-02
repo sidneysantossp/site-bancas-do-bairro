@@ -9,6 +9,7 @@ export const baseUrl = isBrowser ? '' : ssrFallback
 
 const MainApi = axios.create({
     baseURL: baseUrl,
+    timeout: 10000,
 })
 
 MainApi.interceptors.request.use(function (config) {
@@ -75,7 +76,29 @@ MainApi.interceptors.request.use(function (config) {
         config.headers['zone_id'] = normalizedZoneHeader
     } else {
         // Fallback: garantir zoneId padrão para evitar erro "ID da zona necessário"
-        const defaultZone = JSON.stringify([1])
+        // Permitir configuração via variável de ambiente: NEXT_PUBLIC_DEFAULT_ZONE_ID ou NEXT_PUBLIC_DEFAULT_ZONE_IDS
+        const envDefault = process.env.NEXT_PUBLIC_DEFAULT_ZONE_ID || process.env.NEXT_PUBLIC_DEFAULT_ZONE_IDS
+        let defaultZoneValue
+        if (envDefault) {
+            try {
+                const parsed = JSON.parse(envDefault)
+                if (Array.isArray(parsed) && parsed.length > 0) {
+                    const nums = parsed.map((n) => Number(n)).filter((n) => Number.isFinite(n) && n > 0)
+                    if (nums.length > 0) defaultZoneValue = JSON.stringify(nums)
+                } else {
+                    const asNum = Number(parsed)
+                    defaultZoneValue = !Number.isNaN(asNum) && asNum > 0 ? String(asNum) : String(parsed)
+                }
+            } catch (_) {
+                const parts = String(envDefault)
+                    .split(',')
+                    .map((s) => Number(s.trim()))
+                    .filter((n) => Number.isFinite(n) && n > 0)
+                if (parts.length > 1) defaultZoneValue = JSON.stringify(parts)
+                else if (parts.length === 1) defaultZoneValue = String(parts[0])
+            }
+        }
+        const defaultZone = defaultZoneValue || JSON.stringify([1])
         config.headers.zoneId = defaultZone
         config.headers['zone-id'] = defaultZone
         config.headers['zone_id'] = defaultZone
@@ -85,7 +108,6 @@ MainApi.interceptors.request.use(function (config) {
                 if (!saved || saved === 'null' || saved === 'undefined' || saved === '[]') {
                     localStorage.setItem('zoneid', defaultZone)
                 }
-                // Não definir 'location' aqui para evitar sobrescrever o endereço real do usuário
             } catch (_) {}
         }
     }

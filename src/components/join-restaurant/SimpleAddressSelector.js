@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect } from 'react'
 import { 
     TextField, 
     Paper, 
@@ -10,8 +10,9 @@ import {
 } from '@mui/material'
 import SearchIcon from '@mui/icons-material/Search'
 import { useDispatch } from 'react-redux'
-import { setLocation, setFormattedAddress } from '../../redux/slices/addressData'
-import useGoogleMaps from '../../hooks/useGoogleMaps'
+import { setFormattedAddress } from '../../redux/slices/addressData'
+// remove: import useGoogleMaps from '../../hooks/useGoogleMaps'
+import useGetAutocompletePlace from '@/hooks/react-query/google-api/usePlaceAutoComplete'
 
 const SimpleAddressSelector = ({ 
     setSearchKey,
@@ -20,23 +21,30 @@ const SimpleAddressSelector = ({
     setPlaceDetailsEnabled 
 }) => {
     const dispatch = useDispatch()
-    const { isLoaded } = useGoogleMaps()
+    // remove: const { isLoaded } = useGoogleMaps()
     const [inputValue, setInputValue] = useState('')
     const [showSuggestions, setShowSuggestions] = useState(false)
     const [predictions, setPredictions] = useState([])
-    const [loading, setLoading] = useState(false)
-    const autocompleteService = useRef(null)
-    const placesService = useRef(null)
+    // remove: const [loading, setLoading] = useState(false)
+    // remove: const autocompleteService = useRef(null)
+    // remove: const placesService = useRef(null)
+    const [enabled, setEnabled] = useState(false)
+
+    // Buscar sugestões via backend (proxy Google Places)
+    const { data: placesData, isLoading } = useGetAutocompletePlace(
+        inputValue,
+        enabled
+    )
 
     // Inicializar Google Places services quando a API estiver carregada
-    useEffect(() => {
+    /* useEffect(() => {
         if (isLoaded && window.google) {
             autocompleteService.current = new window.google.maps.places.AutocompleteService()
             placesService.current = new window.google.maps.places.PlacesService(
                 document.createElement('div')
             )
         }
-    }, [isLoaded])
+    }, [isLoaded]) */
 
     // Carregar endereço salvo do localStorage quando o componente inicializar
     useEffect(() => {
@@ -46,113 +54,83 @@ const SimpleAddressSelector = ({
         }
     }, [])
 
-    // Buscar sugestões da API do Google Places
-    const searchPlaces = (query) => {
-        if (!autocompleteService.current || !query.trim()) {
+    // Atualiza previsões a partir do backend (Autocomplete Data API via proxy)
+    useEffect(() => {
+        if (!placesData) {
             setPredictions([])
             return
         }
-
-        setLoading(true)
-        
-        const request = {
-            input: query,
-            componentRestrictions: { country: 'br' }, // Restringir ao Brasil
-            types: ['address'], // Buscar endereços
-            language: 'pt-BR'
+        let tempData = []
+        // Hook useGetAutocompletePlace retorna o corpo (data) diretamente.
+        // Ainda assim, suportamos ambos os formatos por segurança.
+        const data = (placesData && placesData.data) ? placesData.data : placesData
+        if (data?.suggestions) {
+            tempData = data.suggestions
+                .map((item) => ({
+                    place_id: item?.placePrediction?.placeId || item?.place_id,
+                    description:
+                        item?.placePrediction?.structuredFormat?.mainText?.text
+                            ? `${item.placePrediction.structuredFormat.mainText.text}${
+                                  item.placePrediction.structuredFormat.secondaryText?.text
+                                      ? ', ' + item.placePrediction.structuredFormat.secondaryText.text
+                                      : ''
+                              }`
+                            : item?.description || item?.placePrediction?.text?.text,
+                }))
+                .filter((x) => x.place_id && x.description)
+        } else if (data?.predictions) {
+            tempData = data.predictions.map((p) => ({
+                place_id: p.place_id,
+                description: p.description,
+            }))
+        } else if (Array.isArray(data)) {
+            tempData = data.map((p) => ({
+                place_id: p.place_id || p.id,
+                description: p.description || p.formatted_address,
+            }))
         }
+        setPredictions(tempData || [])
+    }, [placesData])
 
-        autocompleteService.current.getPlacePredictions(request, (results, status) => {
-            setLoading(false)
-            if (status === window.google.maps.places.PlacesServiceStatus.OK && results) {
-                setPredictions(results)
-                setShowSuggestions(true)
-            } else {
-                setPredictions([])
-                setShowSuggestions(false)
-            }
-        })
-    }
+    // Autocomplete pelo backend via react-query (sem Google JS API)
+    // searchPlaces removido
+
 
     const handleInputChange = (event) => {
         const value = event.target.value
         setInputValue(value)
-        
-        // Buscar sugestões da API do Google quando há input
+
+        // Notifica o hook pai
+        if (setSearchKey) {
+            setSearchKey({ description: value })
+        }
         if (value.trim().length > 0) {
-            searchPlaces(value)
+            setEnabled(true)
+            setShowSuggestions(true)
         } else {
+            setEnabled(false)
             setPredictions([])
             setShowSuggestions(false)
         }
     }
 
-    // Obter detalhes do lugar selecionado
-    const getPlaceDetails = (placeId, description) => {
-        if (!placesService.current) return
-
-        const request = {
-            placeId: placeId,
-            fields: ['geometry', 'formatted_address', 'name']
-        }
-
-        placesService.current.getDetails(request, (place, status) => {
-            if (status === window.google.maps.places.PlacesServiceStatus.OK && place) {
-                const lat = place.geometry.location.lat()
-                const lng = place.geometry.location.lng()
-                const formattedAddress = place.formatted_address || description
-
-                console.log('Endereço selecionado:', { lat, lng, formattedAddress })
-
-                // Atualizar Redux
-                dispatch(setLocation({ lat, lng }))
-                dispatch(setFormattedAddress(formattedAddress))
-
-                // Atualizar localStorage
-                localStorage.setItem('currentLatLng', JSON.stringify({ lat, lng }))
-                localStorage.setItem('location', formattedAddress)
-
-                // Atualizar o input local para garantir persistência visual
-                setInputValue(formattedAddress)
-
-                // Notificar componentes pais
-                if (setSearchKey) {
-                    setSearchKey({
-                        description: formattedAddress,
-                        lat,
-                        lng
-                    })
-                }
-                
-                if (setPlaceId) setPlaceId(placeId)
-                if (setPlaceDescription) setPlaceDescription(formattedAddress)
-                if (setPlaceDetailsEnabled) setPlaceDetailsEnabled(true)
-
-                // Disparar evento customizado para notificar outros componentes
-                window.dispatchEvent(new CustomEvent('addressSelected', {
-                    detail: {
-                        address: formattedAddress,
-                        lat,
-                        lng
-                    }
-                }))
-            }
-        })
-    }
+    // getPlaceDetails removido: os detalhes agora são buscados pelo componente pai via proxy (useGetLocation/useGetPlaceDetails)
 
     const handleAddressSelect = (prediction) => {
-        console.log('Predição selecionada:', prediction)
-        
-        // Fixar o endereço no input imediatamente
         const selectedAddress = prediction.description
         setInputValue(selectedAddress)
         setShowSuggestions(false)
 
-        // Salvar imediatamente no localStorage para persistência
         localStorage.setItem('location', selectedAddress)
+        dispatch(setFormattedAddress(selectedAddress))
 
-        // Obter detalhes completos do lugar
-        getPlaceDetails(prediction.place_id, selectedAddress)
+        if (setPlaceId) setPlaceId(prediction.place_id)
+        if (setPlaceDescription) setPlaceDescription(selectedAddress)
+        if (setPlaceDetailsEnabled) setPlaceDetailsEnabled(true)
+
+        if (typeof window !== 'undefined') {
+            window.dispatchEvent(new CustomEvent('addressSelected', { detail: { address: selectedAddress } }))
+        }
     }
 
     return (
@@ -212,7 +190,7 @@ const SimpleAddressSelector = ({
                     }}
                 >
                     <List>
-                        {loading ? (
+                        {isLoading ? (
                             <ListItem>
                                 <ListItemText 
                                     primary="Buscando endereços..." 

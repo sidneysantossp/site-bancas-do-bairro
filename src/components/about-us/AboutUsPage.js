@@ -1,4 +1,5 @@
 import { Box, Grid, Typography, useTheme } from '@mui/material'
+import DOMPurify from 'isomorphic-dompurify'
 import { StyleThemBox } from '../food-card/FoodCard.style'
 import { useTranslation } from 'react-i18next'
 
@@ -25,9 +26,9 @@ const AboutUsPage = ({ configData }) => {
                     <StyleThemBox>
                         <div
                             dangerouslySetInnerHTML={{
-                                __html: configData?.about_us,
+                                __html: DOMPurify.sanitize(configData?.about_us || ''),
                             }}
-                        ></div>
+                        />
                     </StyleThemBox>
                 </Grid>
             </Grid>

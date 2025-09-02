@@ -58,7 +58,7 @@ const GoogleMapComponent = ({
         }),
         []
     )
-    const { isLoaded } = useGoogleMaps()
+    const { isLoaded, isError, errorMessage } = useGoogleMaps()
     const [isMounted, setIsMounted] = useState(false)
     const [openInfoWindow, setOpenInfoWindow] = useState(false)
     const [mapSetup, setMapSetup] = useState(false)
@@ -131,6 +131,27 @@ const GoogleMapComponent = ({
             map.fitBounds(bounds)
         }
     }, [polygonPaths, map])
+    if (isError) {
+        return (
+            <CustomStackFullWidth
+                alignItems="center"
+                justifyContent="center"
+                sx={{
+                    minHeight: '400px',
+                    [theme.breakpoints.down('sm')]: {
+                        minHeight: '250px',
+                    },
+                }}
+            >
+                <Stack alignItems="center" spacing={1}>
+                    <Skeleton width="100%" height="100%" variant="rectangular" animation="wave" />
+                    <span style={{ color: theme.palette.error.main, fontSize: 12 }}>
+                        Erro ao carregar o Google Maps: {errorMessage}
+                    </span>
+                </Stack>
+            </CustomStackFullWidth>
+        )
+    }
     return isLoaded ? (
         <CustomStackFullWidth position="relative" className="map">
             <Stack
