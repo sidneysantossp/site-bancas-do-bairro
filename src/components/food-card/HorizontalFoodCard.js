@@ -16,6 +16,7 @@ import { CustomOverlayBox } from '@/styled-components/CustomStyles.style'
 import { getReviewCount, isAvailable } from '@/utils/customFunctions'
 import FavoriteIcon from '@mui/icons-material/Favorite'
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder'
+import VisibilityIcon from '@mui/icons-material/Visibility'
 import StartPriceView from '../foodDetail-modal/StartPriceView'
 import { RTL } from '../RTL/RTL'
 import { t } from 'i18next'
@@ -28,6 +29,21 @@ import CustomPopoverWithItem from '../custom-popover/CustomPopoverWithItem'
 import WishListImage from '../../assets/images/WishListImage'
 import DeleteIcon from '../../assets/images/icons/DeleteIcon'
 import HalalSvg from '@/components/food-card/HalalSvg'
+import { useRouter } from 'next/router'
+
+// Helper local de slug
+const buildProductSlug = (product) => {
+    const id = product?.id
+    const name = product?.name || 'produto'
+    const slug = name
+        .toString()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/(^-|-$)/g, '')
+    return id ? `${slug}-${id}` : slug
+}
 
 const HorizontalFoodCard = (props) => {
     const {
@@ -54,6 +70,7 @@ const HorizontalFoodCard = (props) => {
         horizontal,
     } = props
     const theme = useTheme()
+    const router = useRouter()
     const [anchorEl, setAnchorEl] = useState(null)
     const { global } = useSelector((state) => state.globalSettings)
     const isSmall = useMediaQuery(theme.breakpoints.down('sm'))
@@ -76,6 +93,13 @@ const HorizontalFoodCard = (props) => {
     const handleClose = (event) => {
         setAnchorEl(null)
     }
+    const handleViewProduct = (e) => {
+        e.stopPropagation()
+        if (product?.id) {
+            const slug = buildProductSlug(product)
+            router.push(`/produto/${slug}`)
+        }
+    }
     return (
         <>
             <RTL direction={languageDirection}>
@@ -87,7 +111,7 @@ const HorizontalFoodCard = (props) => {
                 >
                     <Stack
                         direction="row"
-                        spacing={1.5}
+                        spacing={1}
                         width="100%"
                         sx={{ overflow: 'hidden' }}
                     >
@@ -117,6 +141,8 @@ const HorizontalFoodCard = (props) => {
                                 height="95px"
                                 borderRadius="3px"
                                 objectFit="cover"
+                                onClick={handleViewProduct}
+                                sx={{ cursor: 'pointer' }}
                             />
 
                             {!isAvailable(
@@ -145,7 +171,7 @@ const HorizontalFoodCard = (props) => {
                                 </Stack>
                             )}
                         </Stack>
-                        <Stack gap="7px" width="100%">
+                        <Stack gap="7px" sx={{ flex: 1, minWidth: 0 }}>
                             <Stack>
                                 <Stack
                                     direction="row"
@@ -157,14 +183,15 @@ const HorizontalFoodCard = (props) => {
                                     <Typography
                                         fontSize="14px"
                                         fontWeight="500"
-                                        maxWidth="120px"
                                         noWrap
                                         sx={{
                                             overflow: 'hidden',
                                             textOverflow: 'ellipsis',
+                                            cursor: 'pointer',
                                         }}
                                         color={theme.palette.neutral[1200]}
                                         component="h3"
+                                        onClick={handleViewProduct}
                                     >
                                         {product?.name}
                                     </Typography>
@@ -228,127 +255,15 @@ const HorizontalFoodCard = (props) => {
                                     ''
                                 )}
                             </Stack>
-
                             <StartPriceView
                                 data={product}
-                                hideStartFromText="true"
                                 handleBadge={handleBadge}
+                                available_date_ends={product?.available_date_ends}
                             />
-                        </Stack>
-
-                        <Stack
-                            justifyContent="space-between"
-                            alignItems=" flex-end"
-                        >
-                            {!product?.available_date_ends && (
-                                <>
-                                    {!isInList(product.id) ? (
-                                        <IconButton
-                                            onClick={(e) => addToFavorite(e)}
-                                            sx={{ padding: '3px' }}
-                                        >
-                                            <FavoriteBorderIcon color="primary" />
-                                        </IconButton>
-                                    ) : (
-                                        <>
-                                            {inWishListPage === 'true' ? (
-                                                <IconButton
-                                                    onClick={handleClickDelete}
-                                                    sx={{ padding: '3px' }}
-                                                >
-                                                    <DeleteIcon />
-                                                </IconButton>
-                                            ) : (
-                                                <IconButton
-                                                    onClick={(e) =>
-                                                        deleteWishlistItem(
-                                                            product.id,
-                                                            e
-                                                        )
-                                                    }
-                                                    sx={{ padding: '3px' }}
-                                                >
-                                                    <FavoriteIcon color="primary" />
-                                                </IconButton>
-                                            )}
-                                        </>
-                                    )}
-                                </>
-                            )}
-                            {!isInCart && (
-                                <IconButton
-                                    onClick={(e) => addToCart(e)}
-                                    sx={{ padding: '3px' }}
-                                >
-                                    {addToCartLoading ? (
-                                        <CircularLoader size="20px" />
-                                    ) : (
-                                        <AddShoppingCartIcon color="primary" />
-                                    )}
-                                </IconButton>
-                            )}
-                            {isInCart &&
-                                !incrOpen &&
-                                product?.variations?.length === 0 && (
-                                    <AfterAddToCart
-                                        isInCart={isInCart}
-                                        product={product}
-                                        getQuantity={getQuantity}
-                                        handleClickQuantityButton={
-                                            handleClickQuantityButton
-                                        }
-                                        setIncrOpen={setIncrOpen}
-                                        incrOpen={incrOpen}
-                                        addToCartLoading={addToCartLoading}
-                                        horizontal={horizontal}
-                                    />
-                                )}
                         </Stack>
                     </Stack>
-                    <Box
-                        position="relative"
-                        width="100%"
-                        sx={{
-                            width: {
-                                xs: 'calc(100% - 85px)',
-                                sm: 'calc(100% - 130px)',
-                            },
-                            marginInlineStart: 'auto',
-                        }}
-                    >
-                        {isInCart && incrOpen && (
-                            <AfterAddToCart
-                                isInCart={isInCart}
-                                product={product}
-                                getQuantity={getQuantity}
-                                handleClickQuantityButton={
-                                    handleClickQuantityButton
-                                }
-                                setIncrOpen={setIncrOpen}
-                                incrOpen={incrOpen}
-                                position="-30px"
-                                horizontal={horizontal}
-                            />
-                        )}
-                    </Box>
                 </CustomFoodCardNew>
             </RTL>
-            <CustomPopover
-                anchorEl={anchorEl}
-                setAnchorEl={setAnchorEl}
-                maxWidth="421px"
-                padding="20px 35px 25px"
-            >
-                <CustomPopoverWithItem
-                    icon={<WishListImage />}
-                    deleteItem={handleClick}
-                    handleClose={handleClose}
-                    confirmButtonText="Yes , Remove"
-                    cancelButtonText="Cancel"
-                    title="Remove this food"
-                    subTitle="Want to remove this food your favourite list ?"
-                />
-            </CustomPopover>
         </>
     )
 }

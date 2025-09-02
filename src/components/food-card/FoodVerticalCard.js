@@ -16,6 +16,23 @@ import { getReviewCount } from '@/utils/customFunctions'
 import FoodRating from './FoodRating'
 import { t } from 'i18next'
 import HalalSvg from '@/components/food-card/HalalSvg'
+import { useRouter } from 'next/router'
+
+// Helper local para gerar slug de forma resiliente
+const buildProductSlug = (product) => {
+    const id = product?.id
+    const name = product?.name || 'produto'
+    // remover acentos e caracteres especiais, trocar por '-'
+    const slug = name
+        .toString()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/(^-|-$)/g, '')
+    return id ? `${slug}-${id}` : slug
+}
+
 const FoodVerticalCard = (props) => {
     const {
         product,
@@ -40,6 +57,14 @@ const FoodVerticalCard = (props) => {
     const [isTransformed, setIstransformed] = useState(false)
     const theme = useTheme()
     const isSmall = useMediaQuery(theme.breakpoints.down('md'))
+    const router = useRouter()
+    const handleViewProduct = (e) => {
+        e.stopPropagation()
+        if (product?.id) {
+            const slug = buildProductSlug(product)
+            router.push(`/produto/${slug}`)
+        }
+    }
     return (
         <CustomFoodCardNew
             maxwidth="250px"
@@ -103,9 +128,11 @@ const FoodVerticalCard = (props) => {
                                 sx={{
                                     overflow: 'hidden',
                                     textOverflow: 'ellipsis',
+                                    cursor: 'pointer',
                                 }}
                                 color={theme.palette.neutral[1200]}
                                 component="h3"
+                                onClick={handleViewProduct}
                             >
                                 {product?.name}
                             </Typography>

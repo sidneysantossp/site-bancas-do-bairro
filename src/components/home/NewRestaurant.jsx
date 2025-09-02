@@ -230,7 +230,7 @@ const NewRestaurant = () => {
                                 fontWeight={{ xs: '500', md: '700' }}
                                 component="h2"
                             >
-                                Novidades nas Bancas do Bairro
+                                Bancas em Destaque
                             </Typography>
                         </Stack>
                         <CustomViewAll

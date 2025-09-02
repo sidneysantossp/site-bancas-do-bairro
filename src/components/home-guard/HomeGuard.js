@@ -7,27 +7,32 @@ const HomeGuard = (props) => {
     const {children,from,page} = props
     const router = useRouter()
     const { cartList } = useSelector((state) => state.cart)
+    const { userLocationUpdate } = useSelector((state) => state.globalSettings)
     const [checked, setChecked] = useState(false)
+
     useEffect(
         () => {
             if (!router.isReady) {
                 return
             }
             if(from==="checkout" && cartList?.length===0 && page !== 'campaign'){
-                router.push('/')
+                router.push('/home')
+                return
             }
-            const zoneId = localStorage.getItem('zoneid')
+
             const location = localStorage.getItem('location')
-            
-            // Verificar se há localização válida (mais flexível)
+
+            // Quando a localização for válida, liberamos o conteúdo
             if (location && location !== 'null' && location !== 'undefined' && location.trim() !== '') {
                 setChecked(true)
             } else {
-                router.push('/')
+                // Não redirecionar imediatamente. Aguarde ForceGeolocation preencher os dados
+                setChecked(false)
             }
         },
+        // Reavaliar quando o roteador estiver pronto e quando a geolocalização atualizar
         // eslint-disable-next-line react-hooks/exhaustive-deps
-        [router.isReady]
+        [router.isReady, userLocationUpdate]
     )
 
     if (!checked) {

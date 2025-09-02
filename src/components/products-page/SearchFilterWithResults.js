@@ -73,7 +73,7 @@ const SearchFilterWithResults = ({
                                     )}
                                     {data?.data?.products?.length === 0 && (
                                         <CustomEmptyResult
-                                            label="No food found"
+                                            label={t('No food found') === 'No food found' ? 'Nenhum produto encontrado!' : t('No food found')}
                                             image={noFoodFoundImage}
                                         />
                                     )}

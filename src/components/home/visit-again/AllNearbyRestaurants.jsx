@@ -81,7 +81,7 @@ const AllNearbyRestaurants = ({
                                     height="150px"
                                     width="150px"
                                     image={noRestaurantsImage}
-                                    label="No Restaurants Found"
+                                    label={t('No restaurant found') === 'No restaurant found' ? 'Nenhuma Banca encontrada!' : t('No restaurant found')}
                                 />
                             </CustomStackFullWidth>
                         ) : (

@@ -9,7 +9,7 @@ const NavCuisinesList = ({ item, handledropClose }) => {
     return (
         <Link
             href={{
-                pathname: `/cuisines/${item.id}`,
+                pathname: `/bancas/${item.id}`,
                 query: { name: item?.name },
             }}
                 key={item?.id}

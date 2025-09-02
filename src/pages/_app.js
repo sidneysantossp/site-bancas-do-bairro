@@ -31,6 +31,9 @@ import '../styles/nprogress.css'
 import { createTheme } from '../theme/index'
 import createEmotionCache from '../utils/create-emotion-cache'
 import ForceGeolocation from '../components/geolocation/ForceGeolocation'
+// Adiciona inicialização do Firebase Messaging no cliente
+// (useEffect já está importado acima)
+import { initMessagingAndGetToken, onForegroundMessage } from '../lib/firebaseClient'
 
 Router.events.on('routeChangeStart', nProgress.start)
 Router.events.on('routeChangeError', nProgress.done)
@@ -75,8 +78,8 @@ function App({ Component, pageProps, emotionCache = clientSideEmotionCache }) {
         let lang
         if (!normalizedRaw) {
             lang = 'pt-br'
-        } else if (normalizedRaw === 'en') {
-            // Se estiver salvo como inglês, forçamos para pt-br nesta instalação
+        } else if (normalizedRaw === 'en' || normalizedRaw?.startsWith('en-')) {
+            // Se estiver salvo como inglês (inclui variações en-xx), forçamos para pt-br nesta instalação
             lang = 'pt-br'
         } else if (normalizedRaw === 'pt' || normalizedRaw.startsWith('pt-')) {
             lang = 'pt-br'
@@ -84,10 +87,36 @@ function App({ Component, pageProps, emotionCache = clientSideEmotionCache }) {
             lang = normalizedRaw
         }
         i18n.changeLanguage(lang)
+        if (typeof document !== 'undefined') {
+            document.documentElement.setAttribute('lang', lang)
+        }
         if (lang !== userLanguage) {
             localStorage.setItem('language', lang)
         }
         setViewFooter(true)
+    }, [])
+
+    // Inicializa FCM no cliente: registra SW, pede permissão e obtém token
+    useEffect(() => {
+        let unsubscribe = () => {}
+        ;(async () => {
+            try {
+                const token = await initMessagingAndGetToken()
+                if (token) {
+                    // TODO: Enviar token ao seu backend se necessário
+                    // await fetch('/api/save-fcm-token', { method: 'POST', body: JSON.stringify({ token }) })
+                    console.log('FCM token obtido:', token)
+                }
+                unsubscribe = onForegroundMessage((payload) => {
+                    console.log('FCM foreground message:', payload)
+                })
+            } catch (e) {
+                console.warn('FCM não inicializado:', e)
+            }
+        })()
+        return () => {
+            try { unsubscribe() } catch {}
+        }
     }, [])
 
     let persistor = persistStore(store)
@@ -103,7 +132,8 @@ function App({ Component, pageProps, emotionCache = clientSideEmotionCache }) {
         if (storedVersion !== currentVersion) {
             localStorage.clear()
             localStorage.setItem('appVersion', currentVersion)
-            router.push('/')
+            // Evita navegação dura para a mesma URL: apenas recarrega a página
+            // para carregar os novos assets sem router.push para '/'
             window.location.reload()
         }
     }, [])

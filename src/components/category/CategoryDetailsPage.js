@@ -220,7 +220,7 @@ const CategoryDetailsPage = ({
                                 {data?.data?.products.length === 0 && (
                                     <CustomEmptyResult
                                         image={noFoodFoundImage}
-                                        label={t('No Food Found')}
+                                        label={t('No Food Found') === 'No Food Found' ? 'Nenhum produto encontrado!' : t('No Food Found')}
                                     />
                                 )}
                             </>
@@ -242,7 +242,7 @@ const CategoryDetailsPage = ({
                                     <CustomStackFullWidth sx={{ mt: '10px' }}>
                                         <CustomEmptyResult
                                             image={noRestaurantsImage}
-                                            label="No Restaurants Found"
+                                            label={t('No restaurant found') === 'No restaurant found' ? 'Nenhuma Banca encontrada!' : t('No restaurant found')}
                                         />
                                     </CustomStackFullWidth>
                                 )}

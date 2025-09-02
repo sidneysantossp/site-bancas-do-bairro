@@ -99,7 +99,7 @@ const FeatureCatagories = () => {
             sx={{
                 paddingTop: categoryIsSticky && '.5rem',
                 position: 'sticky',
-                top: { xs: '91px', md: '108px' },
+                top: { xs: '91px', md: '120px' },
                 zIndex: 1100,
                 background: (theme) => theme.palette.neutral[1800],
                 boxShadow: categoryIsSticky

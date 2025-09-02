@@ -30,7 +30,7 @@ import { useTranslation } from 'react-i18next'
                              mb="30px"
                          >
                              <Grid item xs={12} sm={12} md={12} justify="center">
-                                 <CustomPageTitle title={t('Cuisines')} />
+                                 <CustomPageTitle title={t('Cuisines') === 'Cuisines' ? 'Bancas' : t('Cuisines')} />
                              </Grid>
                              {cuisines?.map((item, index) => (
                                  <Grid

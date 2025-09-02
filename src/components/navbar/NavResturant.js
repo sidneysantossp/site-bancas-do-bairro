@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, Fragment } from 'react'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import {
     alpha,
@@ -45,7 +45,7 @@ const NavResturant = ({ zoneid }) => {
         ['restaurants/popular'],
         () => RestaurantsApi?.popularRestaurants(),
         {
-            enabled: false,
+            enabled: true,
             staleTime: 1000 * 60 * 8,
             onError: onErrorResponse,
             cacheTime: 8 * 60 * 1000,
@@ -132,12 +132,11 @@ const NavResturant = ({ zoneid }) => {
                                                 ? restaurant?.slug
                                                 : restaurant?.id
                                         return (
-                                            <>
+                                            <Fragment key={restaurant?.id ?? restaurant?.slug ?? index}>
                                                 {index % 2 === 0 ? (
                                                     <Grid
                                                         item
                                                         md={6}
-                                                        key={restaurant.id}
                                                     >
                                                         <Link
                                                             href={{
@@ -216,7 +215,6 @@ const NavResturant = ({ zoneid }) => {
                                                     <Grid
                                                         item
                                                         md={6}
-                                                        key={restaurant.id}
                                                     >
                                                         <Link
                                                             href={`/banca/${restaurantIdOrSlug}`}
@@ -284,14 +282,14 @@ const NavResturant = ({ zoneid }) => {
                                                         </Link>
                                                     </Grid>
                                                 )}
-                                            </>
+                                            </Fragment>
                                         )
                                     })}
                                 {popularRestaurants?.length === 0 && (
                                     <CustomEmptyResult
                                         height="100px"
                                         image={noRestaurantsImage}
-                                        label={t('No restaurant found') === 'No restaurant found' ? 'Nenhuma Banca encontrada' : t('No restaurant found')}
+                                        label={t('No restaurant found') === 'No restaurant found' ? 'Nenhuma Banca encontrada!' : t('No restaurant found')}
                                     />
                                 )}
                             </Grid>

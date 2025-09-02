@@ -2,6 +2,8 @@ import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { setUserLocationUpdate } from '@/redux/slices/global'
 import { GoogleApi } from '@/hooks/react-query/config/googleApi'
+import { useRouter } from 'next/router'
+import { useRef } from 'react'
 
 const DEFAULT_LOCATION_LABEL = 'São Paulo, SP - Brasil'
 const DEFAULT_ZONE_ARRAY_STRING = JSON.stringify([1])
@@ -10,13 +12,29 @@ const ForceGeolocation = () => {
     const dispatch = useDispatch()
     const { userLocationUpdate } = useSelector((state) => state.globalSettings)
 
+    const router = useRouter()
+    const didRedirectRef = useRef(false)
+
     const toggleLocationUpdate = () =>
         dispatch(setUserLocationUpdate(!userLocationUpdate))
 
+    const redirectToHomeOnce = () => {
+        if (didRedirectRef.current) return
+        didRedirectRef.current = true
+        try {
+            const path = typeof window !== 'undefined' ? window.location.pathname : undefined
+            if (path !== '/home') {
+                router.push('/home')
+            }
+        } catch (e) {
+            console.log('Falha ao redirecionar para /home:', e)
+        }
+    }
+
     const setDefaultZone = () => {
-        // Definir zona padrão (ID 1) como fallback
+        // Definir apenas zona padrão (ID 1) como fallback, sem forçar endereço textual
         localStorage.setItem('zoneid', JSON.stringify([1]))
-        localStorage.setItem('location', DEFAULT_LOCATION_LABEL)
+        // Não definir 'location' aqui para não sobrescrever um endereço real do usuário
         toggleLocationUpdate()
         console.log('Zona padrão definida: ID 1')
     }
@@ -26,11 +44,8 @@ const ForceGeolocation = () => {
             const url = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${encodeURIComponent(
                 latitude
             )}&lon=${encodeURIComponent(longitude)}&accept-language=pt-BR`
-            const res = await fetch(url, {
-                headers: {
-                    'User-Agent': 'site-bancas-do-bairro/1.0',
-                },
-            })
+            // Não definir cabeçalhos proibidos pelo navegador (ex: User-Agent)
+            const res = await fetch(url)
             if (!res.ok) throw new Error('OSM reverse geocode HTTP error')
             const data = await res.json()
             const address = data?.display_name
@@ -39,6 +54,7 @@ const ForceGeolocation = () => {
                 localStorage.setItem('zoneid', JSON.stringify([1]))
                 toggleLocationUpdate()
                 console.log('Endereço obtido via OSM:', address)
+                redirectToHomeOnce()
                 return true
             }
         } catch (err) {
@@ -107,6 +123,7 @@ const ForceGeolocation = () => {
 
             toggleLocationUpdate()
             console.log('Localização obtida via API:', address)
+            redirectToHomeOnce()
         } catch (e) {
             console.log(
                 'Falha ao obter endereço/zone via API, tentando Geocoder do Google Maps como fallback',
@@ -127,12 +144,16 @@ const ForceGeolocation = () => {
                         toggleLocationUpdate()
                         
                         console.log('Localização obtida:', address)
+                        redirectToHomeOnce()
                     } else {
                         console.log('Erro no geocoding do Google, tentando OSM...')
                         const ok = await reverseGeocodeOSM(latitude, longitude)
                         if (!ok) {
                             console.log('OSM também falhou, usando zona padrão')
+                            // Como último recurso, defina rótulo com coordenadas para permitir o acesso ao /home
+                            localStorage.setItem('location', `${latitude.toFixed(5)}, ${longitude.toFixed(5)}`)
                             setDefaultZone()
+                            redirectToHomeOnce()
                         }
                     }
                 })
@@ -142,7 +163,10 @@ const ForceGeolocation = () => {
                 const ok = await reverseGeocodeOSM(latitude, longitude)
                 if (!ok) {
                     console.log('OSM falhou, usando zona padrão')
+                    // Como último recurso, defina rótulo com coordenadas para permitir o acesso ao /home
+                    localStorage.setItem('location', `${latitude.toFixed(5)}, ${longitude.toFixed(5)}`)
                     setDefaultZone()
+                    redirectToHomeOnce()
                 }
             }
         }
@@ -230,3 +254,5 @@ const ForceGeolocation = () => {
 }
 
 export default ForceGeolocation
+
+// Removed dangling global redirect function

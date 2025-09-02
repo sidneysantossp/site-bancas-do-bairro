@@ -129,7 +129,7 @@ const PopularResturant = ({ data, latestRestaurantData }) => {
                                 justifyContent="space-between"
                             >
                                 <Typography variant={isXSmall ? 'h4' : 'h3'}>
-                                    Novidades nas Bancas do Bairro
+                                    Bancas em Destaque
                                 </Typography>
                                 <Button
                                     onClick={() =>

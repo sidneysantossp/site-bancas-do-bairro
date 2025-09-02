@@ -1,6 +1,6 @@
 export const CustomHeader = {
     'X-software-id': 33571750,
     'X-server': 'server',
-
-    origin: process.env.NEXT_CLIENT_HOST_URL,
+    // Cabeçalhos restritos pelo navegador (Origin/Referer/Host) não devem ser definidos manualmente.
+    // O navegador define automaticamente quando necessário. Mantemos apenas cabeçalhos permitidos.
 }

@@ -64,12 +64,11 @@ const AddressReselect = ({ location }) => {
                 setDisplayLocation(savedLocation);
                 ensureValidZone();
             } else {
-                // Sem localização válida - definir padrão
-                console.log('Sem localização válida, definindo localização e zona padrão');
-                setDisplayLocation('São Paulo, SP - Brasil');
-                localStorage.setItem('location', 'São Paulo, SP - Brasil');
-                localStorage.setItem('zoneid', JSON.stringify([1]));
-                dispatch(setUserLocationUpdate(!userLocationUpdate));
+                // Sem localização válida - não setar endereço padrão; manter placeholder
+                console.log('Sem localização válida; manter placeholder e apenas garantir zona padrão quando necessário');
+                setDisplayLocation('');
+                ensureValidZone();
+                // Não gravar 'location' aqui para não sobrescrever a geolocalização do usuário
             }
         }
     }, [location, userLocationUpdate, dispatch]);
@@ -86,7 +85,8 @@ const AddressReselect = ({ location }) => {
                 handleClosePopover()
                 dispatch(setClearCart())
                 dispatch(setUserLocationUpdate(!userLocationUpdate))
-                router.push('/')
+-                router.push('/')
++                router.push('/home')
             }
         }
     }, [address])

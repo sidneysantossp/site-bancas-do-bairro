@@ -13,6 +13,7 @@ const nextConfig = {
             'admin.guiadasbancas.com.br',
             'guiadasbancas.com.br',
             'www.guiadasbancas.com.br',
+            '127.0.0.1',
         ],
         formats: ['image/webp', 'image/avif'],
         deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
@@ -56,7 +57,7 @@ const nextConfig = {
         ]
     },
 
-    // Redirects: raiz agora serve a Home (sem redirect '/'); mantendo apenas redirects legados
+    // Redirects: raiz agora serve a Home (sem redirect '/')
     async redirects() {
         return [
             // Redirecionar antigas rotas de restaurant para banca
@@ -84,20 +85,30 @@ const nextConfig = {
         ]
     },
 
-    // Removido: Rewrites que mapeavam /banca -> /restaurant
-    // Agora as páginas de /banca existem nativamente em src/pages/banca
-    // async rewrites() {
-    //     return [
-    //         {
-    //             source: '/banca',
-    //             destination: '/restaurant',
-    //         },
-    //         {
-    //             source: '/banca/:path*',
-    //             destination: '/restaurant/:path*',
-    //         },
-    //     ]
-    // },
+    // Rewrites para expor /bancas como alias público de /cuisines e proxy de API/arquivos
+    async rewrites() {
+        const RAW_BASE = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost/admin-bancas-do-bairro'
+        const BACKEND_BASE = RAW_BASE.replace(/\/$/, '')
+        return [
+            // Aliases públicos
+            { source: '/bancas', destination: '/cuisines' },
+            { source: '/bancas/:id', destination: '/cuisines/:id' },
+
+            // Proxy de API -> backend definido por env (funciona em local e Vercel)
+            // Ex.: /api/v1/config -> ${BACKEND_BASE}/api/v1/config
+            {
+                source: '/api/:path*',
+                destination: `${BACKEND_BASE}/api/:path*`,
+            },
+
+            // Proxy de arquivos de mídia do backend (imagens, storage, etc.)
+            // Ex.: /storage/... -> ${BACKEND_BASE}/storage/...
+            {
+                source: '/storage/:path*',
+                destination: `${BACKEND_BASE}/storage/:path*`,
+            },
+        ]
+    },
     
     // Experimental features (removidas para evitar erros)
     // experimental: {

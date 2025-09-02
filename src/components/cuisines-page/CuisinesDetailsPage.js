@@ -14,7 +14,7 @@ const CuisinesDetailsPage = ({ data, isLoading }) => {
     const matchesToSmall = useMediaQuery('(max-width:400px)')
     return (
         <CustomStackFullWidth spacing={2} sx={{ minHeight: '70vh' }}>
-            <CustomPageTitle title="Cuisine Restaurant" />
+            <CustomPageTitle title="Bancas em Destaque" />
             <Grid container gap="10px">
                 {data &&
                     data?.restaurants.length > 0 &&
@@ -56,7 +56,7 @@ const CuisinesDetailsPage = ({ data, isLoading }) => {
                 {data?.restaurants.length === 0 && (
                     <CustomEmptyResult
                         image={noRestaurantsImage}
-                        label="No Cuisine Restaurant Found"
+                        label="Nenhuma banca encontrada."
                     />
                 )}
             </Grid>

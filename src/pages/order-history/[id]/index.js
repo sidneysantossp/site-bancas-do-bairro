@@ -33,7 +33,7 @@ export const getServerSideProps = async (context) => {
                 'X-software-id': 33571750,
                 'X-server': 'server',
                 'X-localization': language,
-                origin: process.env.NEXT_CLIENT_HOST_URL,
+                
             },
         }
     )

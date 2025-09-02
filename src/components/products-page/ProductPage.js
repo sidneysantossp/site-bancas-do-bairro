@@ -40,7 +40,7 @@ const ProductPage = ({ product_type }) => {
                     {data?.data?.products.length === 0 && (
                         <CustomEmptyResult
                             image={noFoodFoundImage}
-                            label={t('No Food Found')}
+                            label={t('No Food Found') === 'No Food Found' ? 'Nenhum produto encontrado!' : t('No Food Found')}
                         />
                     )}
                     {data?.data ? (

@@ -28,15 +28,13 @@ import { setTrackOrderStoreData, setWelcomeModal } from '@/redux/slices/utils'
 import { setWishList } from '@/redux/slices/wishList'
 import { CustomStackFullWidth } from '@/styled-components/CustomStyles.style'
 import mapIcon from '../../../public/mapDine.png'
-import {
-    Typography,
-    Box,
-    Stack,
-    IconButton,
-    SwipeableDrawer,
-} from '@mui/material'
+import Typography from '@mui/material/Typography'
+import Box from '@mui/material/Box'
+import Stack from '@mui/material/Stack'
+import IconButton from '@mui/material/IconButton'
+import SwipeableDrawer from '@mui/material/SwipeableDrawer'
 import { useTheme } from '@mui/material/styles'
-import { t } from 'i18next'
+import { useTranslation } from 'react-i18next'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { useQuery } from 'react-query'
@@ -99,9 +97,9 @@ const Homes = ({ configData }) => {
         if (!zoneId || zoneId === 'null' || zoneId === 'undefined' || zoneId === '[]' ||
             !location || location === 'null' || location === 'undefined' || location === '') {
             
-            console.log('Definindo zona e localização padrão para carregamento das bancas')
+            console.log('Definindo zona padrão para carregamento das bancas (sem endereço textual)')
             localStorage.setItem('zoneid', JSON.stringify([1]))
-            localStorage.setItem('location', 'São Paulo, SP - Brasil')
+            // Não setar 'location' aqui para evitar sobrescrever geolocalização
             
             // Tentar obter geolocalização se disponível
             if (navigator.geolocation) {
@@ -112,7 +110,7 @@ const Homes = ({ configData }) => {
                         console.log('Geolocalização obtida:', coords)
                     },
                     (error) => {
-                        console.log('Erro na geolocalização, usando padrão:', error.message)
+                        console.log('Erro na geolocalização, mantendo apenas zona padrão:', error.message)
                     },
                     { enableHighAccuracy: false, timeout: 5000, maximumAge: 300000 }
                 )

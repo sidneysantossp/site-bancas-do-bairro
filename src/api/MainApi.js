@@ -1,5 +1,11 @@
 import axios from 'axios'
-export const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
+
+// Base URL strategy:
+// - Browser: use same-origin (''), then hit Next.js rewrites (proxy) to avoid CORS
+// - SSR/Node: use NEXT_PUBLIC_BASE_URL (external API) or NEXT_CLIENT_HOST_URL, or localhost:3020 as last resort
+const isBrowser = typeof window !== 'undefined'
+const ssrFallback = process.env.NEXT_PUBLIC_BASE_URL || process.env.NEXT_CLIENT_HOST_URL || 'http://localhost:3020'
+export const baseUrl = isBrowser ? '' : ssrFallback
 
 const MainApi = axios.create({
     baseURL: baseUrl,
@@ -26,6 +32,12 @@ MainApi.interceptors.request.use(function (config) {
         if (window?.location?.origin) {
             hostname = window.location.origin
         }
+    }
+
+    // Normalizar URL: remover espaços e garantir barra inicial para rotas relativas
+    if (config?.url && !/^https?:\/\//i.test(config.url)) {
+        const trimmed = String(config.url).trim()
+        config.url = trimmed.startsWith('/') ? trimmed : `/${trimmed}`
     }
 
     // Latitude/Longitude apenas se forem números válidos
@@ -73,17 +85,18 @@ MainApi.interceptors.request.use(function (config) {
                 if (!saved || saved === 'null' || saved === 'undefined' || saved === '[]') {
                     localStorage.setItem('zoneid', defaultZone)
                 }
-                const savedLocation = localStorage.getItem('location')
-                if (!savedLocation || savedLocation === 'null' || savedLocation === 'undefined' || savedLocation.trim() === '') {
-                    localStorage.setItem('location', 'São Paulo, SP - Brasil')
-                }
+                // Não definir 'location' aqui para evitar sobrescrever o endereço real do usuário
             } catch (_) {}
         }
     }
 
     if (token) config.headers.authorization = `Bearer ${token}`
     if (language) config.headers['X-localization'] = language
-    if (hostname) config.headers['origin'] = hostname
+
+    // NÃO definir cabeçalhos proibidos pelo navegador (Origin/Referer/Host)
+    // O navegador já envia automaticamente o Origin quando necessário.
+    // if (hostname) config.headers['origin'] = hostname // REMOVIDO
+
     config.headers['X-software-id'] = software_id
 
     return config

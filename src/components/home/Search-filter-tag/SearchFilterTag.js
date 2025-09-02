@@ -131,7 +131,7 @@ const SearchFilterTag = ({
                 position: 'sticky',
                 top: {
                     xs: '45px',
-                    md: router.pathname !== '/' && router.pathname !== '/home' ? '0px' : '50px',
+                    md: router.pathname !== '/' && router.pathname !== '/home' ? '0px' : '60px',
                 },
                 zIndex: { xs: 1100, md: isSticky ? 1200 : 99 },
             }}

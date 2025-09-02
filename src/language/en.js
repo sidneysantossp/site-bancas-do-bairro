@@ -1070,4 +1070,5 @@ export const english = {
         'See our most popular restaurant and foods',
     'Currently Open': 'Currently Open',
     'View From Map': 'View From Map',
+    'Weekly Promotions - Check out the promotions and offers from nearby stores!': 'Weekly Promotions - Check out the promotions and offers from nearby stores!',
 }

@@ -25,6 +25,9 @@ const resources = {
     'pt-br': {
         translation: portuguese,
     },
+    pt: {
+        translation: portuguese,
+    },
 }
 
 i18n.use(initReactI18next) // passes i18n down to react-i18next
@@ -34,6 +37,10 @@ i18n.use(initReactI18next) // passes i18n down to react-i18next
         // you can use the i18n.changeLanguage function to change the language manually: https://www.i18next.com/overview/api#changelanguage
         // if you're using a language detector, do not define the lng option
         fallbackLng: 'en',
+        debug: process.env.NODE_ENV !== 'production',
+        lowerCaseLng: true,
+        supportedLngs: ['en', 'bn', 'ar', 'es', 'pt', 'pt-br'],
+        nonExplicitSupportedLngs: true,
         interpolation: {
             escapeValue: false, // react already safes from xss
         },

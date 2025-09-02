@@ -7,6 +7,8 @@ import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart'
 import { useTranslation } from 'react-i18next'
 import AfterAddToCart from './AfterAddToCart'
 import FavoriteIcon from '@mui/icons-material/Favorite'
+import OpenInNewIcon from '@mui/icons-material/OpenInNew'
+import { useRouter } from 'next/router'
 
 const PrimaryToolTip = ({ theme, children, text }) => {
     return (
@@ -45,6 +47,20 @@ const IconButtonStyled = styled(IconButton)(({ theme }) => ({
     },
 }))
 
+// Helper para gerar slug a partir do produto
+const buildProductSlug = (product) => {
+    const id = product?.id
+    const name = product?.name || 'produto'
+    const slug = name
+        .toString()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/(^-|-$)/g, '')
+    return id ? `${slug}-${id}` : slug
+}
+
 const QuickView = (props) => {
     const {
         id,
@@ -65,9 +81,16 @@ const QuickView = (props) => {
     } = props
     const theme = useTheme()
     const { t } = useTranslation()
+    const router = useRouter()
     const tt = (key, fallback) => {
         const translated = t(key)
         return translated === key ? (fallback ?? key) : translated
+    }
+
+    const openFullPage = (e) => {
+        e.stopPropagation()
+        const slug = product ? buildProductSlug(product) : id
+        router.push(`/produto/${slug}`)
     }
 
     return (
@@ -78,11 +101,18 @@ const QuickView = (props) => {
             height="100%"
         >
             {!noQuickview && (
-                <PrimaryToolTip theme={theme} text={tt('Quick View','Ver Produto')}>
-                    <IconButtonStyled onClick={(e) => quickViewHandleClick(e)}>
-                        <RemoveRedEyeIcon />
-                    </IconButtonStyled>
-                </PrimaryToolTip>
+                <>
+                    <PrimaryToolTip theme={theme} text={tt('Quick View','Ver Produto')}>
+                        <IconButtonStyled onClick={(e) => quickViewHandleClick(e)}>
+                            <RemoveRedEyeIcon />
+                        </IconButtonStyled>
+                    </PrimaryToolTip>
+                    <PrimaryToolTip theme={theme} text={tt('Open full page','Abrir página completa')}>
+                        <IconButtonStyled onClick={openFullPage}>
+                            <OpenInNewIcon />
+                        </IconButtonStyled>
+                    </PrimaryToolTip>
+                </>
             )}
             {!noWishlist && !product?.available_date_ends && (
                 <>

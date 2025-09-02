@@ -257,8 +257,8 @@ const RestaurantList = () => {
                             {isLoading && <CustomShimmerRestaurant />}
                             {data?.data?.restaurants?.length === 0 && (
                                 <CustomEmptyResult
-                                    label="No Restaurants found"
                                     image={noRestaurantsImage}
+                                    label={t('No restaurant found') === 'No restaurant found' ? 'Nenhuma Banca encontrada!' : t('No restaurant found')}
                                 />
                             )}
                         </Grid>

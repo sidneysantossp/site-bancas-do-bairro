@@ -217,7 +217,7 @@ const BestReviewedFood = ({ isLoading }) => {
                             alignItems="center"
                         >
                             <Typography fontSize="14px" fontWeight="500">
-                                Ver todas
+                                {t('View all')}
                             </Typography>
                         </CustomViewAll>
                     </CustomStackFullWidth>

@@ -25,18 +25,38 @@ export const getServerSideProps = async ({ req, resolvedUrl }) => {
     let configData = null
     let landingPageData = null
 
+    // Detectar origem/protocolo do request para headers e metadados coerentes
+    const domain = req.headers.host
+    const protocol = req.headers['x-forwarded-proto'] || (domain?.includes('localhost') ? 'http' : 'https')
+    const origin = `${protocol}://${domain}`
+    const apiBase = process.env.NEXT_PUBLIC_BASE_URL || origin
+
+    // Utilitário de fetch com timeout para evitar travar a renderização no SSR
+    const fetchWithTimeout = async (url, options = {}, timeoutMs = 10000) => {
+        const controller = new AbortController()
+        const id = setTimeout(() => controller.abort(), timeoutMs)
+        try {
+            const res = await fetch(url, { ...options, signal: controller.signal })
+            return res
+        } finally {
+            clearTimeout(id)
+        }
+    }
+
     try {
-        const configRes = await fetch(
-            `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/config`,
+        const configRes = await fetchWithTimeout(
+            `${apiBase}/api/v1/config`,
             {
                 method: 'GET',
                 headers: {
                     'X-software-id': 33571750,
                     'X-server': 'server',
                     'X-localization': language,
-                    origin: process.env.NEXT_CLIENT_HOST_URL,
+                    // origin removido
+                    Accept: 'application/json',
                 },
-            }
+            },
+            10000
         )
 
         if (configRes.ok) {
@@ -53,12 +73,18 @@ export const getServerSideProps = async ({ req, resolvedUrl }) => {
     }
 
     try {
-        const landingPageRes = await fetch(
-            `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/landing-page`,
+        const landingPageRes = await fetchWithTimeout(
+            `${apiBase}/api/v1/landing-page`,
             {
                 method: 'GET',
-                headers: CustomHeader,
-            }
+                headers: {
+                    ...CustomHeader,
+                    'X-localization': language,
+                    // origin removido
+                    Accept: 'application/json',
+                },
+            },
+            10000
         )
 
         if (landingPageRes.ok) {
@@ -74,8 +100,20 @@ export const getServerSideProps = async ({ req, resolvedUrl }) => {
         console.error('Error in landing page data fetch:', error)
     }
 
-    const domain = req.headers.host
-    const pathName = `https://${domain}${resolvedUrl}`
+    // Fallbacks para evitar tela em branco quando as APIs externas não respondem a tempo
+    if (!configData) {
+        configData = {
+            business_name: 'Bancas do Bairro',
+            base_urls: { react_landing_page_images: '' },
+        }
+    }
+    if (!landingPageData) {
+        landingPageData = {
+            banner_section_full: { banner_section_img_full: '' },
+        }
+    }
+
+    const pathName = `${origin}${resolvedUrl}`
 
     return {
         props: {

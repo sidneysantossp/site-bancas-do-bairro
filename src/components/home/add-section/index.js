@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { Stack, Typography, Box } from '@mui/material'
-import { t } from 'i18next'
+import { useTranslation } from 'react-i18next'
 import { useTheme } from '@mui/styles'
 import {
     CustomStackFullWidth,
@@ -27,6 +27,7 @@ const AddsSection = ({ data, isLoading }) => {
     const sliderRef = useRef(null)
     const [activeSlideData, setActiveSlideData] = useState(null)
 
+    const { t, i18n } = useTranslation()
     const theme = useTheme()
     const isSmall = useMediaQuery(theme.breakpoints.down('md'))
 
@@ -207,6 +208,11 @@ const AddsSection = ({ data, isLoading }) => {
                                 }}
                                 onMouseEnter={() => setHoverOn(true)}
                                 onMouseLeave={() => setHoverOn(false)}
+                                className="adds-section"
+                                data-section="adds-section"
+                                data-current-lang={i18n?.language}
+                                data-title-exists={i18n?.exists?.("Highlights for you") ? 'true' : 'false'}
+                                data-subtitle-exists={i18n?.exists?.("See our most popular restaurant and foods") ? 'true' : 'false'}
                             >
                                 <Box
                                     sx={{
@@ -229,6 +235,8 @@ const AddsSection = ({ data, isLoading }) => {
                                         fontWeight={{ xs: '500', md: '700' }}
                                         color={theme.palette.neutral[1000]}
                                         component="h2"
+                                        className="adds-section__title"
+                                        data-i18n-key="Highlights for you"
                                     >
                                         {t('Highlights for you')}
                                     </Typography>
@@ -236,6 +244,8 @@ const AddsSection = ({ data, isLoading }) => {
                                         fontSize={{ xs: '12px', md: '12px' }}
                                         color={theme.palette.neutral[600]}
                                         component="p"
+                                        className="adds-section__subtitle"
+                                        data-i18n-key="See our most popular restaurant and foods"
                                     >
                                         {t(
                                             'See our most popular restaurant and foods'

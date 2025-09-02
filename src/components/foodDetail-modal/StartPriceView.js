@@ -7,7 +7,7 @@ import { useTheme } from '@mui/material/styles'
 
 const StartPriceView = (props) => {
     const theme = useTheme()
-    const { data, hideStartFromText, selectedOptions } = props
+    const { data, hideStartFromText, selectedOptions, stackOldPrice = false } = props
     const { t } = useTranslation()
     const { global } = useSelector((state) => state.globalSettings)
     let currencySymbol
@@ -50,6 +50,64 @@ const StartPriceView = (props) => {
         }
     }
 
+    const hasDiscount = (data?.discount > 0 || data?.restaurant_discount !== 0)
+    const finalPrice = handleConvertedPrice()
+    const originalPrice = getAmount(
+        data?.price,
+        currencySymbolDirection,
+        currencySymbol,
+        digitAfterDecimalPoint
+    )
+
+    if (stackOldPrice) {
+        return (
+            <Stack direction="column" gap={0.25} alignItems="flex-start">
+                {hideStartFromText === 'false' && (
+                    <Typography component="p">A partir de:</Typography>
+                )}
+                {hasDiscount && (
+                    <Typography
+                        component="p"
+                        fontWeight="500"
+                        color={theme.palette.neutral[400]}
+                        sx={{ fontSize: { xs: '12px', sm: '12px' } }}
+                    >
+                        <del>{originalPrice}</del>
+                    </Typography>
+                )}
+                <Typography
+                    display="flex"
+                    fontWeight="700"
+                    alignItems="center"
+                    color={theme.palette.primary.main}
+                    sx={{ fontSize: { xs: '13px', sm: '16px' } }}
+                    component="p"
+                >
+                    {finalPrice}
+                </Typography>
+                {data?.item_stock === 0 &&
+                    selectedOptions?.length === 0 &&
+                    data?.stock_type !== 'unlimited' && (
+                        <Stack
+                            backgroundColor={alpha(theme.palette.error.light, 0.2)}
+                            padding="3px 6px"
+                            borderRadius="10px"
+                            alignItems="center"
+                            justifyContent="center"
+                        >
+                            <Typography
+                                color={theme.palette.error.main}
+                                fontSize="12px"
+                            >
+                                Indisponível
+                            </Typography>
+                        </Stack>
+                    )}
+            </Stack>
+        )
+    }
+
+    // Layout padrão (em linha) preservado
     return (
         <Stack
             direction="row"
@@ -70,14 +128,9 @@ const StartPriceView = (props) => {
                 }}
                 component="p"
             >
-                {data?.price > 0 && handleConvertedPrice()}
-                {data?.price === handleConvertedPrice() ? (
-                    getAmount(
-                        data?.price,
-                        currencySymbolDirection,
-                        currencySymbol,
-                        digitAfterDecimalPoint
-                    )
+                {data?.price > 0 && finalPrice}
+                {data?.price === finalPrice ? (
+                    originalPrice
                 ) : (
                     <Typography
                         component="span"
@@ -86,16 +139,9 @@ const StartPriceView = (props) => {
                         color={theme.palette.neutral[400]}
                         sx={{ fontSize: { xs: '13px', sm: '13px' } }}
                     >
-                        {(data?.discount > 0 ||
-                            data?.restaurant_discount !== 0) && (
+                        {hasDiscount && (
                             <del>
-                                {' '}
-                                {getAmount(
-                                    data.price,
-                                    currencySymbolDirection,
-                                    currencySymbol,
-                                    digitAfterDecimalPoint
-                                )}
+                                {originalPrice}
                             </del>
                         )}
                     </Typography>

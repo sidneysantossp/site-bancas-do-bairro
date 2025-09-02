@@ -1,12 +1,16 @@
-import { Stack } from '@mui/material'
+import { Stack, Button } from '@mui/material'
 import { CustomStackFullWidth } from '@/styled-components/CustomStyles.style'
 import ErrorRoutesProtect from '../components/route-protectors/ErrorRoutesProtect'
 import CustomAlert from '../components/alert/CustomAlert'
 import FourHundred from '../../public/static/404.svg'
 import CustomImageContainer from '@/components/CustomImageContainer'
 import CustomContainer from '@/components/container'
+import { useTranslation } from 'react-i18next'
+import { useRouter } from 'next/router'
 
 export default function Custom400() {
+    const { t } = useTranslation()
+    const router = useRouter()
     return (
         <ErrorRoutesProtect>
             <CustomContainer>
@@ -26,9 +30,17 @@ export default function Custom400() {
                             src={FourHundred?.src}
                         />
                         <CustomAlert
-                            text="Please buy this system and use activated domain."
+                            text={t('Page not found')}
                             type="info"
                         />
+                        <Button
+                            onClick={() => router.push('/')}
+                            variant="contained"
+                            fullWidth
+                            sx={{ mt: 2 }}
+                        >
+                            {t('Back to home')}
+                        </Button>
                     </Stack>
                 </CustomStackFullWidth>
             </CustomContainer>

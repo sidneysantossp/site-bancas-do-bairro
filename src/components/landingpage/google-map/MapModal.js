@@ -248,7 +248,8 @@ const MapModal = ({
             didRedirectRef.current = true
             
             if (redirectUrl) {
-                router.push({ pathname: '/' }, undefined, { shallow: true })
+-                router.push({ pathname: '/' }, undefined, { shallow: true })
++                router.push({ pathname: '/home' }, undefined, { shallow: true })
             }
             handleClose()
         }
@@ -406,7 +407,7 @@ const MapModal = ({
                         })
                     }
                 } else {
-                    router.push('/')
+                    router.push('/home')
                 }
             }, 100)
         } else {
