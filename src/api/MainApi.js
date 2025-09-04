@@ -1,11 +1,12 @@
 import axios from 'axios'
 
 // Base URL strategy:
-// - Browser: use same-origin (''), then hit Next.js rewrites (proxy) to avoid CORS
-// - SSR/Node: use NEXT_PUBLIC_BASE_URL (external API) or NEXT_CLIENT_HOST_URL, or localhost:3020 as last resort
+// - Browser: use NEXT_PUBLIC_BASE_URL if available, otherwise use same-origin proxy
+// - SSR/Node: use NEXT_PUBLIC_BASE_URL (external API) or fallback
 const isBrowser = typeof window !== 'undefined'
+const browserUrl = process.env.NEXT_PUBLIC_BASE_URL || ''
 const ssrFallback = process.env.NEXT_PUBLIC_BASE_URL || process.env.NEXT_CLIENT_HOST_URL || 'http://localhost:3020'
-export const baseUrl = isBrowser ? '' : ssrFallback
+export const baseUrl = isBrowser ? browserUrl : ssrFallback
 
 const MainApi = axios.create({
     baseURL: baseUrl,
@@ -35,10 +36,29 @@ MainApi.interceptors.request.use(function (config) {
         }
     }
 
-    // Normalizar URL: remover espaços e garantir barra inicial para rotas relativas
+    // Normalizar URL relativa sem quebrar baseURL com path (ex.: /admin-bancas-do-bairro)
+    // Regra: se baseURL tiver path além de '/', NÃO prefixar '/'; use caminho relativo (sem barra inicial)
     if (config?.url && !/^https?:\/\//i.test(config.url)) {
         const trimmed = String(config.url).trim()
-        config.url = trimmed.startsWith('/') ? trimmed : `/${trimmed}`
+        const base = config.baseURL || baseUrl || ''
+        let hasPathInBase = false
+        try {
+            if (base) {
+                const u = new URL(base)
+                hasPathInBase = !!(u.pathname && u.pathname !== '/')
+            }
+        } catch (_) {
+            // base pode ser relativo; fallback simples
+            const afterHost = base.replace(/^https?:\/\/[^/]+/i, '')
+            hasPathInBase = !!(afterHost && afterHost !== '/')
+        }
+        if (hasPathInBase) {
+            // garantir que a url NÃO tenha barra inicial
+            config.url = trimmed.replace(/^\/+/, '')
+        } else {
+            // ambiente sem path em baseURL: usar barra inicial para same-origin/proxy
+            config.url = trimmed.startsWith('/') ? trimmed : `/${trimmed}`
+        }
     }
 
     // Latitude/Longitude apenas se forem números válidos

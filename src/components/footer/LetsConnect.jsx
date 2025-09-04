@@ -7,8 +7,10 @@ import {
     styled,
     Typography,
 } from '@mui/material'
+import { useTranslation } from 'react-i18next'
 
 const LetsConnect = ({ languageDirection, web }) => {
+    const { t } = useTranslation()
     const StyledButton = styled(Button)(({ theme }) => ({
         color: '#fff',
         borderTopLeftRadius: `${languageDirection === 'rtl' ? '' : 0}`,
@@ -27,7 +29,7 @@ const LetsConnect = ({ languageDirection, web }) => {
                     variant="h6"
                     className="title font-signika-negative"
                 >
-                    Lets Connect !
+                    Conecte-se com o seu Jornaleiro!
                 </Typography>
                 <Typography className="subtitle font-signika-negative">
                     Stay upto date with restaurants and foods around you

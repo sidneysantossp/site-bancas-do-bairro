@@ -30,20 +30,7 @@ import WishListImage from '../../assets/images/WishListImage'
 import DeleteIcon from '../../assets/images/icons/DeleteIcon'
 import HalalSvg from '@/components/food-card/HalalSvg'
 import { useRouter } from 'next/router'
-
-// Helper local de slug
-const buildProductSlug = (product) => {
-    const id = product?.id
-    const name = product?.name || 'produto'
-    const slug = name
-        .toString()
-        .normalize('NFD')
-        .replace(/[\u0300-\u036f]/g, '')
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/(^-|-$)/g, '')
-    return id ? `${slug}-${id}` : slug
-}
+import { buildProductSEOUrl } from '@/utils/slugUtils'
 
 const HorizontalFoodCard = (props) => {
     const {
@@ -95,9 +82,13 @@ const HorizontalFoodCard = (props) => {
     }
     const handleViewProduct = (e) => {
         e.stopPropagation()
-        if (product?.id) {
-            const slug = buildProductSlug(product)
-            router.push(`/produto/${slug}`)
+        if (product?.id && product?.restaurant) {
+            const seoUrl = buildProductSEOUrl(product, product.restaurant)
+            router.push(seoUrl)
+        } else if (product?.id) {
+            // Fallback para URL antiga se não tiver dados da banca
+            const slug = `${product.name?.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${product.id}`
+            router.push(`/food/${slug}`)
         }
     }
     return (
@@ -273,7 +264,7 @@ const HorizontalFoodCard = (props) => {
                                     pr: 1,
                                 }}
                             >
-                                <Tooltip title={t('View')} placement="left" arrow>
+                                <Tooltip title={t('View') === 'View' ? 'Visualizar' : t('View')} placement="left" arrow>
                                     <IconButton size="small" onClick={handleViewProduct}>
                                         <VisibilityIcon fontSize="small" />
                                     </IconButton>
@@ -281,18 +272,19 @@ const HorizontalFoodCard = (props) => {
 
                                 {isInList(product?.id) ? (
                                     <Tooltip title={t('Remove from wishlist')} placement="left" arrow>
-                                        <IconButton size="small" onClick={handleClick}>
-                                            <FavoriteIcon fontSize="small" />
-                                        </IconButton>
+                                        <IconButton size="small" onClick={handleClick} sx={{ color: theme.palette.primary.main }}>
+                                                    <FavoriteIcon fontSize="small" />
+                                                </IconButton>
                                     </Tooltip>
                                 ) : (
-                                    <Tooltip title={t('Add to wishlist')} placement="left" arrow>
+                                    <Tooltip title={t('Add to wishlist') === 'Add to wishlist' ? 'Favoritos' : t('Add to wishlist')} placement="left" arrow>
                                         <IconButton
                                             size="small"
                                             onClick={(e) => {
                                                 e.stopPropagation()
                                                 addToFavorite(e)
                                             }}
+                                            sx={{ color: theme.palette.primary.main }}
                                         >
                                             <FavoriteBorderIcon fontSize="small" />
                                         </IconButton>
@@ -316,6 +308,7 @@ const HorizontalFoodCard = (props) => {
                                                 e.stopPropagation()
                                                 addToCart(e)
                                             }}
+                                            sx={{ color: theme.palette.primary.main }}
                                         >
                                             <AddShoppingCartIcon fontSize="small" />
                                         </IconButton>

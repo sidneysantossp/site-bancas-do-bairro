@@ -7,8 +7,23 @@ import {
 } from 'firebase/messaging'
 import { getAuth } from 'firebase/auth'
 
-// Habilita Firebase para fluxos de Auth (OTP)
+// Habilita Firebase (Auth sempre; Messaging apenas quando suportado)
 const FIREBASE_ENABLED = true
+
+// Checagens de capacidade do navegador/ambiente para Web Push/Messaging
+const isBrowser = typeof window !== 'undefined'
+const isLocalhost = isBrowser && (/^(localhost|127\.0\.0\.1)$/).test(window.location.hostname)
+const isSecureContext = isBrowser && (window.isSecureContext || isLocalhost)
+const hasServiceWorker = isBrowser && 'serviceWorker' in navigator
+const hasPushManager = isBrowser && 'PushManager' in window
+const hasNotification = isBrowser && 'Notification' in window
+
+const canInitMessaging = () => {
+    if (!isBrowser) return false
+    if (!isSecureContext) return false // HTTPS é obrigatório (exceto localhost)
+    if (!hasServiceWorker || !hasPushManager || !hasNotification) return false
+    return true
+}
 
 const firebaseConfig = {
     apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || 'AIzaSyDVd22dcPNS0bzR4hAKJ1iHDYfLDflZLh0',
@@ -27,13 +42,19 @@ if (FIREBASE_ENABLED) {
         firebaseApp = !getApps().length ? initializeApp(firebaseConfig) : getApp()
         messaging = (async () => {
             try {
-                const isSupportedBrowser = await isSupported()
-                if (isSupportedBrowser) {
-                    return getMessaging(firebaseApp)
+                // Garante que só seguimos em frente quando ambiente e navegador suportam
+                if (!canInitMessaging()) {
+                    console.log('[Firebase] Messaging desativado: contexto inseguro ou APIs ausentes (ServiceWorker/Push/Notification).')
+                    return null
                 }
-                return null
+                const supported = await isSupported()
+                if (!supported) {
+                    console.log('[Firebase] Messaging desativado: navegador não é suportado pelo SDK.')
+                    return null
+                }
+                return getMessaging(firebaseApp)
             } catch (err) {
-                console.warn('Firebase messaging não disponível:', err)
+                console.warn('[Firebase] Messaging indisponível:', err)
                 return null
             }
         })()
@@ -47,33 +68,52 @@ if (FIREBASE_ENABLED) {
 }
 
 export const fetchToken = async (setFcmToken) => {
-    if (!FIREBASE_ENABLED || !messaging) {
-        console.log('Firebase desabilitado - token não disponível')
+    if (!FIREBASE_ENABLED) {
+        console.log('[Firebase] Desabilitado - token não disponível')
         setFcmToken && setFcmToken()
         return Promise.resolve()
     }
-    
-    return getToken(await messaging, {
-        vapidKey: process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY,
-    })
-        .then((currentToken) => {
-            if (currentToken) {
-                setFcmToken(currentToken)
-            } else {
-                setFcmToken()
-            }
+    if (!canInitMessaging()) {
+        console.log('[Firebase] Messaging não inicializado: requer HTTPS (ou localhost) e suporte a ServiceWorker/Push/Notification.')
+        setFcmToken && setFcmToken()
+        return Promise.resolve()
+    }
+    if (!messaging) {
+        console.log('[Firebase] Messaging não disponível no ambiente atual')
+        setFcmToken && setFcmToken()
+        return Promise.resolve()
+    }
+
+    try {
+        const msg = await messaging
+        if (!msg) {
+            setFcmToken && setFcmToken()
+            return
+        }
+        const currentToken = await getToken(msg, {
+            vapidKey: process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY,
         })
-        .catch((err) => {
-            console.error(err)
-        })
+        if (currentToken) {
+            setFcmToken && setFcmToken(currentToken)
+        } else {
+            setFcmToken && setFcmToken()
+        }
+    } catch (err) {
+        console.error('[Firebase] Erro ao obter token FCM:', err)
+        setFcmToken && setFcmToken()
+    }
 }
 
 export const onMessageListener = async () => {
-    if (!FIREBASE_ENABLED || !messaging) {
-        console.log('Firebase desabilitado - listener não disponível')
+    if (!FIREBASE_ENABLED) {
+        console.log('[Firebase] Desabilitado - listener não disponível')
         return Promise.resolve(null)
     }
-    
+    if (!canInitMessaging() || !messaging) {
+        console.log('[Firebase] Messaging não disponível para listener no ambiente atual')
+        return Promise.resolve(null)
+    }
+
     return new Promise((resolve) =>
         (async () => {
             const messagingResolve = await messaging

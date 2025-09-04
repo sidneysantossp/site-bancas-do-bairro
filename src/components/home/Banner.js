@@ -57,20 +57,10 @@ const Banner = ({ bannerIsLoading }) => {
 
     const handleBannerClick = (banner) => {
         if (banner.type === 'restaurant_wise') {
-            router.push(
-                {
-                    pathname: '/banca/[id]',
-                    query: {
-                        id: `${
-                            banner?.restaurant?.slug
-                                ? banner?.restaurant?.slug
-                                : banner?.restaurant?.id
-                        }`,
-                    },
-                },
-                undefined,
-                { shallow: true }
-            )
+            // Usar nova estrutura de URL limpa
+            const restaurant = banner?.restaurant
+            const bancaSlug = restaurant?.slug || `${restaurant?.name?.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')}-${restaurant?.id}`
+            router.push(`/${bancaSlug}`, undefined, { shallow: true })
         } else if (banner?.available_date_ends) {
             router.push(
                 {

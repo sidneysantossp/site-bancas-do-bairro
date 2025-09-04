@@ -1,49 +1,37 @@
-import { Stack, Button } from '@mui/material'
-import { CustomStackFullWidth } from '@/styled-components/CustomStyles.style'
-import ErrorRoutesProtect from '../components/route-protectors/ErrorRoutesProtect'
-import CustomAlert from '../components/alert/CustomAlert'
-import FourHundred from '../../public/static/404.svg'
-import CustomImageContainer from '@/components/CustomImageContainer'
-import CustomContainer from '@/components/container'
-import { useTranslation } from 'react-i18next'
-import { useRouter } from 'next/router'
+import Link from 'next/link'
 
-export default function Custom400() {
-    const { t } = useTranslation()
-    const router = useRouter()
+// Minimal 404 page without app-specific dependencies.
+// Keep this page self-contained to ensure it renders even when the app is broken.
+export default function Custom404() {
     return (
-        <ErrorRoutesProtect>
-            <CustomContainer>
-                <CustomStackFullWidth
-                    justifyContent="center"
-                    alignItems="center"
-                    spacing={4}
-                >
-                    <Stack
-                        maxWidth="500px"
-                        width="100%"
-                        spacing={2}
-                        padding={{ xs: '3rem 1rem 3rem', md: '6rem 1rem 3rem' }}
-                    >
-                        <CustomImageContainer
-                            loading="auto"
-                            src={FourHundred?.src}
-                        />
-                        <CustomAlert
-                            text={t('Page not found')}
-                            type="info"
-                        />
-                        <Button
-                            onClick={() => router.push('/')}
-                            variant="contained"
-                            fullWidth
-                            sx={{ mt: 2 }}
-                        >
-                            {t('Back to home')}
-                        </Button>
-                    </Stack>
-                </CustomStackFullWidth>
-            </CustomContainer>
-        </ErrorRoutesProtect>
+        <div
+            style={{
+                minHeight: '100vh',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: '2rem',
+                textAlign: 'center',
+            }}
+        >
+            <div>
+                <h1 style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>
+                    404 - Página não encontrada
+                </h1>
+                <p style={{ marginBottom: '1.5rem', color: '#555' }}>
+                    A página que você procura não existe ou foi movida.
+                </p>
+                <Link href="/" style={{
+                    display: 'inline-block',
+                    background: '#1976d2',
+                    color: '#fff',
+                    padding: '0.75rem 1.25rem',
+                    borderRadius: '8px',
+                    textDecoration: 'none',
+                }}>
+                    Voltar para a Página Inicial
+                </Link>
+            </div>
+        </div>
     )
 }

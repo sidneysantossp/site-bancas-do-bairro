@@ -119,11 +119,11 @@ const Navigation = () => {
     }, [global])
     return (
         <AppBarStyle
-            disableGutters={true}
             scrolling={
                 userLocation && router.pathname !== '/' && router.pathname !== '/home' ? scrolling : false
             }
             isSmall={isSmall}
+            disableGutters
         >
             <TopNav cartListRefetch={cartListRefetch} />
             {!isSmall && (

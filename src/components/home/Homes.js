@@ -5,6 +5,7 @@ import {
     PopularFoodNearbyApi,
 } from '@/hooks/react-query/config/productsApi'
 import { useWishListGet } from '@/hooks/react-query/config/wish-list/useWishListGet'
+import { useGetCategory } from '@/hooks/react-query/interest/useGetCategory'
 import {
     setFilterbyByCuisineDispatch,
     setFilterbyByDispatch,
@@ -84,48 +85,21 @@ const Homes = ({ configData }) => {
         bestReviewedFoods,
         popularFood,
         addStores,
+        featuredCategories,
     } = useSelector((state) => state.storedData)
 
     const { welcomeModal, isNeedLoad } = useSelector((state) => state.utilsData)
     const dispatch = useDispatch()
-    
-    // Função para garantir zona válida
-    const ensureValidZone = () => {
-        const zoneId = localStorage.getItem('zoneid')
-        const location = localStorage.getItem('location')
-        
-        if (!zoneId || zoneId === 'null' || zoneId === 'undefined' || zoneId === '[]' ||
-            !location || location === 'null' || location === 'undefined' || location === '') {
-            
-            console.log('Definindo zona padrão para carregamento das bancas (sem endereço textual)')
-            localStorage.setItem('zoneid', JSON.stringify([1]))
-            // Não setar 'location' aqui para evitar sobrescrever geolocalização
-            
-            // Tentar obter geolocalização se disponível
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                    (position) => {
-                        const coords = { lat: position.coords.latitude, lng: position.coords.longitude }
-                        localStorage.setItem('currentLatLng', JSON.stringify(coords))
-                        console.log('Geolocalização obtida:', coords)
-                    },
-                    (error) => {
-                        console.log('Erro na geolocalização, mantendo apenas zona padrão:', error.message)
-                    },
-                    { enableHighAccuracy: false, timeout: 5000, maximumAge: 300000 }
-                )
-            }
-            
-            return true
-        }
-        return false
-    }
 
     const onSuccessHandler = (response) => {
         setFetcheedData(response)
         dispatch(setWishList(fetchedData))
     }
     const { refetch } = useWishListGet(onSuccessHandler)
+    const onCategorySuccessHandler = (response) => {
+        dispatch(setFeaturedCategories(response))
+    }
+    const { refetch: refetchCategories } = useGetCategory(onCategorySuccessHandler)
     let getToken = undefined
     if (typeof window !== 'undefined') {
         getToken = localStorage.getItem('token')
@@ -199,18 +173,12 @@ const Homes = ({ configData }) => {
             if (popularFood?.length === 0 || isNeedLoad) {
                 await refetchNearByPopularRestaurantData()
             }
+            if (featuredCategories?.length === 0 || isNeedLoad) {
+                await refetchCategories()
+            }
         }
     useEffect(() => {
-        // Garantir zona válida antes de carregar APIs
-        ensureValidZone()
-        
-        // Aguardar um pouco para garantir que a zona foi definida
-        const timer = setTimeout(() => {
-            console.log('Iniciando carregamento das APIs das bancas')
-            apiRefetch()
-        }, 500) // Reduzido para 500ms
-
-        return () => clearTimeout(timer)
+        apiRefetch()
     }, [])
 
     useEffect(() => {

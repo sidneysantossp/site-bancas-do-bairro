@@ -1,11 +1,15 @@
 import React from 'react'
 import Head from 'next/head'
 
-const Meta = ({ title, description, ogImage, pathName }) => {
+const Meta = ({ title, description, ogImage, pathName, canonicalUrl, keywords }) => {
     return (
         <Head>
             <title>{title}</title>
-            {/*<meta name="description" content={description} />*/}
+            <meta name="description" content={description} />
+            {keywords && <meta name="keywords" content={keywords} />}
+            
+            {/* Canonical URL para SEO */}
+            {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
 
             {/*<!-- Google / Search Engine Tags -->*/}
             <meta itemProp="name" content={title} />
@@ -20,7 +24,7 @@ const Meta = ({ title, description, ogImage, pathName }) => {
             <meta property="og:image:type" content="image/jpg" />
             <meta property="og:image:width" content="1080" />
             <meta property="og:image:height" content="608" />
-            <meta property="og:url" content={pathName} />
+            <meta property="og:url" content={canonicalUrl || pathName} />
             <meta property="og:type" content="website" />
 
             {/*<!-- Twitter Meta Tags -->*/}

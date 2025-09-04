@@ -118,9 +118,9 @@ const NavCatagory = ({ setRestaurantModal, languageDirection }) => {
                     <Grid container p="1rem" spacing={2}>
                         {featuredCategories?.length > 12 ? (
                             <>
-                                {featuredCategories
-                                    ?.slice(0, 12)
-                                    ?.map((category, index) => {
+                                {Array.isArray(featuredCategories) ? featuredCategories
+                                    .slice(0, 12)
+                                    .map((category, index) => {
                                         return (
                                             <>
                                                 {index % 2 === 0 ? (
@@ -283,11 +283,11 @@ const NavCatagory = ({ setRestaurantModal, languageDirection }) => {
                                                 )}
                                             </>
                                         )
-                                    })}
+                                    }) : []}
                             </>
                         ) : (
                             <>
-                                {featuredCategories?.map((category, index) => {
+                                {Array.isArray(featuredCategories) ? featuredCategories.map((category, index) => {
                                     return (
                                         <>
                                             {index % 2 === 0 ? (
@@ -440,7 +440,7 @@ const NavCatagory = ({ setRestaurantModal, languageDirection }) => {
                                             )}
                                         </>
                                     )
-                                })}
+                                }) : []}
                             </>
                         )}
                     </Grid>

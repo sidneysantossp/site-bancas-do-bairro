@@ -2,8 +2,22 @@ import { useJsApiLoader } from '@react-google-maps/api'
 
 // Configuração centralizada do Google Maps API
 const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAP_KEY?.trim()
+
+// Em desenvolvimento, usar um id de script derivado da configuração atual
+// para evitar o erro "Loader must not be called again with different options"
+// quando a aba já carregou o script com outra chave/opções.
+const isProd = process.env.NODE_ENV === 'production'
+// Gerar um sufixo estável e não-revelador da chave (soma simples de char codes)
+const keyHash = (() => {
+    if (!apiKey) return 'nokey'
+    let sum = 0
+    for (let i = 0; i < apiKey.length; i++) sum = (sum + apiKey.charCodeAt(i)) % 9973
+    return String(sum)
+})()
+const SCRIPT_ID = isProd ? 'google-map-script' : `google-map-script-dev-${keyHash}`
+
 const GOOGLE_MAPS_CONFIG = {
-    id: 'google-map-script',
+    id: SCRIPT_ID,
     googleMapsApiKey: apiKey || '',
     language: 'pt-BR', // Português brasileiro
     region: 'BR', // Região Brasil

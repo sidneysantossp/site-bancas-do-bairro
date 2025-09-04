@@ -64,6 +64,15 @@ const NewRestaurant = () => {
         apiRefetch()
     }, [])
 
+    // Normalizar a lista retornada pela API (AxiosResponse -> data -> data|restaurants|array)
+    const latestList = Array.isArray(newRestuarants?.data?.data)
+        ? newRestuarants.data.data
+        : Array.isArray(newRestuarants?.data?.restaurants)
+        ? newRestuarants.data.restaurants
+        : Array.isArray(newRestuarants?.data)
+        ? newRestuarants.data
+        : []
+
     const settings = {
         speed: 500,
         slidesToShow: 3.4,
@@ -186,14 +195,14 @@ const NewRestaurant = () => {
             position="relative"
             container
             paddingTop={
-                newRestuarants?.data?.length > 0 && { xs: '0', sm: '0rem' }
+                latestList.length > 0 && { xs: '0', sm: '0rem' }
             }
             gap="1.4rem"
             ref={newOffsetElementRef}
         >
             <CustomGridWithBgColor
                 newSection={true}
-                foodsize={newRestuarants?.data?.length}
+                foodsize={latestList.length}
                 padding="23px 0 0 23px"
                 item
                 xs={12}
@@ -203,7 +212,7 @@ const NewRestaurant = () => {
                 onMouseEnter={() => setHoverOn(true)}
                 onMouseLeave={() => setHoverOn(false)}
             >
-                {newRestuarants?.data?.length > 0 && (
+                {latestList.length > 0 && (
                     <CustomStackFullWidth
                         direction="row"
                         alignItems="center"
@@ -255,9 +264,9 @@ const NewRestaurant = () => {
                             paddingBottom={isSmall ? '10px' : '20px'}
                         >
                             <Slider {...settings}>
-                                {newRestuarants?.data?.map((restaurantData) => {
+                                {latestList.map((restaurantData) => {
                                     return (
-                                        <Stack>
+                                        <Stack key={restaurantData?.id}>
                                             <LatestRestaurantCard
                                                 key={restaurantData?.id}
                                                 id={restaurantData.id}

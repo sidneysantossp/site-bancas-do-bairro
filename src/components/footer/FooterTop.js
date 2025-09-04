@@ -30,7 +30,7 @@ const FooterTop = ({ landingPageData }) => {
     const languageDirection = localStorage.getItem('direction')
     const { mutate, isLoading } = usePostNewsletterEmail()
     const handleSuccess = () => {
-        CustomToaster('success', 'Subscribed Successfully.')
+        CustomToaster('success', 'Inscrição realizada com sucesso.')
         setEmailAddress('')
         setErrorText(null)
     }
@@ -46,7 +46,7 @@ const FooterTop = ({ landingPageData }) => {
                 }
             )
         } else {
-            setErrorText(t('Please insert a valid email.'))
+            setErrorText('Por favor, insira um e-mail válido.')
         }
     }
 
@@ -96,7 +96,7 @@ const FooterTop = ({ landingPageData }) => {
                                     fontWeight="600"
                                     component="h2"
                                 >
-                                    {landingPageData?.news_letter_title}
+                                    {'Conecte-se com o seu Jornaleiro!'}
                                 </CustomColouredTypography>
                                 <Typography
                                     fontSize="14px"
@@ -106,7 +106,7 @@ const FooterTop = ({ landingPageData }) => {
                                     textAlign={{ xs: 'center', sm: 'left' }}
                                     component="p"
                                 >
-                                    {landingPageData?.news_letter_sub_title}
+                                    {'Receba novidades das bancas e produtos perto de você.'}
                                 </Typography>
                             </CustomStackFullWidth>
                             <CustomStackFullWidth

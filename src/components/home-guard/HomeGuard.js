@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react'
 import {useRouter} from 'next/router'
 import CssBaseline from "@mui/material/CssBaseline";
+import { Box, CircularProgress, Typography } from "@mui/material";
 import { useSelector } from "react-redux";
 
 const HomeGuard = (props) => {
@@ -36,15 +37,39 @@ const HomeGuard = (props) => {
     )
 
     if (!checked) {
-        return null
+        return (
+            <>
+                <CssBaseline/>
+                <Box
+                    sx={{
+                        minHeight: '100vh',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: 2,
+                        px: 2,
+                        textAlign: 'center',
+                    }}
+                >
+                    <CircularProgress color="primary" />
+                    <Typography variant="body1" color="text.secondary">
+                        Carregando localização...
+                    </Typography>
+                </Box>
+            </>
+        )
     }
 
     // If got here, it means that the redirect did not occur, and that tells us that the user is
     // authenticated / authorized.
 
-    return <>
-        <CssBaseline/>
-        {children}</>
+    return (
+        <>
+            <CssBaseline/>
+            {children}
+        </>
+    )
 }
 
 HomeGuard.propTypes = {}

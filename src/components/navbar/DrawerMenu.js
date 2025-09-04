@@ -172,19 +172,21 @@ const DrawerMenu = ({ zoneid, cartListRefetch }) => {
         cat: {
             text: 'Categories',
             displayText: translateOrFallback('Categories', 'Categorias'),
-            items: featuredCategories?.map((item) => item),
+            items: Array.isArray(featuredCategories) ? featuredCategories.map((item) => item) : [],
             path: '/category',
         },
         res: {
             text: 'Restaurants',
             displayText: translateOrFallback('Restaurants', 'Bancas perto de mim'),
-            items: popularRestuarants?.data?.map((i) => i),
+            items: Array.isArray(popularRestuarants?.data?.restaurants)
+                ? popularRestuarants.data.restaurants
+                : [],
             path: '/banca',
         },
         cuisine: {
             text: 'Cuisines',
             displayText: translateOrFallback('Cuisines', 'Os mais buscados'),
-            items: cuisines?.map((i) => i),
+            items: Array.isArray(cuisines) ? cuisines.map((i) => i) : [],
             path: '/cuisines',
         },
         profile: {

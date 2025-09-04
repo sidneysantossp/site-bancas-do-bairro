@@ -227,14 +227,9 @@ const RestaurantBoxCard = (props) => {
         }
     }
     const handleClick = () => {
-        router.push({
-            pathname: `/banca/[id]`,
-            query: {
-                id: `${slug ? slug : id}`,
-                banca_zone_id: zone_id,
-                isDineIn: dine_in ?? dine_in,
-            },
-        })
+        // Usar nova estrutura de URL limpa
+        const bancaSlug = slug || `${name?.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')}-${id}`
+        router.push(`/${bancaSlug}`)
     }
     return (
         <Stack

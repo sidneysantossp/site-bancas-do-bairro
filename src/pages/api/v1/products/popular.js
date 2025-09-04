@@ -1,0 +1,102 @@
+// API mock para produtos populares
+export default function handler(req, res) {
+    const mockProducts = {
+        total_size: 12,
+        limit: 10,
+        offset: 0,
+        products: [
+            {
+                id: 1,
+                name: 'Açaí com Granola',
+                description: 'Açaí cremoso com granola crocante e frutas frescas',
+                image: '/static/food.png',
+                category_id: 1,
+                category_ids: [{ id: 1, position: 1 }],
+                variations: [],
+                add_ons: [],
+                attributes: [],
+                choice_options: [],
+                price: 15.90,
+                tax: 0,
+                tax_type: 'percent',
+                discount: 0,
+                discount_type: 'percent',
+                available_time_starts: '00:00:00',
+                available_time_ends: '23:59:59',
+                veg: 1,
+                status: 1,
+                restaurant_id: 1,
+                restaurant_name: 'Banca do João',
+                restaurant_discount: 0,
+                schedule_order: false,
+                avg_rating: 4.5,
+                rating_count: 25,
+                restaurant_status: 1,
+                restaurant_active: true
+            },
+            {
+                id: 2,
+                name: 'Sanduíche Natural',
+                description: 'Sanduíche integral com peito de peru, queijo branco e salada',
+                image: '/static/food.png',
+                category_id: 2,
+                category_ids: [{ id: 2, position: 1 }],
+                variations: [],
+                add_ons: [],
+                attributes: [],
+                choice_options: [],
+                price: 12.50,
+                tax: 0,
+                tax_type: 'percent',
+                discount: 0,
+                discount_type: 'percent',
+                available_time_starts: '00:00:00',
+                available_time_ends: '23:59:59',
+                veg: 0,
+                status: 1,
+                restaurant_id: 2,
+                restaurant_name: 'Banca da Maria',
+                restaurant_discount: 0,
+                schedule_order: false,
+                avg_rating: 4.2,
+                rating_count: 18,
+                restaurant_status: 1,
+                restaurant_active: true
+            },
+            {
+                id: 3,
+                name: 'Suco de Laranja Natural',
+                description: 'Suco de laranja natural, sem açúcar adicionado',
+                image: '/static/food.png',
+                category_id: 3,
+                category_ids: [{ id: 3, position: 1 }],
+                variations: [],
+                add_ons: [],
+                attributes: [],
+                choice_options: [],
+                price: 8.00,
+                tax: 0,
+                tax_type: 'percent',
+                discount: 0,
+                discount_type: 'percent',
+                available_time_starts: '00:00:00',
+                available_time_ends: '23:59:59',
+                veg: 1,
+                status: 1,
+                restaurant_id: 1,
+                restaurant_name: 'Banca do João',
+                restaurant_discount: 0,
+                schedule_order: false,
+                avg_rating: 4.8,
+                rating_count: 32,
+                restaurant_status: 1,
+                restaurant_active: true
+            }
+        ]
+    };
+
+    // Simular delay de rede
+    setTimeout(() => {
+        res.status(200).json(mockProducts);
+    }, 100);
+}

@@ -26,7 +26,9 @@ const FoodModalTopSection = ({
     }
     const theme = useTheme()
     const handleClick = () => {
-        router.push(`/banca/${product?.restaurant_id}`)
+        // Usar nova estrutura de URL limpa - fallback para ID se não tiver dados da banca
+        const bancaSlug = product?.restaurant?.slug || `banca-${product?.restaurant_id}`
+        router.push(`/${bancaSlug}`)
         handleModalClose()
     }
     return (

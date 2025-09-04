@@ -17,21 +17,7 @@ import FoodRating from './FoodRating'
 import { t } from 'i18next'
 import HalalSvg from '@/components/food-card/HalalSvg'
 import { useRouter } from 'next/router'
-
-// Helper local para gerar slug de forma resiliente
-const buildProductSlug = (product) => {
-    const id = product?.id
-    const name = product?.name || 'produto'
-    // remover acentos e caracteres especiais, trocar por '-'
-    const slug = name
-        .toString()
-        .normalize('NFD')
-        .replace(/[\u0300-\u036f]/g, '')
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/(^-|-$)/g, '')
-    return id ? `${slug}-${id}` : slug
-}
+import { buildProductSEOUrl } from '@/utils/slugUtils'
 
 const FoodVerticalCard = (props) => {
     const {
@@ -60,9 +46,13 @@ const FoodVerticalCard = (props) => {
     const router = useRouter()
     const handleViewProduct = (e) => {
         e.stopPropagation()
-        if (product?.id) {
-            const slug = buildProductSlug(product)
-            router.push(`/produto/${slug}`)
+        if (product?.id && product?.restaurant) {
+            const seoUrl = buildProductSEOUrl(product, product.restaurant)
+            router.push(seoUrl)
+        } else if (product?.id) {
+            // Fallback to clean URL structure
+            const slug = product.name?.toLowerCase().replace(/[^a-z0-9]+/g, '-') || 'produto'
+            router.push(`/produto/${slug}/${product.id}`)
         }
     }
     return (

@@ -31,13 +31,9 @@ const WishListRestaurantCard = ({ restaurant, deleteWishlistRes }) => {
     }
 
     const routeToRestaurant = () => {
-        router.push({
-            pathname: `/banca/[id]`,
-            query: {
-                id: `${slug ? slug : id}`,
-                banca_zone_id: zone_id,
-            },
-        })
+        // Usar nova estrutura de URL limpa
+        const bancaSlug = slug ? slug : `${name?.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')}-${id}`
+        router.push(`/${bancaSlug}`)
     }
 
     return (

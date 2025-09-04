@@ -88,7 +88,7 @@ const RestaurantCard = (props) => {
         }
     }
     return (
-        <Link href={`/banca/${id}`} passHref>
+        <Link href={`/${props?.slug || `${props?.name?.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')}-${id}`}`} passHref>
             <Box className="cardpopular" sx={{ cursor: 'pointer' }}>
                 {restaurantDiscountTag(
                     props.restaurantDiscount,

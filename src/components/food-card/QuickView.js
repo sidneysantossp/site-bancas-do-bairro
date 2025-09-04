@@ -9,6 +9,7 @@ import AfterAddToCart from './AfterAddToCart'
 import FavoriteIcon from '@mui/icons-material/Favorite'
 import OpenInNewIcon from '@mui/icons-material/OpenInNew'
 import { useRouter } from 'next/router'
+import { buildProductSEOUrl } from '@/utils/slugUtils'
 
 const PrimaryToolTip = ({ theme, children, text }) => {
     return (
@@ -37,29 +38,18 @@ const IconButtonStyled = styled(IconButton)(({ theme }) => ({
     backdropFilter: 'blur(2px)',
     borderRadius: '4px',
     padding: '4px',
-    color: theme.palette.whiteContainer.main,
+    color: theme.palette.primary.main,
     height: '36px',
     width: '36px',
     marginInlineEnd: '6px',
     '&:hover': {
         backgroundColor: theme.palette.primary.main,
         border: `0.5px solid ${theme.palette.neutral[100]}`,
+        color: theme.palette.whiteContainer.main,
     },
 }))
 
-// Helper para gerar slug a partir do produto
-const buildProductSlug = (product) => {
-    const id = product?.id
-    const name = product?.name || 'produto'
-    const slug = name
-        .toString()
-        .normalize('NFD')
-        .replace(/[\u0300-\u036f]/g, '')
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/(^-|-$)/g, '')
-    return id ? `${slug}-${id}` : slug
-}
+
 
 const QuickView = (props) => {
     const {
@@ -89,8 +79,16 @@ const QuickView = (props) => {
 
     const openFullPage = (e) => {
         e.stopPropagation()
-        const slug = product ? buildProductSlug(product) : id
-        router.push(`/produto/${slug}`)
+        if (product?.id && product?.restaurant) {
+            const seoUrl = buildProductSEOUrl(product, product.restaurant)
+            router.push(seoUrl)
+        } else if (product?.id) {
+            // Fallback para URL antiga se não tiver dados da banca
+            const slug = `${product.name?.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${product.id}`
+            router.push(`/produto/${slug}`)
+        } else if (id) {
+            router.push(`/produto/${id}`)
+        }
     }
 
     return (
@@ -102,7 +100,7 @@ const QuickView = (props) => {
         >
             {!noQuickview && (
                 <>
-                    <PrimaryToolTip theme={theme} text={tt('Quick View','Ver Produto')}>
+                    <PrimaryToolTip theme={theme} text={tt('Quick View','Visualizar')}>
                         <IconButtonStyled onClick={(e) => quickViewHandleClick(e)}>
                             <RemoveRedEyeIcon />
                         </IconButtonStyled>
@@ -130,7 +128,7 @@ const QuickView = (props) => {
                             </IconButtonStyled>
                         </PrimaryToolTip>
                     ) : (
-                        <PrimaryToolTip theme={theme} text={tt('Add to wishlist','Adicionar Meus Favoritos')}>
+                        <PrimaryToolTip theme={theme} text={tt('Add to wishlist','Favoritos')}>
                             <IconButtonStyled
                                 onClick={(e) => addToWishlistHandler(e)}
                             >

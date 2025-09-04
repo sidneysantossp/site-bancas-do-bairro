@@ -44,62 +44,62 @@ export const getServerSideProps = async ({ req, resolvedUrl }) => {
     }
 
     try {
-        const configRes = await fetchWithTimeout(
-            `${apiBase}/api/v1/config`,
-            {
-                method: 'GET',
-                headers: {
-                    'X-software-id': 33571750,
-                    'X-server': 'server',
-                    'X-localization': language,
-                    // origin removido
-                    Accept: 'application/json',
-                },
+        const { default: configHandler } = await import('../api/v1/config')
+        let tmp = null
+        const mockReq = { cookies: { languageSetting: language } }
+        const mockRes = {
+            status: () => mockRes,
+            json: (data) => {
+                tmp = data
+                return mockRes
             },
-            10000
-        )
-
-        if (configRes.ok) {
-            configData = await configRes.json()
-        } else {
-            console.error(
-                'Error fetching config data:',
-                configRes.status,
-                configRes.statusText
-            )
         }
+        await configHandler(mockReq, mockRes)
+        configData = tmp
     } catch (error) {
-        console.error('Error in config data fetch:', error)
+        console.error('Error loading config mock:', error)
     }
 
     try {
-        const landingPageRes = await fetchWithTimeout(
-            `${apiBase}/api/v1/landing-page`,
-            {
-                method: 'GET',
-                headers: {
-                    ...CustomHeader,
-                    'X-localization': language,
-                    // origin removido
-                    Accept: 'application/json',
-                },
-            },
-            10000
+        const { default: landingHandler } = await import(
+            '../api/v1/react-landing-page'
         )
-
-        if (landingPageRes.ok) {
-            landingPageData = await landingPageRes.json()
-        } else {
+        let tmpLanding = null
+        const mockReq = { query: {} }
+        const mockRes = {
+            status: () => mockRes,
+            json: (data) => {
+                tmpLanding = data
+                return mockRes
+            },
+        }
+        await landingHandler(mockReq, mockRes)
+        landingPageData = tmpLanding
+    } catch (error) {
+        console.error('Error loading landing page mock:', error)
+        // Fallback para /api/v1/landing-page
+        try {
+            const { default: fallbackHandler } = await import(
+                '../api/v1/landing-page'
+            )
+            let tmpLanding = null
+            const mockReq = { query: {} }
+            const mockRes = {
+                status: () => mockRes,
+                json: (data) => {
+                    tmpLanding = data
+                    return mockRes
+                },
+            }
+            await fallbackHandler(mockReq, mockRes)
+            landingPageData = tmpLanding
+        } catch (fallbackError) {
             console.error(
-                'Error fetching landing page data:',
-                landingPageRes.status,
-                landingPageRes.statusText
+                'Error loading landing page fallback mock:',
+                fallbackError
             )
         }
-    } catch (error) {
-        console.error('Error in landing page data fetch:', error)
     }
-
     // Fallbacks para evitar tela em branco quando as APIs externas não respondem a tempo
     if (!configData) {
         configData = {

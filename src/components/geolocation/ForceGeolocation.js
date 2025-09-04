@@ -8,6 +8,7 @@ import { useGoogleMaps } from '@/hooks/useGoogleMaps'
 
 const DEFAULT_LOCATION_LABEL = 'São Paulo, SP - Brasil'
 const DEFAULT_ZONE_ARRAY_STRING = JSON.stringify([1])
+const FALLBACK_LOCATION_LABEL = 'Minha localização atual'
 
 const ForceGeolocation = () => {
     const dispatch = useDispatch()
@@ -36,11 +37,17 @@ const ForceGeolocation = () => {
     }
 
     const setDefaultZone = () => {
-        // Definir apenas zona padrão (ID 1) como fallback, sem forçar endereço textual
+        // Definir zona padrão (ID 1) e um rótulo amigável de localização
         localStorage.setItem('zoneid', JSON.stringify([1]))
-        // Não definir 'location' aqui para não sobrescrever um endereço real do usuário
+        // Garantir que HomeGuard libere o conteúdo mesmo sem endereço real resolvido
+        try {
+            const existingLocation = localStorage.getItem('location')
+            if (!existingLocation || existingLocation === 'null' || existingLocation === 'undefined' || existingLocation.trim() === '') {
+                localStorage.setItem('location', FALLBACK_LOCATION_LABEL)
+            }
+        } catch (_) {}
         toggleLocationUpdate()
-        console.log('Zona padrão definida: ID 1')
+        console.log('Zona padrão definida: ID 1 (com rótulo de localização de fallback)')
     }
 
     const reverseGeocodeOSM = async (latitude, longitude) => {
@@ -166,8 +173,8 @@ const ForceGeolocation = () => {
                                     const ok = await reverseGeocodeOSM(latitude, longitude)
                                     if (!ok) {
                                         console.log('OSM também falhou, usando zona padrão')
-                                        // Como último recurso, defina rótulo com coordenadas para permitir o acesso ao /home
-                                        localStorage.setItem('location', `${latitude.toFixed(5)}, ${longitude.toFixed(5)}`)
+                                        // Não salvar coordenadas como texto no campo 'location'; usar rótulo amigável
+                                        localStorage.setItem('location', FALLBACK_LOCATION_LABEL)
                                         setDefaultZone()
                                         redirectToHomeOnce()
                                     }
@@ -198,8 +205,8 @@ const ForceGeolocation = () => {
                                 const ok = await reverseGeocodeOSM(latitude, longitude)
                                 if (!ok) {
                                     console.log('OSM também falhou, usando zona padrão')
-                                    // Como último recurso, defina rótulo com coordenadas para permitir o acesso ao /home
-                                    localStorage.setItem('location', `${latitude.toFixed(5)}, ${longitude.toFixed(5)}`)
+                                    // Não salvar coordenadas como texto no campo 'location'; usar rótulo amigável
+                                    localStorage.setItem('location', FALLBACK_LOCATION_LABEL)
                                     setDefaultZone()
                                     redirectToHomeOnce()
                                 }
@@ -210,7 +217,8 @@ const ForceGeolocation = () => {
                         const ok = await reverseGeocodeOSM(latitude, longitude)
                         if (!ok) {
                             console.log('OSM falhou, usando zona padrão')
-                            localStorage.setItem('location', `${latitude.toFixed(5)}, ${longitude.toFixed(5)}`)
+                            // Não salvar coordenadas como texto no campo 'location'; usar rótulo amigável
+                            localStorage.setItem('location', FALLBACK_LOCATION_LABEL)
                             setDefaultZone()
                             redirectToHomeOnce()
                         }
@@ -220,7 +228,8 @@ const ForceGeolocation = () => {
                     const ok = await reverseGeocodeOSM(latitude, longitude)
                     if (!ok) {
                         console.log('OSM falhou, usando zona padrão')
-                        localStorage.setItem('location', `${latitude.toFixed(5)}, ${longitude.toFixed(5)}`)
+                        // Não salvar coordenadas como texto no campo 'location'; usar rótulo amigável
+                        localStorage.setItem('location', FALLBACK_LOCATION_LABEL)
                         setDefaultZone()
                         redirectToHomeOnce()
                     }
@@ -231,8 +240,8 @@ const ForceGeolocation = () => {
                 const ok = await reverseGeocodeOSM(latitude, longitude)
                 if (!ok) {
                     console.log('OSM falhou, usando zona padrão')
-                    // Como último recurso, defina rótulo com coordenadas para permitir o acesso ao /home
-                    localStorage.setItem('location', `${latitude.toFixed(5)}, ${longitude.toFixed(5)}`)
+                    // Não salvar coordenadas como texto no campo 'location'; usar rótulo amigável
+                    localStorage.setItem('location', FALLBACK_LOCATION_LABEL)
                     setDefaultZone()
                     redirectToHomeOnce()
                 }

@@ -14,16 +14,27 @@ const firebaseConfig = {
   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
 }
 
+const isBrowser = typeof window !== 'undefined'
+const isLocalhost = isBrowser && (/^(localhost|127\.0\.0\.1)$/).test(window.location.hostname)
+const isSecureContext = isBrowser && (window.isSecureContext || isLocalhost)
+const hasSW = isBrowser && 'serviceWorker' in navigator
+const hasPush = isBrowser && 'PushManager' in window
+const hasNotification = isBrowser && 'Notification' in window
+
 export function initFirebaseApp() {
-  if (typeof window === 'undefined') return null
+  if (!isBrowser) return null
   return getApps().length ? getApps()[0] : initializeApp(firebaseConfig)
 }
 
 export async function initMessagingAndGetToken() {
-  if (typeof window === 'undefined') return null
+  if (!isBrowser) return null
+  if (!isSecureContext || !hasSW || !hasPush || !hasNotification) {
+    console.log('FCM: contexto inseguro ou APIs ausentes (ServiceWorker/Push/Notification). Mensageria desativada.')
+    return null
+  }
   const supported = await isSupported().catch(() => false)
   if (!supported) {
-    console.warn('FCM: navegador não suportado')
+    console.warn('FCM: navegador não suportado pelo SDK de Messaging')
     return null
   }
 
@@ -49,7 +60,8 @@ export async function initMessagingAndGetToken() {
 }
 
 export function onForegroundMessage(callback) {
-  if (typeof window === 'undefined') return () => {}
+  if (!isBrowser) return () => {}
+  if (!isSecureContext || !hasPush || !hasNotification) return () => {}
   const app = initFirebaseApp()
   const messaging = getMessaging(app)
   return onMessage(messaging, (payload) => callback(payload))

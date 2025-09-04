@@ -69,13 +69,9 @@ const NearByRestaurant = ({ dineIn }) => {
     )
 
     const handleRouteToRestaurant = (restaurant) => {
-        router.push({
-            pathname: `/banca/[id]`,
-            query: {
-                id: `${restaurant?.slug ? restaurant?.slug : restaurant?.id}`,
-                banca_zone_id: restaurant?.zone_id,
-            },
-        })
+        // Usar nova estrutura de URL limpa
+        const bancaSlug = `${restaurant?.name?.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')}-${restaurant?.id}`
+        router.push(`/${bancaSlug}`)
     }
     useEffect(() => {
         const apiRefetch = async () => {

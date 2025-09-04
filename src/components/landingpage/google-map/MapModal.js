@@ -122,9 +122,31 @@ const MapModal = ({
                 setInputValue('')
             } else {
                 try {
-                    // Quando houver um endereço salvo válido, preencher o campo
-                    setCurrentLocationValue({ description: savedLocation })
-                    setInputValue(savedLocation)
+                    // Detectar se o valor salvo parece ser coordenadas (ex: "-23.55, -46.63")
+                    const coordLike = /^-?\d{1,3}(?:[\.,]\d+)?\s*,\s*-?\d{1,3}(?:[\.,]\d+)?$/.test(savedLocation)
+                    if (coordLike) {
+                        // Tentar converter coordenadas salvas em endereço amigável
+                        const raw = localStorage.getItem('currentLatLng')
+                        let parsed
+                        try { parsed = raw ? JSON.parse(raw) : null } catch (_) { parsed = null }
+                        const lat = parsed?.lat
+                        const lng = parsed?.lng
+                        if (typeof lat === 'number' && typeof lng === 'number' && !Number.isNaN(lat) && !Number.isNaN(lng)) {
+                            // Mostrar rótulo amigável enquanto busca endereço
+                            setCurrentLocationValue({ description: 'Minha localização atual' })
+                            setInputValue('Minha localização atual')
+                            setLocation({ lat, lng })
+                            setLocationEnabled(true)
+                        } else {
+                            // Sem coordenadas válidas, apenas usar rótulo amigável
+                            setCurrentLocationValue({ description: 'Minha localização atual' })
+                            setInputValue('Minha localização atual')
+                        }
+                    } else {
+                        // Quando houver um endereço salvo válido, preencher o campo
+                        setCurrentLocationValue({ description: savedLocation })
+                        setInputValue(savedLocation)
+                    }
                 } catch (error) {
                     console.error('Erro ao processar valor salvo:', error)
                 }
@@ -171,6 +193,11 @@ const MapModal = ({
                             description: response?.data?.results[0]?.formatted_address || '',
                         }
                         setCurrentLocationValue(headerAddress)
+                        // Sincronizar campo de input e localStorage para substituir coordenadas por endereço
+                        if (headerAddress.description) {
+                            setInputValue(headerAddress.description)
+                            localStorage.setItem('location', headerAddress.description)
+                        }
                     }
                 } catch (error) {
                     // Tratar erro silenciosamente

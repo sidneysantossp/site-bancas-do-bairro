@@ -17,6 +17,7 @@ import {
    Chip,
    Paper,
  } from '@mui/material'
+import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft'
 import { useTheme } from '@mui/material/styles'
 import { CustomStackFullWidth } from '@/styled-components/CustomStyles.style'
 import Meta from '@/components/Meta'
@@ -24,6 +25,7 @@ import PushNotificationLayout from '@/components/PushNotificationLayout'
 // Removendo dependências não importadas
 import axios from 'axios'
 import toast from 'react-hot-toast'
+
 import { useDispatch, useSelector } from 'react-redux'
 import useAddCartItem from '@/hooks/react-query/add-cart/useAddCartItem'
 import { setCart } from '@/redux/slices/cart'
@@ -38,6 +40,9 @@ import { useGetAllProductsOfARestaurant } from '@/hooks/custom-hooks/useGetAllPr
 import VerifiedUserIcon from '@mui/icons-material/VerifiedUser'
 import StorefrontIcon from '@mui/icons-material/Storefront'
 import LockIcon from '@mui/icons-material/Lock'
+import WhatsAppIcon from '@mui/icons-material/WhatsApp'
+import { generateSEOMetaTags, buildProductSEOUrl } from '@/utils/slugUtils'
+import { getCachedRedirect, setCachedRedirect, setCachedNoRedirect } from '@/utils/redirectCache'
 
 // Helper para formato BRL
 const formatBRL = (value) =>
@@ -77,7 +82,10 @@ const ProductPage = ({ product, error, clientOrigin, routeParam }) => {
     setSelectedImage(nextMainImage)
   }, [product?.id, product?.image_full_url, product?.image])
   const imageUrl = product?.image_full_url || product?.image || 'https://via.placeholder.com/800x600/4CAF50/ffffff?text=Produto'
-  const productUrl = `${clientOrigin}/produto/${routeParam || product.id}`
+  // Construir URL canônica SEO-friendly
+  const productUrl = product?.restaurant
+    ? `${clientOrigin}${buildProductSEOUrl(product, product.restaurant)}`
+    : `${clientOrigin}/produto/${routeParam || product.id}`
   const gallery = Array.isArray(product?.images) && product.images.length > 0 ? product.images : [imageUrl]
 
   // Atualiza a imagem selecionada quando o produto muda (evita manter imagem do produto anterior)
@@ -213,10 +221,26 @@ const ProductPage = ({ product, error, clientOrigin, routeParam }) => {
     }
   }
 
+  const handleWhatsAppContact = () => {
+    const whatsappNumber = product?.restaurant?.phone || product?.restaurant?.whatsapp_number || product?.restaurant?.contact
+    if (!whatsappNumber) {
+      toast.error('Número do WhatsApp não disponível')
+      return
+    }
+    
+    const message = `Olá! Vim através do site Bancas do Bairro e tenho interesse no produto: ${product.name}. Poderia me ajudar?`
+    const encodedMessage = encodeURIComponent(message)
+    const url = `https://wa.me/${whatsappNumber.replace(/\D/g, '')}?text=${encodedMessage}`
+    
+    if (typeof window !== 'undefined') {
+      window.open(url, '_blank', 'noopener,noreferrer')
+    }
+  }
+
   // Relacionados por restaurante
   const relatedProducts = useGetAllProductsOfARestaurant(product?.restaurant_id)
   const displayedRelated = useMemo(
-    () => (Array.isArray(relatedProducts) ? relatedProducts.filter((p) => p?.id !== product?.id).slice(0, 12) : []),
+    () => (Array.isArray(relatedProducts) ? relatedProducts.filter((p) => p?.id !== product?.id).slice(0, 3) : []),
     [relatedProducts, product?.id]
   )
 
@@ -225,12 +249,12 @@ const ProductPage = ({ product, error, clientOrigin, routeParam }) => {
     arrows: true,
     infinite: false,
     speed: 400,
-    slidesToShow: 4,
-    slidesToScroll: 4,
+    slidesToShow: 3,
+    slidesToScroll: 3,
     responsive: [
-      { breakpoint: 1200, settings: { slidesToShow: 3, slidesToScroll: 3 } },
+      { breakpoint: 1200, settings: { slidesToShow: 2, slidesToScroll: 2 } },
       { breakpoint: 900, settings: { slidesToShow: 2, slidesToScroll: 2 } },
-      { breakpoint: 600, settings: { slidesToShow: 1.3, slidesToScroll: 1 } },
+      { breakpoint: 600, settings: { slidesToShow: 1, slidesToScroll: 1 } },
     ],
   }
 
@@ -297,19 +321,6 @@ const ProductPage = ({ product, error, clientOrigin, routeParam }) => {
 
       <PushNotificationLayout>
         <Container maxWidth="lg" sx={{ pt: { xs: 8, md: 10 }, pb: { xs: 2, md: 4 } }}>
-          {/* Breadcrumbs */}
-          <Breadcrumbs aria-label="breadcrumb" sx={{ mb: 2 }}>
-            <MUILink component={NextLink} href="/" underline="hover" color="inherit">
-              Início
-            </MUILink>
-            {product?.category_name && (
-              <MUILink component={NextLink} href="/cuisines" underline="hover" color="inherit">
-                {product.category_name}
-              </MUILink>
-            )}
-            <Typography color="text.primary">{product.name}</Typography>
-          </Breadcrumbs>
-
           <Grid container spacing={4}>
             {/* Galeria do Produto */}
             <Grid item xs={12} md={7}>
@@ -360,7 +371,29 @@ const ProductPage = ({ product, error, clientOrigin, routeParam }) => {
             {/* Bloco de Compra */}
             <Grid item xs={12} md={5}>
               <CustomStackFullWidth spacing={2}>
-                <Typography variant="h4" component="h1" fontWeight={700} color="text.primary">
+                {/* Breadcrumbs com botão de voltar */}
+                <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 1 }}>
+                  <IconButton 
+                    onClick={() => router.back()} 
+                    size="small" 
+                    sx={{ p: 0.5 }}
+                  >
+                    <KeyboardArrowLeftIcon fontSize="small" />
+                  </IconButton>
+                  <Breadcrumbs aria-label="breadcrumb" sx={{ '& .MuiBreadcrumbs-separator': { fontSize: 'inherit' } }}>
+                    <Typography component={NextLink} href="/" variant="caption" color="text.secondary" sx={{ textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}>
+                      Início
+                    </Typography>
+                    {product?.category_name && (
+                      <Typography component={NextLink} href="/cuisines" variant="caption" color="text.secondary" sx={{ textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}>
+                        {product.category_name}
+                      </Typography>
+                    )}
+                    <Typography variant="caption" color="text.secondary">{product.name}</Typography>
+                  </Breadcrumbs>
+                </Stack>
+                
+                <Typography variant="h3" component="h1" fontWeight={700} color="text.primary" sx={{ fontSize: { xs: '2rem', md: '2.5rem' } }}>
                   {product.name}
                 </Typography>
 
@@ -373,9 +406,33 @@ const ProductPage = ({ product, error, clientOrigin, routeParam }) => {
 
                 <Divider />
 
+                {product?.restaurant_name && (
+                  <Typography variant="caption" color="text.secondary">
+                    Vendido e entregue por {product.restaurant_name}
+                  </Typography>
+                )}
+
+                {product.description && (
+                  <Typography 
+                    variant="h6" 
+                    color="text.secondary" 
+                    sx={{ 
+                      lineHeight: 1.6, 
+                      fontSize: { xs: '1rem', md: '1.1rem' },
+                      display: '-webkit-box',
+                      WebkitLineClamp: 3,
+                      WebkitBoxOrient: 'vertical',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis'
+                    }}
+                  >
+                    {product.description}
+                  </Typography>
+                )}
+
                 <Stack spacing={0.5}>
                   <Stack direction="row" spacing={1} alignItems="baseline">
-                    <Typography variant="h4" color="primary" fontWeight={800}>
+                    <Typography variant="h3" color="primary" fontWeight={800} sx={{ fontSize: { xs: '1.8rem', md: '2.2rem' } }}>
                       {formatBRL(currentPrice)}
                     </Typography>
                     {originalPrice && currentPrice < Number(originalPrice) && (
@@ -387,45 +444,50 @@ const ProductPage = ({ product, error, clientOrigin, routeParam }) => {
                       <Chip color="success" size="small" label={`${discountPercentage}% OFF`} />
                     ) : null}
                   </Stack>
-                  {product?.restaurant_name && (
-                    <Typography variant="caption" color="text.secondary">
-                      Vendido e entregue por {product.restaurant_name}
-                    </Typography>
-                  )}
                 </Stack>
 
-                {product.description && (
-                  <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.6 }}>
-                    {product.description}
-                  </Typography>
-                )}
-
-                {/* Quantidade */}
+                {/* Quantidade e Botão Comprar */}
                 <Stack direction="row" spacing={1.5} alignItems="center">
-                  <Typography variant="body2" color="text.primary">Quantidade:</Typography>
-                  <Stack direction="row" alignItems="center" sx={{ border: `1px solid ${theme.palette.divider}`, borderRadius: 1 }}>
-                    <IconButton size="small" onClick={() => setQuantity((q) => Math.max(1, q - 1))} sx={{ color: 'text.primary' }}>
+                  <Stack direction="row" alignItems="center" sx={{ border: `1px solid ${theme.palette.divider}`, borderRadius: 1, height: 48 }}>
+                    <IconButton size="medium" onClick={() => setQuantity((q) => Math.max(1, q - 1))} sx={{ color: 'text.primary' }}>
                       −
                     </IconButton>
-                    <Typography sx={{ px: 1, minWidth: 32, textAlign: 'center' }} color="text.primary">{quantity}</Typography>
-                    <IconButton size="small" onClick={() => setQuantity((q) => q + 1)} sx={{ color: 'text.primary' }}>
+                    <Typography sx={{ px: 2, minWidth: 40, textAlign: 'center', fontSize: '1.1rem' }} color="text.primary">{quantity}</Typography>
+                    <IconButton size="medium" onClick={() => setQuantity((q) => q + 1)} sx={{ color: 'text.primary' }}>
                       +
                     </IconButton>
                   </Stack>
-                </Stack>
-
-                <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5}>
                   <Button
                     variant="contained"
                     color="primary"
                     size="large"
                     onClick={handleAddToCart}
                     disabled={addToCartLoading}
-                    fullWidth
+                    sx={{ flex: 1 }}
                   >
                     {addToCartLoading ? 'Adicionando...' : 'Comprar'}
                   </Button>
                 </Stack>
+
+                {/* Botão WhatsApp */}
+                <Button
+                  variant="outlined"
+                  size="large"
+                  onClick={handleWhatsAppContact}
+                  startIcon={<WhatsAppIcon />}
+                  fullWidth
+                  sx={{
+                    borderColor: '#FF8C00',
+                    color: '#FF8C00',
+                    py: 1,
+                    '&:hover': {
+                      borderColor: '#FF8C00',
+                      backgroundColor: 'rgba(255, 140, 0, 0.04)'
+                    }
+                  }}
+                >
+                  Comprar pelo WhatsApp
+                </Button>
  
                  {/* Selo de disponibilidade */}
                  <Typography variant="caption" color="text.secondary">
@@ -472,11 +534,12 @@ const ProductPage = ({ product, error, clientOrigin, routeParam }) => {
           </Grid>
 
           {/* Descrição completa */}
-          <Box sx={{ mt: 6 }}>
-            <Typography variant="h6" fontWeight={700} gutterBottom color="text.primary">
+          <Box sx={{ mt: 3 }}>
+            <Divider sx={{ mb: 4, opacity: 0.6 }} />
+            <Typography variant="h4" fontWeight={700} gutterBottom color="text.primary">
               Descrição do produto
             </Typography>
-            <Typography variant="body1" color="text.secondary" sx={{ whiteSpace: 'pre-line' }}>
+            <Typography variant="h6" color="text.secondary" sx={{ whiteSpace: 'pre-line', fontSize: { xs: '1rem', md: '1.1rem' } }}>
               {product?.description || 'Sem descrição detalhada disponível.'}
             </Typography>
           </Box>
@@ -485,7 +548,7 @@ const ProductPage = ({ product, error, clientOrigin, routeParam }) => {
           {displayedRelated.length > 0 && (
             <Box sx={{ mt: 6 }}>
               <Stack direction="row" alignItems="center" justifyContent="space-between" mb={2}>
-                <Typography variant="h6" fontWeight={700} color="text.primary">
+                <Typography variant="h4" fontWeight={700} color="text.primary">
                   Produtos relacionados
                 </Typography>
               </Stack>
@@ -504,8 +567,20 @@ const ProductPage = ({ product, error, clientOrigin, routeParam }) => {
   )
 }
 
-export async function getServerSideProps({ params, req }) {
+export async function getServerSideProps({ params, req, resolvedUrl }) {
     const raw = params?.id
+    
+    // Verificar cache de redirecionamento primeiro
+    const cachedRedirect = getCachedRedirect(raw)
+    if (cachedRedirect) {
+        return {
+            redirect: {
+                destination: cachedRedirect,
+                permanent: true,
+            },
+        }
+    }
+    
     const match = String(raw || '').match(/(\d+)(?!.*\d)/)
     const numericId = match ? match[1] : null
     const idForApi = numericId || raw
@@ -524,6 +599,8 @@ export async function getServerSideProps({ params, req }) {
             'https://via.placeholder.com/400x300/FF9800/white?text=Imagem+3'
         ],
         restaurant_name: 'Banca do João',
+        restaurant_id: 1,
+        restaurant_slug: 'banca-do-joao',
         category_name: 'Frutas e Vegetais',
         avg_rating: (Math.random() * 2 + 3).toFixed(1),
         rating_count: Math.floor(Math.random() * 100 + 10),
@@ -569,6 +646,29 @@ export async function getServerSideProps({ params, req }) {
                 // Se o nome vier vazio ou genérico, substitui pelo nome derivado do slug
                 const isGeneric = typeof product.name === 'string' && /^produto\s*\d*$/i.test(product.name.trim())
                 product = { ...product, name: product?.name && !isGeneric ? product.name : friendlyName }
+                
+                // Verificar se a URL atual é a URL SEO-friendly correta
+                if (product.restaurant || product.restaurant_id) {
+                    const correctSEOUrl = buildProductSEOUrl(product, product.restaurant || { id: product.restaurant_id, slug: product.restaurant_slug })
+                    const currentPath = resolvedUrl
+                    
+                    // Se não estamos na URL SEO-friendly correta, redirecionar
+                    if (!currentPath.includes('/banca/') || currentPath !== correctSEOUrl) {
+                        // Armazenar no cache para futuras requisições
+                        setCachedRedirect(raw, correctSEOUrl)
+                        
+                        return {
+                            redirect: {
+                                destination: correctSEOUrl,
+                                permanent: true, // 301 redirect
+                            },
+                        }
+                    } else {
+                        // URL está correta, marcar no cache como não precisando redirecionamento
+                        setCachedNoRedirect(raw)
+                    }
+                }
+                
                 return {
                     props: {
                         product,
@@ -581,6 +681,28 @@ export async function getServerSideProps({ params, req }) {
         }
     } catch (error) {
         console.log('API não disponível, usando dados simulados:', error.message)
+    }
+    
+    // Para dados simulados, também verificar redirecionamento SEO
+    if (mockProduct.restaurant_id && mockProduct.restaurant_slug) {
+        const correctSEOUrl = buildProductSEOUrl(mockProduct, { id: mockProduct.restaurant_id, slug: mockProduct.restaurant_slug })
+        const currentPath = resolvedUrl
+        
+        // Se não estamos na URL SEO-friendly correta, redirecionar
+        if (!currentPath.includes('/banca/') || currentPath !== correctSEOUrl) {
+            // Armazenar no cache para futuras requisições
+            setCachedRedirect(raw, correctSEOUrl)
+            
+            return {
+                redirect: {
+                    destination: correctSEOUrl,
+                    permanent: true, // 301 redirect
+                },
+            }
+        } else {
+            // URL está correta, marcar no cache como não precisando redirecionamento
+            setCachedNoRedirect(raw)
+        }
     }
     
     // Retornar dados simulados como fallback

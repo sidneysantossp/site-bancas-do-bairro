@@ -403,7 +403,7 @@ const VisitAgain = () => {
                                     itemLength={userData?.length}
                                 >
                                     <Slider {...settings}>
-                                        {userData?.map(
+                                        {userData && Array.isArray(userData) && userData.map(
                                             (restaurantData, index) => {
                                                 return (
                                                     <RestaurantBoxCard

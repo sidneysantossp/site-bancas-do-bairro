@@ -11,18 +11,47 @@ const normalizeImageUrl = (url) => {
         if (u.startsWith('//')) {
             u = 'https:' + u
         } else if (u.toLowerCase().startsWith('http://')) {
-            // Em dev/localhost, mantenha http para evitar falhas (sem TLS)
+            // Não force HTTPS quando:
+            // - hostname é localhost, 127.0.0.1 ou termina com .local
+            // - hostname é IP privado (10.x.x.x, 172.16-31.x.x, 192.168.x.x)
+            // - a página atual está sendo servida em http
             try {
                 const parsed = new URL(u)
                 const host = parsed.hostname
-                const isLocal = host === 'localhost' || host === '127.0.0.1' || host.endsWith('.local')
-                if (!isLocal) {
-                    // Prefer HTTPS fora de ambiente local
+                const isPrivateIP =
+                    /^10\./.test(host) ||
+                    /^192\.168\./.test(host) ||
+                    /^172\.(1[6-9]|2[0-9]|3[0-1])\./.test(host)
+                const isLocal =
+                    host === 'localhost' ||
+                    host === '127.0.0.1' ||
+                    host.endsWith('.local') ||
+                    isPrivateIP
+                const pageIsHttp =
+                    typeof window !== 'undefined' && window.location && window.location.protocol === 'http:'
+                if (!isLocal && !pageIsHttp) {
+                    // Prefer HTTPS apenas quando não é local/privado e a página já está em https
                     u = u.replace(/^http:\/\//i, 'https://')
                 }
             } catch (_) {
                 // Se não for URL absoluta válida, não force https
             }
+        }
+        // Mapear caminhos relativos comuns do backend para o proxy do Next
+        // Exemplos vindos do backend: 'storage/abc.jpg', 'public/storage/abc.jpg', '/public/storage/abc.jpg'
+        if (/^public\/?storage\//i.test(u)) {
+            // remove prefix 'public/' se existir
+            u = u.replace(/^public\//i, '')
+        }
+        if (/^\/public\/storage\//i.test(u)) {
+            u = u.replace(/^\/public\/storage\//i, '/storage/')
+        }
+        if (/^storage\//i.test(u)) {
+            // garantir barra inicial para acionar rewrite '/storage/:path*'
+            u = '/' + u
+        }
+        if (/^\/storage\//i.test(u)) {
+            // já está correto para o rewrite do Next
         }
         // Encode spaces
         u = u.replace(/\s/g, '%20')

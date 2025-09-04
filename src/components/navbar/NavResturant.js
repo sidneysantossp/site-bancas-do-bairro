@@ -60,7 +60,10 @@ const NavResturant = ({ zoneid }) => {
     }, [zoneid])
     useEffect(() => {
         if (popularRestaurant) {
-            dispatch(setPopularRestaurants(popularRestaurant?.data))
+            const arr = Array.isArray(popularRestaurant?.data?.restaurants)
+                ? popularRestaurant.data.restaurants
+                : []
+            dispatch(setPopularRestaurants(arr))
         }
     }, [popularRestaurant])
 
@@ -139,15 +142,7 @@ const NavResturant = ({ zoneid }) => {
                                                         md={6}
                                                     >
                                                         <Link
-                                                            href={{
-                                                                pathname:
-                                                                    '/banca/[id]',
-                                                                query: {
-                                                                    id: `${restaurantIdOrSlug}`,
-                                                                    banca_zone_id:
-                                                                        restaurant?.zone_id,
-                                                                },
-                                                            }}
+                                                            href={`/${restaurant?.slug || `${restaurant?.name?.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')}-${restaurant?.id}`}`}
                                                             passHref
                                                             style={{textDecoration: 'none'}}
                                                         >
@@ -217,7 +212,7 @@ const NavResturant = ({ zoneid }) => {
                                                         md={6}
                                                     >
                                                         <Link
-                                                            href={`/banca/${restaurantIdOrSlug}`}
+                                                            href={`/${restaurant?.slug || `${restaurant?.name?.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')}-${restaurant?.id}`}`}
                                                             passHref
                                                             style={{textDecoration: 'none'}}
                                                         >
