@@ -31,9 +31,6 @@ import '../styles/nprogress.css'
 import { createTheme } from '../theme/index'
 import createEmotionCache from '../utils/create-emotion-cache'
 import ForceGeolocation from '../components/geolocation/ForceGeolocation'
-// Adiciona inicialização do Firebase Messaging no cliente
-// (useEffect já está importado acima)
-import { initMessagingAndGetToken, onForegroundMessage } from '../lib/firebaseClient'
 
 Router.events.on('routeChangeStart', nProgress.start)
 Router.events.on('routeChangeError', nProgress.done)
@@ -95,29 +92,7 @@ function App({ Component, pageProps, emotionCache = clientSideEmotionCache }) {
         }
         setViewFooter(true)
     }, [])
-
-    // Inicializa FCM no cliente: registra SW, pede permissão e obtém token
-    useEffect(() => {
-        let unsubscribe = () => {}
-        ;(async () => {
-            try {
-                const token = await initMessagingAndGetToken()
-                if (token) {
-                    // TODO: Enviar token ao seu backend se necessário
-                    // await fetch('/api/save-fcm-token', { method: 'POST', body: JSON.stringify({ token }) })
-                    console.log('FCM token obtido:', token)
-                }
-                unsubscribe = onForegroundMessage((payload) => {
-                    console.log('FCM foreground message:', payload)
-                })
-            } catch (e) {
-                console.warn('FCM não inicializado:', e)
-            }
-        })()
-        return () => {
-            try { unsubscribe() } catch {}
-        }
-    }, [])
+    // FCM init is handled by PushNotificationLayout (src/components/PushNotificationLayout.js)
 
     let persistor = persistStore(store)
 
@@ -160,11 +135,11 @@ function App({ Component, pageProps, emotionCache = clientSideEmotionCache }) {
                                     </Head>
                                     <WrapperForApp pathname={router.pathname}>
                                         <ScrollToTop />
+                                        <ForceGeolocation />
                                         {router.pathname !== '/maintenance' && (
                                             <Navigation />
                                         )}
                                         <DynamicFavicon />
-                                        <ForceGeolocation />
 
                                         <Box
                                             sx={{

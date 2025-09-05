@@ -17,10 +17,12 @@ import { useQuery } from 'react-query'
 import { useDispatch, useSelector } from 'react-redux'
 import ResOffer from '../../../public/static/Menu/resturant.png'
 import { RestaurantsApi } from '@/hooks/react-query/config/restaurantApi'
+import { RestaurantsApiNearBy } from '@/hooks/react-query/restaurants/getNearByRestaurants'
 import { setPopularRestaurants } from '@/redux/slices/storedData'
 import { noRestaurantsImage } from '@/utils/LocalImages'
 import CustomImageContainer from '../CustomImageContainer'
 import CustomEmptyResult from '../empty-view/CustomEmptyResult'
+import CustomShimmerRestaurant from '../CustomShimmer/CustomShimmerRestaurant'
 import { onErrorResponse } from '../ErrorResponse'
 import { RTL } from '../RTL/RTL'
 import { NavMenuLink } from './Navbar.style'
@@ -41,9 +43,16 @@ const NavResturant = ({ zoneid }) => {
     const [resdropdown, setResdropdown] = useState(null)
     const openresdrop = Boolean(resdropdown)
 
-    const { data: popularRestaurant, refetch: restaurantApiRefetch } = useQuery(
-        ['restaurants/popular'],
-        () => RestaurantsApi?.popularRestaurants(),
+    const { data: popularRestaurant, refetch: restaurantApiRefetch, isLoading: isNearbyLoading } = useQuery(
+        ['restaurants/nearby', zoneid || 'no-zone'],
+        () =>
+            RestaurantsApiNearBy?.restaurants({
+                offset: 1,
+                page_limit: 20,
+                type: 'all',
+                filterType: 'all',
+                searchKey: '',
+            }),
         {
             enabled: true,
             staleTime: 1000 * 60 * 8,
@@ -127,6 +136,11 @@ const NavResturant = ({ zoneid }) => {
                     <Grid container spacing={3} p="1rem" width="750px">
                         {popularRestaurants && (
                             <Grid item container md={8} spacing={1}>
+                                {isNearbyLoading && popularRestaurants?.length === 0 && (
+                                    <Grid item xs={12}>
+                                        <CustomShimmerRestaurant />
+                                    </Grid>
+                                )}
                                 {popularRestaurants
                                     ?.slice(0, 8)
                                     ?.map((restaurant, index) => {
@@ -142,7 +156,7 @@ const NavResturant = ({ zoneid }) => {
                                                         md={6}
                                                     >
                                                         <Link
-                                                            href={`/${restaurant?.slug || `${restaurant?.name?.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')}-${restaurant?.id}`}`}
+                                                            href={`/banca/${restaurant?.slug || `${restaurant?.name?.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')}-${restaurant?.id}`}`}
                                                             passHref
                                                             style={{textDecoration: 'none'}}
                                                         >
@@ -179,7 +193,7 @@ const NavResturant = ({ zoneid }) => {
                                                                 >
                                                                     <CustomImageContainer
                                                                         src={
-                                                                            restaurant.logo_full_url
+                                                                            restaurant.logo_full_url || restaurant.logo
                                                                         }
                                                                         width="40px"
                                                                         height="40px"
@@ -212,7 +226,7 @@ const NavResturant = ({ zoneid }) => {
                                                         md={6}
                                                     >
                                                         <Link
-                                                            href={`/${restaurant?.slug || `${restaurant?.name?.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')}-${restaurant?.id}`}`}
+                                                            href={`/banca/${restaurant?.slug || `${restaurant?.name?.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')}-${restaurant?.id}`}`}
                                                             passHref
                                                             style={{textDecoration: 'none'}}
                                                         >
@@ -249,7 +263,7 @@ const NavResturant = ({ zoneid }) => {
                                                                 >
                                                                     <CustomImageContainer
                                                                         src={
-                                                                            restaurant.logo_full_url
+                                                                            restaurant.logo_full_url || restaurant.logo
                                                                         }
                                                                         width="40px"
                                                                         height="40px"

@@ -112,14 +112,24 @@ const SecondNavbar = ({ isSticky, cartListRefetch }) => {
         setOpenPopover(false)
     }
 
-    let zoneid = undefined
-    let location = undefined
-    let languageDirection = undefined
-    if (typeof window !== 'undefined') {
-        zoneid = localStorage.getItem('zoneid')
-        languageDirection = localStorage.getItem('direction')
-        location = localStorage.getItem('location')
-    }
+    // Tornar zoneid/location reativos para reagir à geolocalização
+    const [zoneIdValue, setZoneIdValue] = useState(undefined)
+    const [location, setLocation] = useState(undefined)
+    const [languageDirection, setLanguageDirection] = useState(undefined)
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            setZoneIdValue(localStorage.getItem('zoneid'))
+            setLanguageDirection(localStorage.getItem('direction'))
+            setLocation(localStorage.getItem('location'))
+        }
+    }, [])
+    // Atualiza quando o Redux sinaliza mudança de localização (geolocalização concluída)
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            setZoneIdValue(localStorage.getItem('zoneid'))
+            setLocation(localStorage.getItem('location'))
+        }
+    }, [userLocationUpdate])
 
     const handleClick = (value) => {
         router.push({
@@ -293,7 +303,7 @@ const SecondNavbar = ({ isSticky, cartListRefetch }) => {
                                 <NavLinks
                                     languageDirection={languageDirection}
                                     t={t}
-                                    zoneid={zoneid}
+                                    zoneid={zoneIdValue}
                                 />
                             </Stack>
                             <Stack direction="row" alignItems="center">

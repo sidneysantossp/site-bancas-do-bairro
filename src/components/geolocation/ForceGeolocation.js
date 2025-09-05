@@ -7,7 +7,30 @@ import { useRef } from 'react'
 import { useGoogleMaps } from '@/hooks/useGoogleMaps'
 
 const DEFAULT_LOCATION_LABEL = 'São Paulo, SP - Brasil'
-const DEFAULT_ZONE_ARRAY_STRING = JSON.stringify([1])
+// Constrói a zona padrão a partir das variáveis de ambiente, com fallback para [1]
+const getEnvDefaultZoneString = () => {
+    const envDefault = process.env.NEXT_PUBLIC_DEFAULT_ZONE_ID || process.env.NEXT_PUBLIC_DEFAULT_ZONE_IDS
+    if (!envDefault) return undefined
+    try {
+        const parsed = JSON.parse(envDefault)
+        if (Array.isArray(parsed) && parsed.length > 0) {
+            const nums = parsed.map((n) => Number(n)).filter((n) => Number.isFinite(n) && n > 0)
+            if (nums.length > 0) return JSON.stringify(nums)
+        } else {
+            const asNum = Number(parsed)
+            return !Number.isNaN(asNum) && asNum > 0 ? String(asNum) : String(parsed)
+        }
+    } catch (_) {
+        const parts = String(envDefault)
+            .split(',')
+            .map((s) => Number(s.trim()))
+            .filter((n) => Number.isFinite(n) && n > 0)
+        if (parts.length > 1) return JSON.stringify(parts)
+        else if (parts.length === 1) return String(parts[0])
+    }
+    return undefined
+}
+const DEFAULT_ZONE_STRING = getEnvDefaultZoneString() || JSON.stringify([1])
 const FALLBACK_LOCATION_LABEL = 'Minha localização atual'
 
 const ForceGeolocation = () => {
@@ -38,7 +61,7 @@ const ForceGeolocation = () => {
 
     const setDefaultZone = () => {
         // Definir zona padrão (ID 1) e um rótulo amigável de localização
-        localStorage.setItem('zoneid', JSON.stringify([1]))
+        localStorage.setItem('zoneid', DEFAULT_ZONE_STRING)
         // Garantir que HomeGuard libere o conteúdo mesmo sem endereço real resolvido
         try {
             const existingLocation = localStorage.getItem('location')
@@ -47,7 +70,7 @@ const ForceGeolocation = () => {
             }
         } catch (_) {}
         toggleLocationUpdate()
-        console.log('Zona padrão definida: ID 1 (com rótulo de localização de fallback)')
+        console.log('Zona padrão definida (com rótulo de localização de fallback)')
     }
 
     const reverseGeocodeOSM = async (latitude, longitude) => {
@@ -62,7 +85,7 @@ const ForceGeolocation = () => {
             const address = data?.display_name
             if (address && typeof address === 'string') {
                 localStorage.setItem('location', address)
-                localStorage.setItem('zoneid', JSON.stringify([1]))
+                localStorage.setItem('zoneid', DEFAULT_ZONE_STRING)
                 toggleLocationUpdate()
                 console.log('Endereço obtido via OSM:', address)
                 redirectToHomeOnce()
@@ -129,7 +152,7 @@ const ForceGeolocation = () => {
             if (zone && zone.length > 0) {
                 localStorage.setItem('zoneid', JSON.stringify(zone))
             } else {
-                localStorage.setItem('zoneid', JSON.stringify([1]))
+                localStorage.setItem('zoneid', DEFAULT_ZONE_STRING)
             }
 
             toggleLocationUpdate()
@@ -163,7 +186,7 @@ const ForceGeolocation = () => {
                                     localStorage.setItem('location', address)
 
                                     // Definir zona baseada na localização (por enquanto usar zona 1)
-                                    localStorage.setItem('zoneid', JSON.stringify([1]))
+                                    localStorage.setItem('zoneid', DEFAULT_ZONE_STRING)
                                     toggleLocationUpdate()
 
                                     console.log('Localização obtida:', address)
@@ -195,7 +218,7 @@ const ForceGeolocation = () => {
                                 localStorage.setItem('location', address)
 
                                 // Definir zona baseada na localização (por enquanto usar zona 1)
-                                localStorage.setItem('zoneid', JSON.stringify([1]))
+                                localStorage.setItem('zoneid', DEFAULT_ZONE_STRING)
                                 toggleLocationUpdate()
 
                                 console.log('Localização obtida:', address)
@@ -282,8 +305,8 @@ const ForceGeolocation = () => {
                 handleGeolocationSuccess,
                 handleGeolocationError,
                 {
-                    enableHighAccuracy: true,
-                    timeout: 10000,
+                    enableHighAccuracy: false, // Mais rápido, menos preciso
+                    timeout: 5000, // Reduzido para 5 segundos
                     maximumAge: 300000 // 5 minutos
                 }
             )
@@ -302,25 +325,32 @@ const ForceGeolocation = () => {
         const existingLocation = localStorage.getItem('location')
         const existingCoords = localStorage.getItem('currentLatLng')
 
-        const isDefaultLocation = existingLocation === DEFAULT_LOCATION_LABEL
-        const isDefaultZone = existingZoneId === DEFAULT_ZONE_ARRAY_STRING
+        // Semeia zona padrão e rótulo de localização caso inválidos/ausentes para evitar falhas em chamadas iniciais de API
+        const hasValidZoneId = !!existingZoneId && existingZoneId !== 'null' && existingZoneId !== 'undefined' && existingZoneId !== '[]' && existingZoneId.trim() !== ''
+        const hasValidLocation = !!existingLocation && existingLocation !== 'null' && existingLocation !== 'undefined' && existingLocation.trim() !== ''
+        
+        if (!hasValidZoneId || !hasValidLocation) {
+            console.log('Definindo zona e localização padrão imediatamente...')
+            localStorage.setItem('zoneid', DEFAULT_ZONE_STRING)
+            localStorage.setItem('location', FALLBACK_LOCATION_LABEL)
+            toggleLocationUpdate()
+            
+            // Tentar geolocalização em background, mas não bloquear a UI
+            setTimeout(() => {
+                requestGeolocation()
+            }, 2000)
+            return
+        }
+
+        const isDefaultLocation = existingLocation === DEFAULT_LOCATION_LABEL || existingLocation === DEFAULT_LOCATION_LABEL
         const hasCoords = !!existingCoords && existingCoords !== 'null' && existingCoords !== 'undefined'
         
-        // Forçar geolocalização se:
-        // - não houver coordinates salvas, OU
-        // - a localização seja o fallback padrão, OU
-        // - a zona seja a padrão [1]
-        if (!hasCoords || isDefaultLocation || isDefaultZone) {
-            console.log('Forçando geolocalização por ausência de coords ou valores padrão...')
-            // Pequeno delay para garantir que a página carregou
+        // Se não temos coordenadas reais, tentar obter em background
+        if (!hasCoords || isDefaultLocation) {
+            console.log('Tentando melhorar localização em background...')
             setTimeout(() => {
                 requestGeolocation()
-            }, 1000)
-        } else if (!existingZoneId || !existingLocation || existingZoneId === 'null' || existingZoneId === 'undefined' || existingLocation === 'null' || existingLocation === 'undefined' || existingLocation === '') {
-            console.log('Zona ou localização inválida, forçando geolocalização...')
-            setTimeout(() => {
-                requestGeolocation()
-            }, 1000)
+            }, 3000)
         } else {
             console.log('Zona e localização já existem:', { existingZoneId, existingLocation })
         }

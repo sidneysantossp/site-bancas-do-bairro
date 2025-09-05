@@ -10,6 +10,18 @@ const HomeGuard = (props) => {
     const { cartList } = useSelector((state) => state.cart)
     const { userLocationUpdate } = useSelector((state) => state.globalSettings)
     const [checked, setChecked] = useState(false)
+    
+    // Inicialização imediata para evitar carregamento infinito
+    useEffect(() => {
+        console.log('HomeGuard: Inicializando valores padrão imediatamente')
+        
+        // Definir valores padrão sempre que o componente montar
+        localStorage.setItem('location', 'Minha localização atual')
+        localStorage.setItem('zoneid', JSON.stringify([1]))
+        
+        // Liberar conteúdo imediatamente
+        setChecked(true)
+    }, [])
 
     useEffect(
         () => {
@@ -22,14 +34,25 @@ const HomeGuard = (props) => {
             }
 
             const location = localStorage.getItem('location')
+            const zoneid = localStorage.getItem('zoneid')
 
-            // Quando a localização for válida, liberamos o conteúdo
-            if (location && location !== 'null' && location !== 'undefined' && location.trim() !== '') {
+            // Se não há localização válida, definir valores padrão imediatamente
+            if (!location || location === 'null' || location === 'undefined' || location.trim() === '') {
+                console.log('HomeGuard: Definindo localização padrão')
+                localStorage.setItem('location', 'Minha localização atual')
+                localStorage.setItem('zoneid', JSON.stringify([1]))
                 setChecked(true)
-            } else {
-                // Não redirecionar imediatamente. Aguarde ForceGeolocation preencher os dados
-                setChecked(false)
+                return
             }
+
+            // Se não há zoneid válido, definir padrão
+            if (!zoneid || zoneid === 'null' || zoneid === 'undefined' || zoneid === '[]' || zoneid.trim() === '') {
+                console.log('HomeGuard: Definindo zona padrão')
+                localStorage.setItem('zoneid', JSON.stringify([1]))
+            }
+
+            // Liberar o conteúdo
+            setChecked(true)
         },
         // Reavaliar quando o roteador estiver pronto e quando a geolocalização atualizar
         // eslint-disable-next-line react-hooks/exhaustive-deps

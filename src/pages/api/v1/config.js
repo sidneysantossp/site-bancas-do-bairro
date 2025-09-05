@@ -74,7 +74,7 @@ export default function handler(req, res) {
             lat: '-23.5505',
             lng: '-46.6333'
         },
-        map_api_key: process.env.NEXT_PUBLIC_GOOGLE_MAP_KEY || '',
+        map_api_key: (process.env.NEXT_PUBLIC_GOOGLE_MAP_KEY || process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ''),
         customer_verification: 0,
         order_confirmation_model: 'manual',
         show_dm_earning: 1,

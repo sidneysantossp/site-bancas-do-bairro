@@ -8,7 +8,9 @@ import {
 import { getAuth } from 'firebase/auth'
 
 // Habilita Firebase (Auth sempre; Messaging apenas quando suportado)
-const FIREBASE_ENABLED = true
+const FIREBASE_ENABLED = (
+    (process.env.NEXT_PUBLIC_FIREBASE_ENABLED || '').toString().toLowerCase() === 'true'
+)
 
 // Checagens de capacidade do navegador/ambiente para Web Push/Messaging
 const isBrowser = typeof window !== 'undefined'
@@ -37,34 +39,38 @@ const firebaseConfig = {
 let firebaseApp = null
 let messaging = null
 
+// Inicializa SEMPRE o Firebase App para permitir recursos como Auth, mesmo se
+// as notificações estiverem desabilitadas
+try {
+    firebaseApp = !getApps().length ? initializeApp(firebaseConfig) : getApp()
+} catch (err) {
+    console.warn('Firebase inicialização falhou:', err)
+    firebaseApp = null
+}
+
+// Inicializa Messaging apenas quando habilitado e suportado
 if (FIREBASE_ENABLED) {
-    try {
-        firebaseApp = !getApps().length ? initializeApp(firebaseConfig) : getApp()
-        messaging = (async () => {
-            try {
-                // Garante que só seguimos em frente quando ambiente e navegador suportam
-                if (!canInitMessaging()) {
-                    console.log('[Firebase] Messaging desativado: contexto inseguro ou APIs ausentes (ServiceWorker/Push/Notification).')
-                    return null
-                }
-                const supported = await isSupported()
-                if (!supported) {
-                    console.log('[Firebase] Messaging desativado: navegador não é suportado pelo SDK.')
-                    return null
-                }
-                return getMessaging(firebaseApp)
-            } catch (err) {
-                console.warn('[Firebase] Messaging indisponível:', err)
+    messaging = (async () => {
+        try {
+            // Garante que só seguimos em frente quando ambiente e navegador suportam
+            if (!canInitMessaging()) {
+                console.log('[Firebase] Messaging desativado: contexto inseguro ou APIs ausentes (ServiceWorker/Push/Notification).')
                 return null
             }
-        })()
-    } catch (err) {
-        console.warn('Firebase inicialização falhou:', err)
-        firebaseApp = null
-        messaging = null
-    }
+            const supported = await isSupported()
+            if (!supported) {
+                console.log('[Firebase] Messaging desativado: navegador não é suportado pelo SDK.')
+                return null
+            }
+            if (!firebaseApp) return null
+            return getMessaging(firebaseApp)
+        } catch (err) {
+            console.warn('[Firebase] Messaging indisponível:', err)
+            return null
+        }
+    })()
 } else {
-    console.log('Firebase desabilitado - funcionalidade de notificações não disponível')
+    console.log('Firebase (Messaging) desabilitado - funcionalidade de notificações não disponível')
 }
 
 export const fetchToken = async (setFcmToken) => {
@@ -90,8 +96,27 @@ export const fetchToken = async (setFcmToken) => {
             setFcmToken && setFcmToken()
             return
         }
+        // Solicita permissão de notificação (necessário em muitos navegadores)
+        if (typeof Notification !== 'undefined' && Notification.permission !== 'granted') {
+            try {
+                const perm = await Notification.requestPermission()
+                if (perm !== 'granted') {
+                    console.log('[Firebase] Permissão de notificação não concedida')
+                    setFcmToken && setFcmToken()
+                    return
+                }
+            } catch (_) {}
+        }
+        // Garante que o service worker de messaging esteja registrado
+        let registration
+        try {
+            registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js')
+        } catch (e) {
+            console.warn('[Firebase] Falha ao registrar service worker de messaging:', e)
+        }
         const currentToken = await getToken(msg, {
             vapidKey: process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY,
+            serviceWorkerRegistration: registration,
         })
         if (currentToken) {
             setFcmToken && setFcmToken(currentToken)

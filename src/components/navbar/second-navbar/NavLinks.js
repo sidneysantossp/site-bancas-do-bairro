@@ -3,7 +3,6 @@ import { Stack, Typography } from '@mui/material'
 import { NavLinkStyle } from '../Navbar.style'
 import NavCatagory from '../NavCatagory'
 import NavResturant from '../NavResturant'
-import NavCuisines from '../NavCuisines'
 import { setHandleHomePage } from '@/redux/slices/global'
 import { useRouter } from 'next/router'
 import { useDispatch } from 'react-redux'
@@ -39,14 +38,7 @@ const NavLinks = ({ zoneid, t, languageDirection }) => {
                 setRestaurantModal={setRestaurantModal}
                 languageDirection={languageDirection}
             />
-            {/* Opção "Produtos por Banca" ocultada conforme solicitado
-            <NavCuisines
-                openModal={openCategoryModal}
-                setModal={setCategoryModal}
-                setRestaurantModal={setRestaurantModal}
-                languageDirection={languageDirection}
-            />
-            */}
+            { /* NavCuisines ocultado por solicitação */ }
 
             <NavResturant
                 openModal={openRestaurantModal}

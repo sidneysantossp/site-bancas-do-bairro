@@ -4,8 +4,31 @@ import axios from 'axios'
 // - Browser: use NEXT_PUBLIC_BASE_URL if available, otherwise use same-origin proxy
 // - SSR/Node: use NEXT_PUBLIC_BASE_URL (external API) or fallback
 const isBrowser = typeof window !== 'undefined'
-const browserUrl = process.env.NEXT_PUBLIC_BASE_URL || ''
-const ssrFallback = process.env.NEXT_PUBLIC_BASE_URL || process.env.NEXT_CLIENT_HOST_URL || 'http://localhost:3020'
+
+// Ensure trailing slash when a base URL is provided to avoid wrong URL resolution
+const normalizeBaseUrl = (url) => {
+    if (!url) return ''
+    try {
+        // Using WHATWG URL for validation; we only care to ensure it ends with '/'
+        // so relative paths like 'api/v1/..' resolve correctly with axios/new URL()
+        // Examples:
+        //  - 'http://host/path'      => 'http://host/path/'
+        //  - 'http://host'           => 'http://host/'
+        //  - 'http://host/path/'     => unchanged
+        //  - ''                       => ''
+        // If URL constructor throws (invalid), fall back to simple check
+        // eslint-disable-next-line no-new
+        new URL(url)
+        return url.endsWith('/') ? url : `${url}/`
+    } catch (_) {
+        return url && !url.endsWith('/') ? `${url}/` : url
+    }
+}
+
+const browserUrl = normalizeBaseUrl(process.env.NEXT_PUBLIC_BASE_URL || '')
+const ssrFallback = normalizeBaseUrl(
+    process.env.NEXT_PUBLIC_BASE_URL || process.env.NEXT_CLIENT_HOST_URL || 'http://localhost:3020'
+)
 export const baseUrl = isBrowser ? browserUrl : ssrFallback
 
 const MainApi = axios.create({
@@ -81,11 +104,18 @@ MainApi.interceptors.request.use(function (config) {
                 return undefined
             }
             const asNum = Number(parsed)
-            if (!Number.isNaN(asNum) && asNum > 0) return String(asNum)
-            if (typeof parsed === 'string' && parsed.trim().length > 0) return parsed
+            if (!Number.isNaN(asNum) && asNum > 0) return JSON.stringify([asNum])
+            if (typeof parsed === 'string' && parsed.trim().length > 0) {
+                // Tentar separar por vírgula e normalizar
+                const parts = String(parsed)
+                    .split(',')
+                    .map((s) => Number(s.trim()))
+                    .filter((n) => Number.isFinite(n) && n > 0)
+                if (parts.length > 0) return JSON.stringify(parts)
+            }
         } catch (e) {
             const asNum = Number(rawZoneId)
-            if (!Number.isNaN(asNum) && asNum > 0) return String(asNum)
+            if (!Number.isNaN(asNum) && asNum > 0) return JSON.stringify([asNum])
         }
         return undefined
     })()
@@ -95,30 +125,30 @@ MainApi.interceptors.request.use(function (config) {
         config.headers['zone-id'] = normalizedZoneHeader
         config.headers['zone_id'] = normalizedZoneHeader
     } else {
-        // Fallback: garantir zoneId padrão para evitar erro "ID da zona necessário"
+        // Fallback: garantir zoneId padrão como ARRAY JSON para evitar erro de count() no backend PHP
         // Permitir configuração via variável de ambiente: NEXT_PUBLIC_DEFAULT_ZONE_ID ou NEXT_PUBLIC_DEFAULT_ZONE_IDS
         const envDefault = process.env.NEXT_PUBLIC_DEFAULT_ZONE_ID || process.env.NEXT_PUBLIC_DEFAULT_ZONE_IDS
-        let defaultZoneValue
+        let defaultZoneArray = []
         if (envDefault) {
             try {
                 const parsed = JSON.parse(envDefault)
-                if (Array.isArray(parsed) && parsed.length > 0) {
-                    const nums = parsed.map((n) => Number(n)).filter((n) => Number.isFinite(n) && n > 0)
-                    if (nums.length > 0) defaultZoneValue = JSON.stringify(nums)
+                if (Array.isArray(parsed)) {
+                    defaultZoneArray = parsed
+                        .map((n) => Number(n))
+                        .filter((n) => Number.isFinite(n) && n > 0)
                 } else {
                     const asNum = Number(parsed)
-                    defaultZoneValue = !Number.isNaN(asNum) && asNum > 0 ? String(asNum) : String(parsed)
+                    if (Number.isFinite(asNum) && asNum > 0) defaultZoneArray = [asNum]
                 }
             } catch (_) {
                 const parts = String(envDefault)
                     .split(',')
                     .map((s) => Number(s.trim()))
                     .filter((n) => Number.isFinite(n) && n > 0)
-                if (parts.length > 1) defaultZoneValue = JSON.stringify(parts)
-                else if (parts.length === 1) defaultZoneValue = String(parts[0])
+                if (parts.length > 0) defaultZoneArray = parts
             }
         }
-        const defaultZone = defaultZoneValue || JSON.stringify([1])
+        const defaultZone = JSON.stringify(defaultZoneArray.length > 0 ? defaultZoneArray : [1])
         config.headers.zoneId = defaultZone
         config.headers['zone-id'] = defaultZone
         config.headers['zone_id'] = defaultZone

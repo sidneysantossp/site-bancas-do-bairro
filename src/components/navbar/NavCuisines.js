@@ -43,7 +43,7 @@ const NavCuisines = ({ setRestaurantModal, languageDirection }) => {
         setAnchorEl(null)
     }
     const handleClick = () => {
-        router.push('/bancas')
+        router.push('/cuisines')
         handledropClose()
     }
 

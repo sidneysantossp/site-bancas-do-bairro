@@ -1,1 +1,1 @@
-export { default, getServerSideProps } from '../cuisines/index'
+export { default, getServerSideProps } from '../banca/index'

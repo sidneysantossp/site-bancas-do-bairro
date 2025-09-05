@@ -1,7 +1,8 @@
 import { useJsApiLoader } from '@react-google-maps/api'
 
 // Configuração centralizada do Google Maps API
-const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAP_KEY?.trim()
+// Suporta ambas variáveis: NEXT_PUBLIC_GOOGLE_MAP_KEY (preferida) e NEXT_PUBLIC_GOOGLE_MAPS_API_KEY (legada)
+const apiKey = (process.env.NEXT_PUBLIC_GOOGLE_MAP_KEY || process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY)?.trim()
 
 // Em desenvolvimento, usar um id de script derivado da configuração atual
 // para evitar o erro "Loader must not be called again with different options"
