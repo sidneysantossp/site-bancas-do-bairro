@@ -22,6 +22,12 @@ const FeatureCatagories = () => {
     const { catOffsetElementRef } = useScrollSticky()
     const { global } = useSelector((state) => state.globalSettings)
     const { featuredCategories } = useSelector((state) => state.storedData)
+    // Normaliza dados vindos do Redux (podem ter ficado como objeto {data: []} por sessões anteriores)
+    const categoryList = Array.isArray(featuredCategories)
+        ? featuredCategories
+        : Array.isArray(featuredCategories?.data)
+            ? featuredCategories.data
+            : []
     const { categoryIsSticky, foodTypeIsSticky } = useSelector(
         (state) => state.scrollPosition
     )
@@ -29,8 +35,8 @@ const FeatureCatagories = () => {
     const settings = {
         dots: false,
         infinite: categoryIsSticky
-            ? featuredCategories?.length > 12
-            : featuredCategories?.length > 7,
+            ? categoryList?.length > 12
+            : categoryList?.length > 7,
         speed: 700,
         slidesToShow: categoryIsSticky ? 12 : 7,
         slidesToScroll: 3,
@@ -43,7 +49,7 @@ const FeatureCatagories = () => {
                 settings: {
                     slidesToShow: 8,
                     slidesToScroll: 3,
-                    infinite: featuredCategories?.length > 8 && true,
+                    infinite: categoryList?.length > 8 && true,
                 },
             },
             {
@@ -51,7 +57,7 @@ const FeatureCatagories = () => {
                 settings: {
                     slidesToShow: 6,
                     slidesToScroll: 3,
-                    infinite: featuredCategories?.length > 6 && true,
+                    infinite: categoryList?.length > 6 && true,
                 },
             },
             {
@@ -59,7 +65,7 @@ const FeatureCatagories = () => {
                 settings: {
                     slidesToShow: 5,
                     slidesToScroll: 3,
-                    infinite: featuredCategories?.length > 5 && true,
+                    infinite: categoryList?.length > 5 && true,
                 },
             },
             {
@@ -67,7 +73,7 @@ const FeatureCatagories = () => {
                 settings: {
                     slidesToShow: 7,
                     slidesToScroll: 3,
-                    infinite: featuredCategories?.length > 4.5 && true,
+                    infinite: categoryList?.length > 4.5 && true,
                 },
             },
 
@@ -76,7 +82,7 @@ const FeatureCatagories = () => {
                 settings: {
                     slidesToShow: 7,
                     slidesToScroll: 3,
-                    infinite: featuredCategories?.length > 7 && true,
+                    infinite: categoryList?.length > 7 && true,
                 },
             },
             {
@@ -84,13 +90,13 @@ const FeatureCatagories = () => {
                 settings: {
                     slidesToShow: 5,
                     slidesToScroll: 3,
-                    infinite: featuredCategories?.length > 5 && true,
+                    infinite: categoryList?.length > 5 && true,
                 },
             },
         ],
     }
 
-    if (!featuredCategories) {
+    if (!categoryList) {
         return null
     }
 
@@ -148,13 +154,13 @@ const FeatureCatagories = () => {
                         onMouseEnter={() => setHoverOn(true)}
                         onMouseLeave={() => setHoverOn(false)}
                     >
-                        {featuredCategories?.length > 0 ? (
+                        {categoryList?.length > 0 ? (
                             <Slider
                                 className="slick__slider"
                                 {...settings}
                                 ref={sliderRef}
                             >
-                                {featuredCategories.map((categoryItem) => (
+                                {categoryList.map((categoryItem) => (
                                     <FeaturedCategoryCard
                                         key={categoryItem?.id}
                                         id={categoryItem?.id}

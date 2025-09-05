@@ -97,7 +97,13 @@ const Homes = ({ configData }) => {
     }
     const { refetch } = useWishListGet(onSuccessHandler)
     const onCategorySuccessHandler = (response) => {
-        dispatch(setFeaturedCategories(response))
+        // Normaliza para sempre enviar um array ao store
+        const normalized = Array.isArray(response)
+            ? response
+            : Array.isArray(response?.data)
+                ? response.data
+                : []
+        dispatch(setFeaturedCategories(normalized))
     }
     const { refetch: refetchCategories } = useGetCategory(onCategorySuccessHandler)
     let getToken = undefined
@@ -173,7 +179,8 @@ const Homes = ({ configData }) => {
             if (popularFood?.length === 0 || isNeedLoad) {
                 await refetchNearByPopularRestaurantData()
             }
-            if (featuredCategories?.length === 0 || isNeedLoad) {
+            // Refetch categorias se não for array (dados antigos) ou vazio
+            if (!Array.isArray(featuredCategories) || featuredCategories?.length === 0 || isNeedLoad) {
                 await refetchCategories()
             }
         }
