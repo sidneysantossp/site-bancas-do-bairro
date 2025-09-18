@@ -1,6 +1,6 @@
 {
     "name": "StackFood",
-    "version": "3.3.3",
+    "version": "3.4.0",
     "private": true,
     "dependencies": {
         "@emotion/cache": "^11.14.0",

@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.4.0](https://github.com/sidneysantossp/site-bancas-do-bairro/compare/v3.3.3...v3.4.0) (2025-09-18)
+
+
+### Features
+
+* Atualizações do frontend - Portal das Bancas do Bairro ([8b27aca](https://github.com/sidneysantossp/site-bancas-do-bairro/commit/8b27acaf5f04272c78af558991e56aeb8506a8fa))
+
+
+### Bug Fixes
+
+* harden Firebase Messaging init for cross-device compatibility ([9233e30](https://github.com/sidneysantossp/site-bancas-do-bairro/commit/9233e30e0ae310639f27995548ab20529ac43a87))
+
+
+### Maintenance
+
+* **deploy:** força redeploy Vercel com footer/categorias/produto atualizados ([146614f](https://github.com/sidneysantossp/site-bancas-do-bairro/commit/146614febe517cdd4aea90284609df8f2fbb2cc6))
+* **deploy:** força redeploy Vercel com footer/categorias/produto atualizados ([6080ba9](https://github.com/sidneysantossp/site-bancas-do-bairro/commit/6080ba9d08638bf638d2bb0c6017850aaa99f037))
+* merge conflicts and update dependencies ([4068e0b](https://github.com/sidneysantossp/site-bancas-do-bairro/commit/4068e0b34c55a42b315fe680fa9b3a859d4ee786))
+* **release:** 3.3.2 ([a65b5d1](https://github.com/sidneysantossp/site-bancas-do-bairro/commit/a65b5d1973219501a326f1c63955d87c2e1ae6f8))
+* **release:** 3.3.3 ([51822cf](https://github.com/sidneysantossp/site-bancas-do-bairro/commit/51822cfbac4b8fdb3cf2872849581faa3a115752))
+
 ### [3.3.1](https://github.com/sidneysantossp/site-bancas-do-bairro/compare/v3.3.0...v3.3.1) (2025-09-02)
 
 
