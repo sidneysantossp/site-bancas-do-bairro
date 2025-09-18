@@ -1,6 +1,43 @@
-// API mock para configuração do sistema
-export default function handler(req, res) {
-    const mockConfig = {
+// API que busca configuração do backend de produção
+export default async function handler(req, res) {
+    const backendUrl = 'https://admin.guiadasbancas.com.br'
+    
+    try {
+        console.log('Buscando configuração do backend de produção...')
+        
+        const response = await fetch(`${backendUrl}/api/v1/config`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'User-Agent': 'NextJS-API/1.0',
+                'zoneId': JSON.stringify([1]),
+                'zone-id': JSON.stringify([1]),
+                'zone_id': JSON.stringify([1]),
+                'X-software-id': '33571750',
+            },
+        })
+
+        if (!response.ok) {
+            console.error('Erro ao buscar configuração:', response.status, response.statusText)
+            // Fallback para dados mock em caso de erro
+            return res.status(200).json(getMockConfig())
+        }
+
+        const data = await response.json()
+        console.log('Configuração obtida com sucesso')
+        
+        res.status(200).json(data)
+    } catch (error) {
+        console.error('Erro na requisição de configuração:', error.message)
+        // Fallback para dados mock em caso de erro
+        res.status(200).json(getMockConfig())
+    }
+}
+
+// Dados mock como fallback
+function getMockConfig() {
+    return {
         business_name: 'Bancas do Bairro',
         logo: '/logo.png',
         address: 'São Paulo, SP',
@@ -137,6 +174,4 @@ export default function handler(req, res) {
             react_site_url: process.env.NEXT_CLIENT_HOST_URL || 'http://localhost:3000'
         }
     }
-    
-    res.status(200).json(mockConfig)
 }

@@ -5,6 +5,8 @@ import { CustomButtonPrimary } from '@/styled-components/CustomButtons.style'
 import { CustomStackFullWidth } from '@/styled-components/CustomStyles.style'
 import CloseIcon from '@mui/icons-material/Close'
 import MapWithSearchBox from '../../../google-map/MapWithSearchBox'
+import OpenStreetMapSelector from '../../../maps/OpenStreetMapSelector'
+import { useGoogleMaps } from '@/hooks/useGoogleMaps'
 import { getToken } from '../../../checkout-page/functions/getGuestUserId'
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline'
 import { useDispatch, useSelector } from 'react-redux'
@@ -24,6 +26,7 @@ const AddressReselectPopover = (props) => {
     const theme = useTheme()
     const dispatch = useDispatch()
     const [rerenderMap, setRerenderMap] = useState(false)
+    const { isLoaded: googleMapsLoaded, isError: googleMapsError } = useGoogleMaps()
     const {
         coords,
         anchorEl,
@@ -87,6 +90,11 @@ const AddressReselectPopover = (props) => {
             await refetchCurrentLocation()
             setRerenderMap((prvMap) => !prvMap)
         }
+    }
+
+    const handleOpenStreetMapSelect = (locationData) => {
+        CustomToaster('success', 'Nova localização definida com sucesso!')
+        onClose()
     }
 
     return (
@@ -178,69 +186,13 @@ const AddressReselectPopover = (props) => {
                                 justifyContent="center"
                                 alignItems="center"
                             >
-                                <MapWithSearchBox
-                                    isGps={true}
-                                    rerenderMap={rerenderMap}
-                                    orderType="dd"
-                                    padding="0px"
-                                    coords={coords}
-                                    mapHeight="400px"
+                                {/* Sempre usar OpenStreetMap por enquanto até Google Maps ser configurado */}
+                                <OpenStreetMapSelector
+                                    onLocationSelect={handleOpenStreetMapSelect}
+                                    onClose={onClose}
+                                    initialLocation={localStorage.getItem('location') || ''}
                                 />
-                                <Stack
-                                    width={{ xs: '80%', sm: '85%', md: '90%' }}
-                                    position="absolute"
-                                    right="15px"
-                                    bottom="5%"
-                                    direction="row"
-                                    spacing={1}
-                                >
-                                    {geoCodeLoading ? (
-                                        <Button
-                                            fullWidth
-                                            sx={{
-                                                color: `${theme.palette.whiteText.main} !important`,
-                                                backgroundColor:
-                                                    theme.palette.primary.main,
-                                                '&:hover': {
-                                                    backgroundColor:
-                                                        theme.palette.primary
-                                                            .dark,
-                                                },
-                                            }}
-                                        >
-                                            <AnimationDots size="0px" />
-                                        </Button>
-                                    ) : (
-                                        <Button
-                                            fullWidth
-                                            sx={{
-                                                color: `${theme.palette.whiteText.main} !important`,
-                                                backgroundColor:
-                                                    theme.palette.primary.main,
-                                                '&:hover': {
-                                                    backgroundColor:
-                                                        theme.palette.primary
-                                                            .dark,
-                                                },
-                                            }}
-                                            paddingTop="10px"
-                                            paddingBottom="10px"
-                                            onClick={getLocation}
-                                        >
-                                            {'Selecionar'}
-                                        </Button>
-                                    )}
-                                    <IconButton
-                                        sx={{
-                                            background: (theme) =>
-                                                theme.palette.neutral[100],
-                                            padding: '10px',
-                                        }}
-                                        onClick={setUserCurrentLocation}
-                                    >
-                                        <GpsFixedIcon color="primary" />
-                                    </IconButton>
-                                </Stack>
+                                {/* Remover botões do Google Maps quando usando OpenStreetMap */}
                             </CustomStackFullWidth>
                         )}
                     </CustomStackFullWidth>

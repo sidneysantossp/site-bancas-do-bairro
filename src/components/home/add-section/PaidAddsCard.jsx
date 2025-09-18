@@ -18,6 +18,7 @@ import { useWishListResDelete } from '@/hooks/react-query/config/wish-list/useWi
 import { useDispatch, useSelector } from 'react-redux'
 import { t } from 'i18next'
 import FavoriteIcon from '@mui/icons-material/Favorite'
+import { buildBancaSlug } from '@/utils/slugUtils'
 
 const PaidAddsCard = ({
     item,
@@ -120,13 +121,9 @@ const PaidAddsCard = ({
     }, [ended, index, itemLength, sliderRef])
 
     const handleClick = () => {
-        router.push({
-            pathname: `/banca/[id]`,
-            query: {
-                id: `${item?.slug ? item?.slug : item?.restaurant?.id}`,
-                banca_zone_id: item?.restaurant?.zone_id,
-            },
-        })
+        const restaurantObj = item?.restaurant || {}
+        const targetSlug = item?.slug || restaurantObj?.slug || buildBancaSlug({ id: restaurantObj?.id, name: restaurantObj?.name })
+        router.push(`/${targetSlug}`)
     }
     const handleVideoClick = () => {
         setVideoModal(true)

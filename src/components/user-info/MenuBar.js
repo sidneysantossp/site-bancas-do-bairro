@@ -51,7 +51,7 @@ const MenuBar = ({ tabData, onClose, sidedrawer, page, setAttributeId }) => {
                             key={index}
                             selected={item.value === page}
                             onClick={() => handleClick(item)}
-                            disableGutters="true"
+                            disableGutters={true}
                             sx={{
                                 color: (theme) =>
                                     item.value === page &&

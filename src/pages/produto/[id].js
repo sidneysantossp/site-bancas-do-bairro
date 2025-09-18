@@ -504,13 +504,7 @@ const ProductPage = ({ product, error, clientOrigin, routeParam }) => {
                      bancaSlugOrId ? (
                        <MUILink
                          component={NextLink}
-                         href={{
-                           pathname: '/banca/[id]',
-                           query: {
-                             id: `${bancaSlugOrId}`,
-                             ...(bancaZoneId ? { banca_zone_id: bancaZoneId } : {}),
-                           },
-                         }}
+                         href={`/${bancaSlugOrId}`}
                          underline="none"
                          sx={{ textDecoration: 'none' }}
                          aria-label={`Ver perfil da banca ${product.restaurant_name}`}
@@ -653,7 +647,7 @@ export async function getServerSideProps({ params, req, resolvedUrl }) {
                     const currentPath = resolvedUrl
                     
                     // Se não estamos na URL SEO-friendly correta, redirecionar
-                    if (!currentPath.includes('/banca/') || currentPath !== correctSEOUrl) {
+                    if (currentPath !== correctSEOUrl) {
                         // Armazenar no cache para futuras requisições
                         setCachedRedirect(raw, correctSEOUrl)
                         
@@ -689,7 +683,7 @@ export async function getServerSideProps({ params, req, resolvedUrl }) {
         const currentPath = resolvedUrl
         
         // Se não estamos na URL SEO-friendly correta, redirecionar
-        if (!currentPath.includes('/banca/') || currentPath !== correctSEOUrl) {
+        if (currentPath !== correctSEOUrl) {
             // Armazenar no cache para futuras requisições
             setCachedRedirect(raw, correctSEOUrl)
             

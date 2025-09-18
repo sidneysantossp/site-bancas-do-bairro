@@ -21,7 +21,9 @@ export const CustomDrawer = styled(Drawer)(({ theme }) => ({
     },
 }))
 
-export const ButtonContainer = styled(Stack)(({ theme, marginBottom }) => ({
+export const ButtonContainer = styled(Stack, {
+    shouldForwardProp: (prop) => prop !== 'marginBottom'
+})(({ theme, marginBottom }) => ({
     marginLeft: '15px',
     marginRight: '15px',
     marginTop: 'auto',
@@ -29,7 +31,9 @@ export const ButtonContainer = styled(Stack)(({ theme, marginBottom }) => ({
     marginBottom: marginBottom ?? '40px',
 }))
 
-export const AppBarStyle = styled(AppBar)(({ theme, scrolling, isSmall }) => ({
+export const AppBarStyle = styled(AppBar, {
+    shouldForwardProp: (prop) => prop !== 'scrolling' && prop !== 'isSmall'
+})(({ theme, scrolling, isSmall }) => ({
     background: 'transparent !important',
     boxShadow: 'none !important',
     top: !scrolling ? '0' : isSmall ? '0' : '-50px',
@@ -53,7 +57,9 @@ export const AppBarStyle = styled(AppBar)(({ theme, scrolling, isSmall }) => ({
         },
     },
 }))
-export const NavLinkStyle = styled(Stack)(({ theme, languageDirection }) => ({
+export const NavLinkStyle = styled(Stack, {
+    shouldForwardProp: (prop) => prop !== 'languageDirection'
+})(({ theme, languageDirection }) => ({
     color: `${theme.palette.mode === 'dark' ? '#fff' : '#000'}`,
     marginLeft: `${languageDirection === 'rtl' && '20px'}`,
     marginRight: languageDirection === 'rtl' ? '16px' : '0px',
@@ -70,14 +76,18 @@ export const NavMenuLink = styled(MenuLink)(({ theme }) => ({
         color: theme.palette.primary.main,
     },
 }))
-export const TopBarButton = styled(Button)(({ theme, formMobileMenu }) => ({
+export const TopBarButton = styled(Button, {
+    shouldForwardProp: (prop) => prop !== 'formMobileMenu'
+})(({ theme, formMobileMenu }) => ({
     padding: formMobileMenu === 'true' ? '7px 5px' : '',
     color: theme.palette.neutral[100],
     backgroundColor: theme.palette.navbarBg,
     minWidth: '40px',
     maxWidth: '200px',
 }))
-export const CustomSwitch = styled(Switch)(({ theme, noimage }) => ({
+export const CustomSwitch = styled(Switch, {
+    shouldForwardProp: (prop) => prop !== 'noimage'
+})(({ theme, noimage }) => ({
     width: 42,
     height: 22,
     padding: 0,
@@ -164,7 +174,9 @@ export const CustomNavSearchIcon = styled(IconButton)(({ theme }) => ({
     justifyContent: 'center',
 }))
 
-export const LefRightBorderBox = styled(Stack)(
+export const LefRightBorderBox = styled(Stack, {
+    shouldForwardProp: (prop) => prop !== 'languageDirection' && prop !== 'location' && prop !== 'isMobile'
+})(
     ({ theme, languageDirection, location, isMobile }) => ({
         borderRight:
             isMobile || !location

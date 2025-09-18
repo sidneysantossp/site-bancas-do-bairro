@@ -15,7 +15,10 @@ import Router from 'next/router'
 import { useTranslation } from 'react-i18next'
 import { useQuery } from 'react-query'
 import { useDispatch, useSelector } from 'react-redux'
-import ResOffer from '../../../public/static/Menu/resturant.png'
+// import ResOffer from '../../../public/static/Menu/resturant.png'
+const ResOffer = {
+    src: 'https://videos.openai.com/vg-assets/assets%2Ftask_01k5c9fbx6eymsp27336xcf0xq%2F1758128098_img_0.webp?st=2025-09-18T04%3A58%3A30Z&se=2025-09-24T05%3A58%3A30Z&sks=b&skt=2025-09-18T04%3A58%3A30Z&ske=2025-09-24T05%3A58%3A30Z&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skoid=5e5fc900-07cf-43e7-ab5b-314c0d877bb0&skv=2019-02-02&sv=2018-11-09&sr=b&sp=r&spr=https%2Chttp&sig=dx4vGXZjjs6K8gAVU0W5ddjpscV%2B06Lymim5kqdyzrY%3D&az=oaivgprodscus'
+}
 import { RestaurantsApi } from '@/hooks/react-query/config/restaurantApi'
 import { RestaurantsApiNearBy } from '@/hooks/react-query/restaurants/getNearByRestaurants'
 import { setPopularRestaurants } from '@/redux/slices/storedData'
@@ -156,7 +159,7 @@ const NavResturant = ({ zoneid }) => {
                                                         md={6}
                                                     >
                                                         <Link
-                                                            href={`/banca/${restaurant?.slug || `${restaurant?.name?.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')}-${restaurant?.id}`}`}
+                                                            href={`/${restaurant?.name?.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')}-${restaurant?.id}`}
                                                             passHref
                                                             style={{textDecoration: 'none'}}
                                                         >
@@ -226,7 +229,7 @@ const NavResturant = ({ zoneid }) => {
                                                         md={6}
                                                     >
                                                         <Link
-                                                            href={`/banca/${restaurant?.slug || `${restaurant?.name?.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')}-${restaurant?.id}`}`}
+                                                            href={`/${restaurant?.name?.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')}-${restaurant?.id}`}
                                                             passHref
                                                             style={{textDecoration: 'none'}}
                                                         >
@@ -330,13 +333,26 @@ const NavResturant = ({ zoneid }) => {
                                 </Button>
                             )}
 
-                            <CustomImageContainer
-                                src={ResOffer?.src}
-                                alt="restaurant-image"
-                                borderRadius=".6rem"
-                                height="202px"
-                                width="225px"
-                            />
+                            <div
+                                style={{
+                                    width: '225px',
+                                    height: '202px',
+                                    borderRadius: '1.5rem',
+                                    overflow: 'hidden',
+                                    position: 'relative'
+                                }}
+                            >
+                                <img
+                                    src={ResOffer?.src}
+                                    alt="restaurant-image"
+                                    style={{
+                                        width: '100%',
+                                        height: '100%',
+                                        objectFit: 'cover',
+                                        borderRadius: '1.5rem'
+                                    }}
+                                />
+                            </div>
                         </Grid>
                     </Grid>
                 </Popover>

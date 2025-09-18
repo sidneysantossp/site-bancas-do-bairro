@@ -25,18 +25,28 @@ const normalizeBaseUrl = (url) => {
     }
 }
 
-const browserUrl = normalizeBaseUrl(process.env.NEXT_PUBLIC_BASE_URL || '')
-const ssrFallback = normalizeBaseUrl(
-    process.env.NEXT_PUBLIC_BASE_URL || process.env.NEXT_CLIENT_HOST_URL || 'http://localhost:3020'
+// Estratégia simplificada: sempre usar APIs locais mock quando em desenvolvimento
+const productionBackend = process.env.NEXT_PUBLIC_BASE_URL
+const isDevelopment = process.env.NODE_ENV === 'development'
+
+// Em desenvolvimento, usar sempre APIs locais para evitar CORS
+const browserUrl = (isDevelopment || !productionBackend) ? '' : normalizeBaseUrl(productionBackend)
+const ssrFallback = productionBackend ? normalizeBaseUrl(productionBackend) : normalizeBaseUrl(
+    process.env.NEXT_CLIENT_HOST_URL || 'http://localhost:3020'
 )
 export const baseUrl = isBrowser ? browserUrl : ssrFallback
 
 const MainApi = axios.create({
     baseURL: baseUrl,
-    timeout: 10000,
+    timeout: 30000, // Aumentado para 30 segundos
+    headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+    },
 })
 
 MainApi.interceptors.request.use(function (config) {
+    console.log('API Request:', config.baseURL, config.url)
     let rawZoneId = undefined
     let token = undefined
     let language = undefined
@@ -59,28 +69,16 @@ MainApi.interceptors.request.use(function (config) {
         }
     }
 
-    // Normalizar URL relativa sem quebrar baseURL com path (ex.: /admin-bancas-do-bairro)
-    // Regra: se baseURL tiver path além de '/', NÃO prefixar '/'; use caminho relativo (sem barra inicial)
+    // Normalizar URL - sempre usar APIs locais em desenvolvimento
     if (config?.url && !/^https?:\/\//i.test(config.url)) {
         const trimmed = String(config.url).trim()
-        const base = config.baseURL || baseUrl || ''
-        let hasPathInBase = false
-        try {
-            if (base) {
-                const u = new URL(base)
-                hasPathInBase = !!(u.pathname && u.pathname !== '/')
-            }
-        } catch (_) {
-            // base pode ser relativo; fallback simples
-            const afterHost = base.replace(/^https?:\/\/[^/]+/i, '')
-            hasPathInBase = !!(afterHost && afterHost !== '/')
-        }
-        if (hasPathInBase) {
-            // garantir que a url NÃO tenha barra inicial
-            config.url = trimmed.replace(/^\/+/, '')
-        } else {
-            // ambiente sem path em baseURL: usar barra inicial para same-origin/proxy
+        
+        if (isDevelopment || !productionBackend) {
+            // Desenvolvimento: usar APIs locais do Next.js
             config.url = trimmed.startsWith('/') ? trimmed : `/${trimmed}`
+        } else {
+            // Produção: conexão direta ao backend
+            config.url = trimmed.replace(/^\/+/, '')
         }
     }
 
@@ -173,4 +171,19 @@ MainApi.interceptors.request.use(function (config) {
 
     return config
 })
+
+// Interceptor de resposta para debugging
+MainApi.interceptors.response.use(
+    function (response) {
+        // Log de sucesso para debugging
+        console.log('API Success:', response.config.url, response.status)
+        return response
+    },
+    function (error) {
+        // Log de erro para debugging
+        console.error('API Error:', error.config?.url, error.response?.status, error.message)
+        return Promise.reject(error)
+    }
+)
+
 export default MainApi

@@ -16,6 +16,7 @@ import { HomeTextTypography } from '../home/HomeStyle'
 import DelivaryTruckIcon from '../../assets/images/icons/DelivaryTruckIcon'
 import DistanceIcon from '../../assets/images/icons/DistanceIcon'
 import RestaurantItemsIcon from '../../assets/images/icons/RestaurantItemsIcon'
+import { buildBancaSlug } from '@/utils/slugUtils'
 
 const ProfilePhotoWrapper = styled(Stack)(({ theme }) => ({
     justifyContent: 'center',
@@ -157,13 +158,8 @@ const LatestRestaurantCard = (props) => {
         }
     }
     const handleClick = () => {
-        router.push({
-            pathname: `/banca/[id]`,
-            query: {
-                id: `${slug ? slug : id}`,
-                banca_zone_id: zone_id,
-            },
-        })
+        const targetSlug = slug || buildBancaSlug({ id, name })
+        router.push(`/${targetSlug}`)
     }
     return (
         <>

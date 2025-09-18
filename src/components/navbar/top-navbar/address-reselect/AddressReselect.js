@@ -98,6 +98,59 @@ const AddressReselect = ({ location }) => {
             userDecisionTimeout: 5000,
             isGeolocationEnabled: true,
         })
+
+    // Função para fazer reverse geocoding e obter endereço
+    const reverseGeocode = async (lat, lng) => {
+        try {
+            const response = await fetch(
+                `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}&accept-language=pt-BR`
+            )
+            
+            if (response.ok) {
+                const data = await response.json()
+                const locationName = data.display_name || `${lat.toFixed(4)}, ${lng.toFixed(4)}`
+                
+                // Salvar localização automaticamente
+                localStorage.setItem('location', locationName)
+                localStorage.setItem('currentLatLng', JSON.stringify({ lat, lng }))
+                
+                // Obter zona correta do backend
+                try {
+                    const zoneResponse = await fetch(`/api/v1/config/get-zone-id?lat=${lat}&lng=${lng}`)
+                    const zoneData = await zoneResponse.json()
+                    
+                    if (zoneData.zone_ids && zoneData.zone_ids.length > 0) {
+                        localStorage.setItem('zoneid', JSON.stringify(zoneData.zone_ids))
+                        console.log('Zona obtida do backend (AddressReselect):', zoneData.zone_ids)
+                    } else {
+                        localStorage.setItem('zoneid', JSON.stringify([1])) // Fallback
+                    }
+                } catch (zoneError) {
+                    console.error('Erro ao obter zona (AddressReselect):', zoneError)
+                    localStorage.setItem('zoneid', JSON.stringify([1])) // Fallback
+                }
+                
+                setDisplayLocation(locationName)
+                dispatch(setUserLocationUpdate(!userLocationUpdate))
+                
+                console.log('Geolocalização automática definida:', locationName)
+            }
+        } catch (err) {
+            console.error('Erro no reverse geocoding automático:', err)
+        }
+    }
+
+    // Efeito para capturar geolocalização automaticamente quando disponível
+    useEffect(() => {
+        if (coords && isGeolocationEnabled && isGeolocationAvailable) {
+            // Verificar se já não há uma localização válida salva
+            const savedLocation = localStorage.getItem('location')
+            if (!savedLocation || savedLocation === 'undefined' || savedLocation === 'null' || savedLocation === '') {
+                console.log('Capturando geolocalização automática...', coords)
+                reverseGeocode(coords.latitude, coords.longitude)
+            }
+        }
+    }, [coords, isGeolocationEnabled, isGeolocationAvailable, dispatch, userLocationUpdate])
     const handleClosePopover = () => {
         dispatch(setOpenMapDrawer(false))
         setMapOpen(false)

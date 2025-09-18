@@ -35,7 +35,7 @@ import { useGetAllProductsOfARestaurant } from '@/hooks/custom-hooks/useGetAllPr
 import VerifiedUserIcon from '@mui/icons-material/VerifiedUser'
 import StorefrontIcon from '@mui/icons-material/Storefront'
 import WhatsAppIcon from '@mui/icons-material/WhatsApp'
-import { buildProductSEOUrl } from '@/utils/slugUtils'
+import { buildProductSEOUrl, buildBancaSlug } from '@/utils/slugUtils'
 
 const formatBRL = (value) =>
   Number(value ?? 0).toLocaleString('pt-BR', {
@@ -421,7 +421,7 @@ const ProductDetailPageContent = ({ product, restaurant, clientOrigin }) => {
                     restaurant ? (
                       <MUILink
                         component={NextLink}
-                        href={{ pathname: '/banca/[id]', query: { id: `${restaurant.slug || restaurant.id}` } }}
+                        href={`/${restaurant?.slug || buildBancaSlug(restaurant)}`}
                         underline="none"
                         sx={{ textDecoration: 'none' }}
                         aria-label={`Ver perfil da banca ${product.restaurant_name}`}

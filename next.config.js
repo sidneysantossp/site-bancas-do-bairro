@@ -12,20 +12,23 @@ const nextConfig = {
             { source: '/bancas/:id', destination: '/banca/:id' },
         ]
 
-        // Em desenvolvimento, use as rotas locais do Next.js em /api
-        // Somente proxie /api e /storage quando um backend externo estiver configurado
-        // e não estivermos em desenvolvimento
-        if (BACKEND_BASE && process.env.NODE_ENV !== 'development') {
-            rules.push(
-                {
-                    source: '/api/:path*',
-                    destination: `${BACKEND_BASE}/api/:path*`,
-                },
-                {
-                    source: '/storage/:path*',
-                    destination: `${BACKEND_BASE}/storage/:path*`,
-                }
-            )
+        // Quando um backend externo estiver configurado, proxiar /api e /storage
+        // Usamos beforeFiles para ter precedência sobre rotas locais (ex.: pages/api)
+        if (BACKEND_BASE) {
+            return {
+                beforeFiles: [
+                    {
+                        source: '/api/:path*',
+                        destination: `${BACKEND_BASE}/api/:path*`,
+                    },
+                    {
+                        source: '/storage/:path*',
+                        destination: `${BACKEND_BASE}/storage/:path*`,
+                    },
+                ],
+                afterFiles: rules,
+                fallback: [],
+            }
         }
 
         return rules

@@ -49,17 +49,23 @@ export const buildBancaSlug = (restaurant) => {
 
 /**
  * Extrai o ID de um slug
- * @param {string} slug - Slug no formato "nome-item-id"
+ * @param {string} slug - Slug no formato "nome-item-id". Também aceita variantes como "nome-item123" (sem hífen antes do ID)
  * @returns {string|null} - ID extraído ou null se não encontrado
  */
 export const extractIdFromSlug = (slug) => {
   if (!slug || typeof slug !== 'string') return null
   
-  const parts = slug.split('-')
+  // Remover querystring e hash se existirem
+  const pure = slug.split(/[?#]/)[0]
+
+  // 1) Caso canônico: último segmento separado por hífen é um número
+  const parts = pure.split('-')
   const lastPart = parts[parts.length - 1]
-  
-  // Verificar se a última parte é um número
-  return /^\d+$/.test(lastPart) ? lastPart : null
+  if (/^\d+$/.test(lastPart)) return lastPart
+
+  // 2) Variante tolerante: extrair dígitos finais mesmo sem hífen (ex.: "mini-kebab13" => "13")
+  const match = pure.match(/(\d+)$/)
+  return match ? match[1] : null
 }
 
 /**

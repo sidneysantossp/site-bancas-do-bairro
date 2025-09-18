@@ -27,6 +27,9 @@ export function middleware(request) {
     const bancaSlug = pathname.replace('/banca/', '')
     if (bancaSlug && /\d+$/.test(bancaSlug)) {
       url.pathname = `/${bancaSlug}`
+      // Remover parâmetros redundantes que podem vir de navegações antigas
+      url.searchParams.delete('bancaSlug')
+      url.searchParams.delete('id')
       return NextResponse.redirect(url, 301)
     }
   }
@@ -40,6 +43,9 @@ export function middleware(request) {
     if (bancaSlug && productSlug) {
       // Redirecionar para estrutura nova: /nome-banca-123/produtos/nome-produto-456
       url.pathname = `/${bancaSlug}/produtos/${productSlug}`
+      // Limpar possíveis parâmetros redundantes herdados
+      url.searchParams.delete('bancaSlug')
+      url.searchParams.delete('id')
       return NextResponse.redirect(url, 301)
     }
   }
